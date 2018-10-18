@@ -1,0 +1,25 @@
+opam-version: "2.0"
+name: "styrographos"
+version: "0.0.1.0"
+maintainer: "na4zagin3"
+authors: [
+  "na4zagin3"
+]
+homepage: "https://github.com/na4zagin3/satyrographos"
+dev-repo: "git+https://github.com/na4zagin3/satyrographos.git"
+bug-reports: "https://github.com/na4zagin3/satyrographos/issues"
+license: "GPL3+"
+build: [
+  ["dune" "subst"] {pinned}
+  ["dune" "build" "-p" name "-j" jobs]
+]
+
+depends: [
+  "ocaml" {>= "4.06.0"}
+  "batteries"
+  "dune" {build}
+  "fileutils"
+  "ppx_deriving" {build}
+  "satysfi" {= "0.0.3"}
+# "yojson"
+]
