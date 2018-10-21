@@ -1,5 +1,6 @@
 (library
  (name satyrographos)
  (synopsis "Internal Satyrographos Library, do not use!")
- (preprocess (pps ppx_deriving.std))
+ (inline_tests)
+ (preprocess (staged_pps ppx_inline_test ppx_deriving.std))
  (libraries batteries fileutils yojson))

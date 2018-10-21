@@ -20,6 +20,7 @@ depends: [
   "dune" {build}
   "fileutils"
   "ppx_deriving" {build}
+  "ppx_inline_test" {build}
   "satysfi" {= "0.0.3"}
 # "yojson"
 ]

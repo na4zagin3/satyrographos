@@ -4,6 +4,7 @@ let prefix = match SatysfiDirs.home_dir () with
   | Some(d) -> d
   | None -> failwith "Cannot find home directory"
 
+let user_dir = Filename.concat prefix ".satysfi"
 let root_dir = Filename.concat prefix ".satyrographos"
 let package_dir = Filename.concat root_dir "packages"
 
@@ -35,6 +36,48 @@ let () = match Array.to_list Sys.argv with
         "remove <package-name>";
       ]
     end
+  | (name :: "package" :: opts) -> begin match opts with
+    | ["list"] -> [%derive.show: string list] (Registory.list reg) |> print_endline
+    | ["show"; p] -> Registory.directory reg p
+      |> Package.read_dir
+      |> [%derive.show: Package.t]
+      |> print_endline
+    | _ -> List.iter (Printf.printf "%s pin %s\n" name) [
+        "list";
+        "show <package-name>";
+      ]
+    end
+  | (name :: "install" :: opts) -> begin
+    let install_to d =
+      let packages = Registory.list reg
+        |> List.map (Registory.directory reg)
+        |> List.map Package.read_dir
+      in
+      let merged = packages
+        |> List.fold_left Package.union Package.empty
+      in
+      match FileUtil.test FileUtil.Is_dir d, Package.is_managed_dir d with
+      | true, false ->
+        Printf.printf "Directory %s is not managed by Satyrographos.\n" d;
+        Printf.printf "Please remove %s first.\n" d
+      | _, _ ->
+        Printf.printf "Loaded packages\n";
+        [%derive.show: Package.t list] packages |> print_endline;
+        Printf.printf "Installing to %s\n" d;
+        [%derive.show: Package.t] merged |> print_endline;
+        Package.write_dir d merged
+    in
+    match opts with
+    | [] -> install_to (Filename.concat user_dir "dist")
+    | [d] -> install_to d
+    | _ -> List.iter (Printf.printf "%s pin %s\n" name) [
+        "install [<path-to-install>]";
+      ]
+    end
   | (_ :: "status" :: _) -> status ()
-  | (name :: _) -> Printf.printf "%s pin ...\n" name
+  | (name :: _) -> List.iter (Printf.printf "%s %s\n" name) [
+      "pin";
+      "package";
+      "install";
+    ]
   | args -> [%derive.show: string list] args |> print_endline
