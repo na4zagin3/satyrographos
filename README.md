@@ -1,9 +1,9 @@
 # satyrographos
-Naive package manager for SATySFi.
+A naive package manager for SATySFi.
 
 Currently, it only composes `~/.opam/<ocaml-version>/share/satysfi/<package>` installed by OPAM and user-defined packages under `~/.satyrographos/packages/<package>` and copy into ``~/.satysfi/dist`.
 
-Satyrographos simplifies installation of SATySFi. For example, @zr-tex8r’s `make-satysfi.sh` will be like this.
+Satyrographos simplifies installation of SATySFi. For example, @zr-tex8r’s (`make-satysfi.sh`)[https://gist.github.com/zr-tex8r/0ab0d24255ecf631692c1f0cbc5ca026] will be like this.
 
 ```sh
 #!/bin/bash
@@ -44,10 +44,24 @@ $ cp -r ~/.satyrographos/packages/*/* ~/.satysfi/dist
 ## Register Libraries
 You can add a new library for SATySFi as an OPAM library or a directory under `~/.satyrographos`.
 
-In this section, we are going to register a new library `great-package` which has `packages/your-great.package.satyh`.
+In this section, we are going to register a new library `great-package` like this.
+```
+- ~/src/
+  - great-package/
+    - hash/
+      - fonts.satysfi-hash
+    - fonts/
+      - interesting-font.ttf
+    - packages/
+      - your-great.package.satyh
+```
 
 ### Local Directory
-Copy your file into `~/.satyrographos/packages/great-package/packages/your-great-package.satyh`.
+Register your local library with `satyrographos pin add <local-dir>`.
+```
+$ satyrographos pin add ~/src/great-package
+$ satyrographos install
+```
 
 ### OPAM Package
 Create a new package which installs the file into `<prefix>/usr/share/satysfi/great-package/packages/your-great-package.satyh`.
