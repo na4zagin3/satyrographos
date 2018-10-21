@@ -1,0 +1,5 @@
+(executable
+ (name main)
+ (public_name satyrographos)
+ (preprocess (pps ppx_deriving.std))
+ (libraries batteries fileutils satyrographos))

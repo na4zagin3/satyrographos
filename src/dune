@@ -1,5 +1,5 @@
-(executable
- (name main)
- (public_name satyrographos)
+(library
+ (name satyrographos)
+ (synopsis "Internal Satyrographos Library, do not use!")
  (preprocess (pps ppx_deriving.std))
  (libraries batteries fileutils yojson))

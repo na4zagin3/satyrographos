@@ -1,3 +1,5 @@
+open Satyrographos
+
 let prefix = match SatysfiDirs.home_dir () with
   | Some(d) -> d
   | None -> failwith "Cannot find home directory"
