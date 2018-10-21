@@ -2,8 +2,13 @@ module PackageFiles = Map.Make(String)
 
 module Json = struct
   include Yojson.Safe
+  type t = json
   let equal_json = (=)
+  let compare = compare
 end
+
+module StringMap = Map.Make(String)
+module JsonSet = Set.Make(Json)
 
 let string_map_printer fmt v =
   [%derive.show: (string * string) list] (PackageFiles.bindings v)
@@ -29,6 +34,33 @@ let empty = {
 
 
 let show_file_list = [%derive.show: string list]
+
+let hash_map_singleton (k, x) =
+  StringMap.singleton k (JsonSet.singleton x)
+
+let hash_map_union =
+  StringMap.union (fun _ x y -> Some(JsonSet.union x y))
+
+let validate_hash f abs_fs = function
+  | (`Assoc a) ->
+    List.map hash_map_singleton a
+    |> List.fold_left hash_map_union StringMap.empty
+    |> StringMap.filter (fun _ v -> JsonSet.cardinal v > 1)
+    |> StringMap.mapi (fun k v -> Printf.sprintf "Error in %s:\nField: %s\nValues: %s\nOriginally from: %s\n\n"
+      f
+      k
+      (Json.to_string (`List (JsonSet.elements v)))
+      (show_file_list abs_fs)
+    )
+    |> StringMap.bindings
+    |> List.map (fun (_, v) -> v)
+
+  | _ -> [f ^ " is not an object. Originally from " ^ show_file_list abs_fs]
+
+let validate p =
+  PackageFiles.bindings p.hashes
+  |> List.map (fun (f, (abs_fs, h)) -> validate_hash f abs_fs h)
+  |> List.concat
 
 let add_file f absolute_path p =
   if FilePath.is_relative absolute_path

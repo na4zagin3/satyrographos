@@ -94,7 +94,9 @@ let () = match Array.to_list Sys.argv with
         [%derive.show: Package.t list] packages |> print_endline;
         Printf.printf "Installing to %s\n" d;
         [%derive.show: Package.t] merged |> print_endline;
-        Package.write_dir d merged
+        Package.write_dir d merged;
+        Printf.printf "Installation completed!\n";
+        List.iter (Printf.printf "(WARNING) %s") (Package.validate merged)
     in
     match opts with
     | [] -> install_to (Filename.concat user_dir "dist")
