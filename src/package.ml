@@ -57,6 +57,7 @@ let write_dir d p =
 
 let mark_filename = ".satyrographos"
 let mark_managed_dir d =
+  FileUtil.mkdir ~parent:true d;
   FileUtil.touch (FilePath.concat d mark_filename)
 
 let is_managed_dir d =

@@ -87,6 +87,9 @@ let () = match Array.to_list Sys.argv with
         Printf.printf "Directory %s is not managed by Satyrographos.\n" d;
         Printf.printf "Please remove %s first.\n" d
       | _, _ ->
+        Printf.printf "Remove destination %s \n" d;
+        FileUtil.(rm ~force:Force ~recurse:true [d]);
+        Package.mark_managed_dir d;
         Printf.printf "Loaded packages\n";
         [%derive.show: Package.t list] packages |> print_endline;
         Printf.printf "Installing to %s\n" d;
