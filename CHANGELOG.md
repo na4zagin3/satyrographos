@@ -7,6 +7,10 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 ## [Unreleased]
 ### Added
 - Add Licence and Changelog.
-- Functionality to register packages (not yet install)
+- Functionality to register packages
+- Functionality to install registered packages
+- Merge hash files
+- Detect duplicated package files
+- Detect duplicated hash definitions
 
 [Unreleased]: https://github.com/na4zagin3/styrographos/tree/HEAD

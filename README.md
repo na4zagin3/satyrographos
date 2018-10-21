@@ -35,7 +35,7 @@ satyrographos install
 ## How Does It Works?
 It copies all files under `~/.opam/<ocaml-version>/share/satysfi/<package>` and  `~/.satyrographos/packages/<package>` and copy into `~/.satysfi/dist`.
 
-Except for duplication detection, `satyrographos install` behaves as
+Except for duplication detection and hash file merging, `satyrographos install` behaves as
 ```sh
 $ cp -r "$(opam var share)"/share/satysfi/*/* ~/.satysfi/dist
 $ cp -r ~/.satyrographos/packages/*/* ~/.satysfi/dist
