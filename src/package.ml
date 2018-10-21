@@ -21,7 +21,11 @@ let add_file f absolute_path p =
   else { p with files = PackageFiles.add f absolute_path p.files }
 
 let union p1 p2 =
-  let error_file_conflict f f1 f2 = failwith ("Conflicting file " ^ f ^ "\n  " ^ f1 ^ "\n  " ^ f2) in
+  let error_file_conflict f f1 f2 = match FileUtil.cmp f1 f2 with
+    | None -> Some(f1)
+    | Some(-1) -> failwith ("Cannot read either of files " ^ f ^ "\n  " ^ f1 ^ "\n  " ^ f2)
+    | _ -> failwith ("Conflicting file " ^ f ^ "\n  " ^ f1 ^ "\n  " ^ f2)
+  in
   { hashes = ();
     files = PackageFiles.union error_file_conflict p1.files p2.files;
   }
