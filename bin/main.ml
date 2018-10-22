@@ -17,7 +17,7 @@ let opam_share_dir =
 let reg = {Registory.package_dir=package_dir}
 let reg_opam =
   Printf.printf "opam dir: %s\n" opam_share_dir;
-  {Registory.package_dir=Filename.concat opam_share_dir "satysfi"}
+  {SatysfiRegistory.package_dir=Filename.concat opam_share_dir "satysfi"}
 
 
 let initialize () =
@@ -59,8 +59,8 @@ let () = match Array.to_list Sys.argv with
     end
   (* TODO: Merge with the previous clause *)
   | (name :: "package-opam" :: opts) -> begin match opts with
-    | ["list"] -> [%derive.show: string list] (Registory.list reg_opam) |> print_endline
-    | ["show"; p] -> Registory.directory reg_opam p
+    | ["list"] -> [%derive.show: string list] (SatysfiRegistory.list reg_opam) |> print_endline
+    | ["show"; p] -> SatysfiRegistory.directory reg_opam p
       |> Package.read_dir
       |> [%derive.show: Package.t]
       |> print_endline
@@ -71,12 +71,13 @@ let () = match Array.to_list Sys.argv with
     end
   | (name :: "install" :: opts) -> begin
     let install_to d =
-      let read_packages r = Registory.list r
-        |> List.map (Registory.directory r)
+      let user_packages = Registory.list reg
+        |> List.map (Registory.directory reg)
       in
-      let packages = [reg; reg_opam]
-        |> List.map read_packages
-        |> List.concat
+      let dist_packages = SatysfiRegistory.list reg_opam
+        |> List.map (SatysfiRegistory.directory reg_opam)
+      in
+      let packages = List.append user_packages dist_packages
         |> List.map Package.read_dir
       in
       let merged = packages
