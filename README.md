@@ -17,16 +17,10 @@ yes '' | sh <(curl -sL https://raw.githubusercontent.com/ocaml/opam/master/shell
 opam init --auto-setup --comp 4.06.0 --disable-sandboxing
 eval $(opam env)
 opam repository add satysfi-external https://github.com/gfngfn/satysfi-external-repo.git
+opam repository add satyrographos https://github.com/na4zagin3/satyrographos-repo.git
 opam update
 
-git clone https://github.com/gfngfn/SATySFi.git
-
-opam pin add -y ./SATySFi
 opam install -y satysfi
-
-git clone https://github.com/na4zagin3/satyrographos
-
-opam pin add -y ./satyrographos
 opam install -y satyrographos
 
 satyrographos install
