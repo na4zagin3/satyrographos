@@ -1,6 +1,8 @@
 # satyrographos
 A naive package manager for SATySFi.
 
+_WARNING: Command line interfaces except for `satyrographos install` are EXPERIMENTAL and subject to change and removal._
+
 Currently, it only composes `~/.opam/<ocaml-version>/share/satysfi/<package>` installed by OPAM and user-defined packages under `~/.satyrographos/packages/<package>` and copy into ``~/.satysfi/dist`.
 
 Satyrographos simplifies installation of SATySFi. For example, @zr-tex8r’s (`make-satysfi.sh`)[https://gist.github.com/zr-tex8r/0ab0d24255ecf631692c1f0cbc5ca026] will be like this.

@@ -36,7 +36,7 @@ let pin_list () =
 let pin_list_command =
   let open Command.Let_syntax in
   Command.basic
-    ~summary:"List installed packages"
+    ~summary:"List installed packages (experimental)"
     [%map_open
       let _ = args (* ToDo: Remove this *)
       in
@@ -49,7 +49,7 @@ let pin_dir p () =
 let pin_dir_command =
   let open Command.Let_syntax in
   Command.basic
-    ~summary:"Get directory where package PACKAGE is stored"
+    ~summary:"Get directory where package PACKAGE is stored (experimental)"
     [%map_open
       let p = anon ("PACKAGE" %: string)
       in
@@ -63,7 +63,7 @@ let pin_add p dir () =
 let pin_add_command =
   let open Command.Let_syntax in
   Command.basic
-    ~summary:"Add package with name PACKAGE copying from DIR"
+    ~summary:"Add package with name PACKAGE copying from DIR (experimental)"
     [%map_open
       let p = anon ("PACKAGE" %: string)
       and dir = anon ("DIR" %: file)
@@ -78,7 +78,7 @@ let pin_remove p () =
 let pin_remove_command =
   let open Command.Let_syntax in
   Command.basic
-    ~summary:"Remove package"
+    ~summary:"Remove package (experimental)"
     [%map_open
       let p = anon ("PACKAGE" %: string) (* ToDo: Remove this *)
       in
@@ -87,7 +87,7 @@ let pin_remove_command =
     ]
 
 let pin_command =
-  Command.group ~summary:"Manipulate packages"
+  Command.group ~summary:"Manipulate packages (experimental)"
     [ "list", pin_list_command; (* ToDo: use this default*)
       "dir", pin_dir_command;
       "add", pin_add_command;
@@ -98,7 +98,7 @@ let pin_command =
 let package_show_command_g p_show =
   let open Command.Let_syntax in
   Command.basic
-    ~summary:"Show package information"
+    ~summary:"Show package information (experimental)"
     [%map_open
       let p = anon ("PACKAGE" %: string)
       in
@@ -108,7 +108,7 @@ let package_show_command_g p_show =
 let package_list_command_g p_list =
   let open Command.Let_syntax in
   Command.basic
-    ~summary:"Show list of packages installed"
+    ~summary:"Show list of packages installed (experimental)"
     [%map_open
       let _ = args (* ToDo: Remove this *)
       in
@@ -130,7 +130,7 @@ let package_show_command =
   package_show_command_g package_show
 
 let package_command =
-  Command.group ~summary:"Install packages"
+  Command.group ~summary:"Install packages (experimental)"
     [ "list", package_list_command; (* ToDo: use this default*)
       "show", package_show_command;
     ]
@@ -150,7 +150,7 @@ let package_opam_show_command =
   package_show_command_g package_opam_show
 
 let package_opam_command =
-  Command.group ~summary:"Inspect packages installed with OPAM"
+  Command.group ~summary:"Inspect packages installed with OPAM (experimental)"
     [ "list", package_opam_list_command; (* ToDo: use this default*)
       "show", package_opam_show_command;
     ]
@@ -191,7 +191,7 @@ let install_command =
     Sys.getenv "SATYSFI_RUNTIME"
     |> Option.value ~default:(Filename.concat user_dir "dist") in
   let readme () =
-    sprintf "Install SATySFi Libraries to given DIR, environmental variable SATYSFI_RUNTIME, or %s." default_target_dir
+    sprintf "Install SATySFi Libraries to a directory environmental variable SATYSFI_RUNTIME has or %s. Currently it accepts an argument DIR, but this is experimental." default_target_dir
   in
   Command.basic
     ~summary:"Install SATySFi runtime"
@@ -206,7 +206,7 @@ let install_command =
 let status_command =
   let open Command.Let_syntax in
   Command.basic
-    ~summary:"Show status"
+    ~summary:"Show status (experimental)"
     [%map_open
       let _ = args (* ToDo: Remove this *)
       in
