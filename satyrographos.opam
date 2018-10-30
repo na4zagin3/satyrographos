@@ -24,6 +24,6 @@ depends: [
   "ppx_deriving" {build}
   "ppx_inline_test" {build}
   "ppx_jane" {build}
-  "satysfi" {= "0.0.3"}
-# "yojson"
+  "satysfi" {>= "0.0.3" & < "0.0.4"}
+  "yojson"
 ]
