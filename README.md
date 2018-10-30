@@ -59,3 +59,6 @@ $ satyrographos install
 
 ### OPAM Package
 Create a new package which installs the file into `<prefix>/usr/share/satysfi/great-package/packages/your-great-package.satyh`.
+
+Examples:
+- SATySFi-fonts-theano: https://github.com/na4zagin3/SATySFi-fonts-theano
