@@ -17,10 +17,13 @@ build: [
 depends: [
   "ocaml" {>= "4.06.0"}
   "batteries"
+  "cmdliner"
+  "core"
   "dune" {build}
   "fileutils"
   "ppx_deriving" {build}
   "ppx_inline_test" {build}
+  "ppx_jane" {build}
   "satysfi" {= "0.0.3"}
 # "yojson"
 ]

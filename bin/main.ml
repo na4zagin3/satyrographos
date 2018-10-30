@@ -1,5 +1,5 @@
 open Satyrographos
-open Batteries
+open Core
 
 let prefix = match SatysfiDirs.home_dir () with
   | Some(d) -> d
@@ -11,8 +11,8 @@ let package_dir = Filename.concat root_dir "packages"
 
 let opam_share_dir =
   Unix.open_process_in "opam var share"
-  |> IO.read_all
-  |> String.trim
+  |> In_channel.input_all
+  |> String.strip
 
 let reg = {Registory.package_dir=package_dir}
 let reg_opam =
@@ -39,7 +39,7 @@ let () = match Array.to_list Sys.argv with
       Printf.printf "Added %s (%s)\n" p dir
     | ["remove"; p] -> Registory.remove reg p;
       Printf.printf "Removed %s\n" p
-    | _ -> List.iter (Printf.printf "%s pin %s\n" name) [
+    | _ -> List.iter ~f:(Printf.printf "%s pin %s\n" name) [
         "list";
         "dir <package-name>";
         "add <package-name> <dir>";
@@ -52,7 +52,7 @@ let () = match Array.to_list Sys.argv with
       |> Package.read_dir
       |> [%derive.show: Package.t]
       |> print_endline
-    | _ -> List.iter (Printf.printf "%s package %s\n" name) [
+    | _ -> List.iter ~f:(Printf.printf "%s package %s\n" name) [
         "list";
         "show <package-name>";
       ]
@@ -64,7 +64,7 @@ let () = match Array.to_list Sys.argv with
       |> Package.read_dir
       |> [%derive.show: Package.t]
       |> print_endline
-    | _ -> List.iter (Printf.printf "%s package-opam %s\n" name) [
+    | _ -> List.iter ~f:(Printf.printf "%s package-opam %s\n" name) [
         "list";
         "show <package-name>";
       ]
@@ -72,16 +72,16 @@ let () = match Array.to_list Sys.argv with
   | (name :: "install" :: opts) -> begin
     let install_to d =
       let user_packages = Registory.list reg
-        |> List.map (Registory.directory reg)
+        |> List.map ~f:(Registory.directory reg)
       in
       let dist_packages = SatysfiRegistory.list reg_opam
-        |> List.map (SatysfiRegistory.directory reg_opam)
+        |> List.map ~f:(SatysfiRegistory.directory reg_opam)
       in
       let packages = List.append user_packages dist_packages
-        |> List.map Package.read_dir
+        |> List.map ~f:Package.read_dir
       in
       let merged = packages
-        |> List.fold_left Package.union Package.empty
+        |> List.fold_left ~f:Package.union ~init:Package.empty
       in
       match FileUtil.test FileUtil.Is_dir d, Package.is_managed_dir d with
       | true, false ->
@@ -97,17 +97,17 @@ let () = match Array.to_list Sys.argv with
         [%derive.show: Package.t] merged |> print_endline;
         Package.write_dir d merged;
         Printf.printf "Installation completed!\n";
-        List.iter (Printf.printf "(WARNING) %s") (Package.validate merged)
+        List.iter ~f:(Printf.printf "(WARNING) %s") (Package.validate merged)
     in
     match opts with
     | [] -> install_to (Filename.concat user_dir "dist")
     | [d] -> install_to d
-    | _ -> List.iter (Printf.printf "%s pin %s\n" name) [
+    | _ -> List.iter ~f:(Printf.printf "%s pin %s\n" name) [
         "install [<path-to-install>]";
       ]
     end
   | (_ :: "status" :: _) -> status ()
-  | (name :: _) -> List.iter (Printf.printf "%s %s\n" name) [
+  | (name :: _) -> List.iter ~f:(Printf.printf "%s %s\n" name) [
       "pin";
       "package";
       "install";
