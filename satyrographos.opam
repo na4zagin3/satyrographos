@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "styrographos"
-version: "0.0.1.0"
+version: "0.0.1.1"
 maintainer: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
 authors: [
   "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
