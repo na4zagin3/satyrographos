@@ -11,11 +11,94 @@ let mem reg name = directory reg name |> FileUtil.test FileUtil.Is_dir
 let remove reg name =
   [directory reg name] |> FileUtil.rm ~force:Force ~recurse:true
 let add_dir reg name dir =
+  let add_dir reg name dir = FileUtil.cp ~recurse:true [dir] (directory reg name) in
   match mem reg name, FileUtil.test FileUtil.Is_dir dir with
-  | true, _ -> raise (RegisteredAlready name)
+  | true, _ -> remove reg name; add_dir reg name dir
   | _, false -> failwith (dir ^ " is not a directory")
-  | false, true -> FileUtil.cp ~recurse:true [dir] (directory reg name)
+  | false, true -> add_dir reg name dir
   (* | false, false -> FileUtil.cp ~recurse:true [dir] (directory reg name) *)
 
 let initialize reg =
   FileUtil.mkdir ~parent:true reg.package_dir
+
+(* Tests *)
+open Core
+let create_new_reg dir =
+  let reg = {package_dir=dir} in
+  initialize reg; reg
+let with_new_reg f =
+  let dir = Filename.temp_dir "Satyrographos" "Registory" in
+  protect ~f:(fun () -> create_new_reg dir |> f) ~finally:(fun () -> FileUtil.rm ~force:Force ~recurse:true [dir])
+
+let test_package_list ~expect reg =
+  [%test_result: string list] ~expect (list reg)
+let test_package_content ~expect reg p =
+  [%test_result: string list] ~expect begin
+    let target_dir = directory reg p in
+    target_dir |> FileUtil.ls |> List.map ~f:(FilePath.make_relative target_dir)
+  end
+
+let%test "registory: initialize" = with_new_reg (fun _ -> true)
+let%test "registory: list: empty" = with_new_reg begin fun reg ->
+    list reg = []
+  end
+let%test_unit "registory: add empty dir" = with_new_reg begin fun reg ->
+    let dir = Filename.temp_dir "Satyrographos" "Package" in
+    add_dir reg "a" dir;
+    test_package_list ~expect:["a"] reg;
+    [%test_result: bool] ~expect:true (mem reg "a");
+    [%test_result: bool] ~expect:false (mem reg "b");
+    [%test_result: bool] ~expect:true (directory reg "a" |> FileUtil.(test Is_dir ))
+  end
+
+let%test_unit "registory: add nonempty dir" = with_new_reg begin fun reg ->
+    let dir = Filename.temp_dir "Satyrographos" "Package" in
+    FilePath.concat dir "c" |> FileUtil.touch;
+    add_dir reg "a" dir;
+    test_package_list ~expect:["a"] reg;
+    [%test_result: bool] ~expect:true (mem reg "a");
+    [%test_result: bool] ~expect:false (mem reg "b");
+    [%test_result: bool] ~expect:true (directory reg "a" |> FileUtil.(test Is_dir));
+    test_package_content ~expect:["c"] reg "a"
+  end
+
+let%test_unit "registory: add nonempty dir twice" = with_new_reg begin fun reg ->
+    let dir1 = Filename.temp_dir "Satyrographos" "Package" in
+    FilePath.concat dir1 "c" |> FileUtil.touch;
+    add_dir reg "a" dir1;
+    test_package_list ~expect:["a"] reg;
+    test_package_content ~expect:["c"] reg "a";
+    let dir2 = Filename.temp_dir "Satyrographos" "Package" in
+    FilePath.concat dir2 "d" |> FileUtil.touch;
+    add_dir reg "a" dir2;
+    test_package_list ~expect:["a"] reg;
+    test_package_content ~expect:["d"] reg "a"
+  end
+
+let%test_unit "registory: added dir must be copied" = with_new_reg begin fun reg ->
+    let dir = Filename.temp_dir "Satyrographos" "Package" in
+    FilePath.concat dir "c" |> FileUtil.touch;
+    add_dir reg "a" dir;
+    test_package_list ~expect:["a"] reg;
+    test_package_content ~expect:["c"] reg "a";
+    FilePath.concat dir "d" |> FileUtil.touch;
+    test_package_list ~expect:["a"] reg;
+    test_package_content ~expect:["c"] reg "a";
+    FileUtil.rm [FilePath.concat dir "c"];
+    test_package_list ~expect:["a"] reg;
+    test_package_content ~expect:["c"] reg "a";
+  end
+
+let%test_unit "registory: add the same directory twice with different contents" = with_new_reg begin fun reg ->
+    let dir = Filename.temp_dir "Satyrographos" "Package" in
+    FilePath.concat dir "c" |> FileUtil.touch;
+    add_dir reg "a" dir;
+    test_package_list ~expect:["a"] reg;
+    test_package_content ~expect:["c"] reg "a";
+    FilePath.concat dir "d" |> FileUtil.touch;
+    FileUtil.rm [FilePath.concat dir "c"];
+    add_dir reg "b" dir;
+    test_package_list ~expect:["a"; "b"] reg;
+    test_package_content ~expect:["c"] reg "a";
+    test_package_content ~expect:["d"] reg "b";
+  end
