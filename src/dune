@@ -3,4 +3,4 @@
  (synopsis "Internal Satyrographos Library, do not use!")
  (inline_tests)
  (preprocess (staged_pps ppx_inline_test ppx_deriving.std))
- (libraries batteries fileutils yojson))
+ (libraries core fileutils yojson))
