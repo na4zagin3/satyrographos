@@ -1,3 +1,5 @@
+open Core
+
 type package_name = string
 exception RegisteredAlready of package_name
 
@@ -5,7 +7,7 @@ type t = {
   package_dir: string;
 }
 
-let list reg = FileUtil.ls reg.package_dir |> List.map FilePath.basename
+let list reg = FileUtil.ls reg.package_dir |> List.map ~f:FilePath.basename
 let directory reg name = Filename.concat reg.package_dir name
 let mem reg name = directory reg name |> FileUtil.test FileUtil.Is_dir
 let remove reg name =
@@ -18,14 +20,17 @@ let add_dir reg name dir =
   | false, true -> add_dir reg name dir
   (* | false, false -> FileUtil.cp ~recurse:true [dir] (directory reg name) *)
 
-let initialize reg =
-  FileUtil.mkdir ~parent:true reg.package_dir
+let initialize dir =
+  FileUtil.mkdir ~parent:true dir
+
+let read package_dir = {
+    package_dir = package_dir;
+  }
 
 (* Tests *)
 open Core
 let create_new_reg dir =
-  let reg = {package_dir=dir} in
-  initialize reg; reg
+  initialize dir; read dir
 let with_new_reg f =
   let dir = Filename.temp_dir "Satyrographos" "Registory" in
   protect ~f:(fun () -> create_new_reg dir |> f) ~finally:(fun () -> FileUtil.rm ~force:Force ~recurse:true [dir])

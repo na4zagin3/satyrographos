@@ -1,6 +1,8 @@
 open Satyrographos
 open Core
 
+let scheme_version = 1
+
 let prefix = match SatysfiDirs.home_dir () with
   | Some(d) -> d
   | None -> failwith "Cannot find home directory"
@@ -9,24 +11,34 @@ let user_dir = Filename.concat prefix ".satysfi"
 let root_dir = Filename.concat prefix ".satyrographos"
 let package_dir = Filename.concat root_dir "packages"
 
+let current_scheme_version = Version.get_version root_dir
+
 let opam_share_dir =
   Unix.open_process_in "opam var share"
   |> In_channel.input_all
   |> String.strip
 
-let reg = {Registory.package_dir=package_dir}
-let reg_opam =
-  Printf.printf "opam dir: %s\n" opam_share_dir;
-  {SatysfiRegistory.package_dir=Filename.concat opam_share_dir "satysfi"}
-
-
+(* TODO Move this to a new module *)
 let initialize () =
-  Registory.initialize reg
+  match current_scheme_version with
+  | None ->
+    Registory.initialize package_dir;
+    Version.mark_version root_dir scheme_version
+  | Some 0 -> Printf.sprintf "Semantics of `pin add` has been changed.\nPlease remove %s to continue." root_dir |> failwith
+  | Some 1 -> ()
+  | Some v -> Printf.sprintf "Unknown scheme version %d" v |> failwith
 
 let () =
   initialize ()
 
+let reg = Registory.read package_dir
+let reg_opam =
+  Printf.printf "opam dir: %s\n" opam_share_dir;
+  {SatysfiRegistory.package_dir=Filename.concat opam_share_dir "satysfi"}
+
 let status () =
+  printf "scheme version: ";
+  [%derive.show: int option] current_scheme_version |> print_endline;
   [%derive.show: string list] (Registory.list reg) |> print_endline;
   [%derive.show: string list] (SatysfiDirs.runtime_dirs ()) |> print_endline;
   [%derive.show: string option] (SatysfiDirs.user_dir ()) |> print_endline
