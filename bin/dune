@@ -2,5 +2,5 @@
  (name main)
  (public_name satyrographos)
  (preprocess (pps ppx_deriving.std ppx_jane))
- (libraries core satyrographos)
+ (libraries core satyrographos uri)
  (modules main))

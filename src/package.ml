@@ -108,6 +108,7 @@ let read_dir d =
   else failwith (d ^ " is not a package directory")
 
 let write_dir d p =
+  FileUtil.mkdir ~parent:true d;
   PackageFiles.iter (fun path fullpath ->
     let file_dst = FilePath.concat d path in
     Printf.printf "Copying %s to %s\n" fullpath file_dst;
