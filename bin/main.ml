@@ -9,6 +9,7 @@ let prefix = match SatysfiDirs.home_dir () with
 
 let user_dir = Filename.concat prefix ".satysfi"
 let root_dir = Filename.concat prefix ".satyrographos"
+let repository_dir = Filename.concat root_dir "repo"
 let package_dir = Filename.concat root_dir "packages"
 let metadata_file = Filename.concat root_dir "metadata"
 
@@ -23,6 +24,7 @@ let opam_share_dir =
 let initialize () =
   match current_scheme_version with
   | None ->
+    Repository.initialize repository_dir metadata_file;
     Registory.initialize package_dir metadata_file;
     Version.mark_version root_dir scheme_version
   | Some 0 -> Printf.sprintf "Semantics of `pin add` has been changed.\nPlease remove %s to continue." root_dir |> failwith
@@ -32,7 +34,8 @@ let initialize () =
 let () =
   initialize ()
 
-let reg = Registory.read package_dir metadata_file
+let repo = Repository.read repository_dir metadata_file
+let reg = Registory.read package_dir repo metadata_file
 let reg_opam =
   Printf.printf "opam dir: %s\n" opam_share_dir;
   {SatysfiRegistory.package_dir=Filename.concat opam_share_dir "satysfi"}
@@ -40,12 +43,13 @@ let reg_opam =
 let status () =
   printf "scheme version: ";
   [%derive.show: int option] current_scheme_version |> print_endline;
+  [%derive.show: string list] (Repository.list repo) |> print_endline;
   [%derive.show: string list] (Registory.list reg) |> print_endline;
   [%derive.show: string list] (SatysfiDirs.runtime_dirs ()) |> print_endline;
   [%derive.show: string option] (SatysfiDirs.user_dir ()) |> print_endline
 
 let pin_list () =
-  [%derive.show: string list] (Registory.list reg) |> print_endline
+  [%derive.show: string list] (Repository.list repo) |> print_endline
 let pin_list_command =
   let open Command.Let_syntax in
   Command.basic
@@ -58,7 +62,7 @@ let pin_list_command =
     ]
 
 let pin_dir p () =
-  Registory.directory reg p |> print_endline
+  Repository.directory repo p |> print_endline
 let pin_dir_command =
   let open Command.Let_syntax in
   Command.basic
@@ -72,9 +76,12 @@ let pin_dir_command =
 
 let pin_add p url () =
   Uri.of_string url
-  |> Registory.add reg p
+  |> Repository.add repo p
   |> ignore;
-  Printf.printf "Added %s (%s)\n" p url
+  Printf.printf "Added %s (%s)\n" p url;
+  Registory.update_all reg
+  |> [%derive.show: string list option]
+  |> Printf.printf "Built packages: %s\n"
 let pin_add_command =
   let open Command.Let_syntax in
   Command.basic
@@ -88,7 +95,8 @@ let pin_add_command =
     ]
 
 let pin_remove p () =
-  Registory.remove reg p;
+  (* TODO remove the package *)
+  Repository.remove repo p;
   Printf.printf "Removed %s\n" p
 let pin_remove_command =
   let open Command.Let_syntax in
@@ -184,14 +192,24 @@ let install d () =
   let merged = packages
     |> List.fold_left ~f:Package.union ~init:Package.empty
   in
+  (* TODO build all *)
   Printf.printf "Updating packages\n";
-  begin match Registory.update_all reg with
+  begin match Repository.update_all repo with
   | Some updated_packages -> begin
     Printf.printf "Updated packages\n";
     [%derive.show: string list] updated_packages |> print_endline
   end
   | None ->
     Printf.printf "No packages updated\n"
+  end;
+  Printf.printf "Building updated packages\n";
+  begin match Registory.update_all reg with
+  | Some updated_packages -> begin
+    Printf.printf "built packages\n";
+    [%derive.show: string list] updated_packages |> print_endline
+  end
+  | None ->
+    Printf.printf "No packages built\n"
   end;
   match FileUtil.test FileUtil.Is_dir d, Package.is_managed_dir d with
   | true, false ->
