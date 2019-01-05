@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
+- Use new repository schema.
 
 ## [v0.0.1.1] - 2018-10-31
 ### Added
