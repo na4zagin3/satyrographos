@@ -15,6 +15,15 @@ let metadata_file = Filename.concat root_dir "metadata"
 
 let current_scheme_version = Version.get_version root_dir
 
+let compatibility_optin () =
+  match Sys.getenv "SATYROGRAPHOS_EXPERIMENTAL" with
+  | Some "1" ->
+    Printf.printf "Compatibility warning: You have opted in to use experimental features.\n"
+  | _ ->
+    Printf.printf "Compatibility warning: This is an experimental feature.\n";
+    Printf.printf "You have to opt in by setting env variable SATYROGRAPHOS_EXPERIMENTAL=1 to test this feature.\n";
+    exit 1
+
 let opam_share_dir =
   Unix.open_process_in "opam var share"
   |> In_channel.input_all
@@ -49,6 +58,7 @@ let status () =
   [%derive.show: string option] (SatysfiDirs.user_dir ()) |> print_endline
 
 let pin_list () =
+  compatibility_optin ();
   [%derive.show: string list] (Repository.list repo) |> print_endline
 let pin_list_command =
   let open Command.Let_syntax in
@@ -62,6 +72,7 @@ let pin_list_command =
     ]
 
 let pin_dir p () =
+  compatibility_optin ();
   Repository.directory repo p |> print_endline
 let pin_dir_command =
   let open Command.Let_syntax in
@@ -75,6 +86,9 @@ let pin_dir_command =
     ]
 
 let pin_add p url () =
+  compatibility_optin ();
+  Printf.printf "Compatibility warning: Although currently Satyrographos simply copies the given directory,\n";
+  Printf.printf "it will have a build script to control package installation, which is a breaking change.";
   Uri.of_string url
   |> Repository.add repo p
   |> ignore;
@@ -95,6 +109,7 @@ let pin_add_command =
     ]
 
 let pin_remove p () =
+  compatibility_optin ();
   (* TODO remove the package *)
   Repository.remove repo p;
   Printf.printf "Removed %s\n" p
@@ -140,11 +155,13 @@ let package_list_command_g p_list =
     ]
 
 let package_list () =
+  compatibility_optin ();
   [%derive.show: string list] (Registory.list reg) |> print_endline
 let package_list_command =
   package_list_command_g package_list
 
 let package_show p () =
+  compatibility_optin ();
   Registory.directory reg p
     |> Package.read_dir
     |> [%derive.show: Package.t]
@@ -160,11 +177,13 @@ let package_command =
 
 
 let package_opam_list () =
+  compatibility_optin ();
   [%derive.show: string list] (SatysfiRegistory.list reg_opam) |> print_endline
 let package_opam_list_command =
   package_list_command_g package_opam_list
 
 let package_opam_show p () =
+  compatibility_optin ();
   SatysfiRegistory.directory reg_opam p
     |> Package.read_dir
     |> [%derive.show: Package.t]

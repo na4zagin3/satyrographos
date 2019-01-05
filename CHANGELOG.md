@@ -6,6 +6,7 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 - Use new repository schema.
+- Add compatibility gates and warnings.
 
 ## [v0.0.1.1] - 2018-10-31
 ### Added
