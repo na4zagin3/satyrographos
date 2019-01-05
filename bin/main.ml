@@ -164,7 +164,8 @@ let package_show p () =
   compatibility_optin ();
   Registory.directory reg p
     |> Package.read_dir
-    |> [%derive.show: Package.t]
+    |> [%sexp_of: Package.t]
+    |> Sexp.to_string_hum
     |> print_endline
 let package_show_command =
   package_show_command_g package_show
@@ -186,7 +187,8 @@ let package_opam_show p () =
   compatibility_optin ();
   SatysfiRegistory.directory reg_opam p
     |> Package.read_dir
-    |> [%derive.show: Package.t]
+    |> [%sexp_of: Package.t]
+    |> Sexp.to_string_hum
     |> print_endline
 let package_opam_show_command =
   package_show_command_g package_opam_show
@@ -239,9 +241,13 @@ let install d () =
     FileUtil.(rm ~force:Force ~recurse:true [d]);
     Package.mark_managed_dir d;
     Printf.printf "Loaded packages\n";
-    [%derive.show: Package.t list] packages |> print_endline;
+    [%sexp_of: Package.t list] packages
+    |> Sexp.to_string_hum
+    |> print_endline;
     Printf.printf "Installing to %s\n" d;
-    [%derive.show: Package.t] merged |> print_endline;
+    [%sexp_of: Package.t] merged
+    |> Sexp.to_string_hum
+    |> print_endline;
     Package.write_dir d merged;
     Printf.printf "Installation completed!\n";
     List.iter ~f:(Printf.printf "(WARNING) %s") (Package.validate merged)

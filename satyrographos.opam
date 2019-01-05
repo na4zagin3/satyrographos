@@ -20,6 +20,7 @@ depends: [
   "core"
   "dune" {build}
   "fileutils"
+  "json-derivers"
   "ppx_deriving" {build}
   "ppx_inline_test" {build}
   "ppx_jane" {build}

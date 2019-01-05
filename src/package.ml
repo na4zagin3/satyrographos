@@ -1,31 +1,27 @@
-module PackageFiles = Map.Make(String)
+open Core
+
+module PackageFiles = struct
+  include Map.Make(String)
+
+  let union f = merge ~f:(fun ~key:key -> function
+    | `Left v | `Right v -> Some v
+    | `Both (x, y) -> f key x y
+  )
+end
 
 module Json = struct
   include Yojson.Safe
-  type t = json
-  let equal_json = (=)
-  let compare = compare
+  include Json_derivers.Yojson
 end
 
 module StringMap = Map.Make(String)
 module JsonSet = Set.Make(Json)
 
-let string_map_printer fmt v =
-  [%derive.show: (string * string) list] (PackageFiles.bindings v)
-  |> Format.fprintf fmt "%s"
-
-let json_map_printer fmt v =
-  (PackageFiles.bindings v)
-  |> List.map (fun (f, (abs_f, json)) -> (f, `Tuple [`List (List.map (fun x -> `String x) abs_f); json]))
-  |> (fun x -> `Assoc x)
-  |> Json.pretty_to_string
-  |> Format.fprintf fmt "%s"
-
 type t = {
-  hashes: (string list * Json.json) PackageFiles.t [@printer fun fmt v -> json_map_printer fmt v];
-  files: string PackageFiles.t [@printer fun fmt v -> string_map_printer fmt v];
+  hashes: (string list * Json.t) PackageFiles.t;
+  files: string PackageFiles.t;
 }
-[@@deriving show, eq]
+[@@deriving sexp, compare]
 
 let empty = {
   hashes = PackageFiles.empty;
@@ -33,43 +29,53 @@ let empty = {
 }
 
 
-let show_file_list = [%derive.show: string list]
+let show_file_list files =
+  [%sexp_of: string list] files
+  |> Sexp.to_string
 
 let hash_map_singleton (k, x) =
   StringMap.singleton k (JsonSet.singleton x)
 
+let to_string x =
+  [%sexp_of: t] x
+  |> Sexp.to_string
+
 let hash_map_union =
-  StringMap.union (fun _ x y -> Some(JsonSet.union x y))
+  (* TODO use merge_skewed *)
+  StringMap.merge ~f:(fun ~key:_ -> function
+    | `Left v | `Right v -> Some v
+    | `Both (x, y) -> Some(JsonSet.union x y)
+  )
 
 let validate_hash f abs_fs = function
   | (`Assoc a) ->
-    List.map hash_map_singleton a
-    |> List.fold_left hash_map_union StringMap.empty
-    |> StringMap.filter (fun _ v -> JsonSet.cardinal v > 1)
-    |> StringMap.mapi (fun k v -> Printf.sprintf "Error in %s:\nField: %s\nValues: %s\nOriginally from: %s\n\n"
+    List.map ~f:hash_map_singleton a
+    |> List.fold_left ~f:hash_map_union ~init:StringMap.empty
+    |> StringMap.filter ~f:(fun v -> JsonSet.length v > 1)
+    |> StringMap.mapi ~f:(fun ~key:k ~data:v -> Printf.sprintf "Error in %s:\nField: %s\nValues: %s\nOriginally from: %s\n\n"
       f
       k
       (Json.to_string (`List (JsonSet.elements v)))
       (show_file_list abs_fs)
     )
-    |> StringMap.bindings
-    |> List.map (fun (_, v) -> v)
+    |> StringMap.data
 
   | _ -> [f ^ " is not an object. Originally from " ^ show_file_list abs_fs]
 
 let validate p =
-  PackageFiles.bindings p.hashes
-  |> List.map (fun (f, (abs_fs, h)) -> validate_hash f abs_fs h)
+  PackageFiles.mapi p.hashes
+    ~f:(fun ~key:f ~data:(abs_fs, h) -> validate_hash f abs_fs h)
+  |> PackageFiles.data
   |> List.concat
 
 let add_file f absolute_path p =
   if FilePath.is_relative absolute_path
   then failwith ("BUG: FilePath must be absolute but got " ^ absolute_path)
-  else { p with files = PackageFiles.add f absolute_path p.files }
+  else { p with files = PackageFiles.add_exn ~key:f ~data:absolute_path p.files }
 
 let add_hash f abs_f p =
   let json = Json.from_file abs_f in
-  { p with hashes = PackageFiles.add f ([abs_f], json) p.hashes }
+  { p with hashes = PackageFiles.add_exn ~key:f ~data:([abs_f], json) p.hashes }
 
 let union p1 p2 =
   let handle_file_conflict f f1 f2 = match FileUtil.cmp f1 f2 with
@@ -86,15 +92,15 @@ let union p1 p2 =
   }
 
 let%test "union: empty + empty = empty" =
-  equal empty (union empty empty)
+  [%compare.equal: t] empty (union empty empty)
 
 let%test "union: empty + p = empty" =
   let p = add_file "a" "/b" empty in
-  equal p (union empty p)
+  [%compare.equal: t] p (union empty p)
 
 let%test "union: p + empty = empty" =
   let p = add_file "a" "/b" empty in
-  equal p (union p empty)
+  [%compare.equal: t] p (union p empty)
 
 let read_dir d =
   let add acc f =
@@ -109,13 +115,13 @@ let read_dir d =
 
 let write_dir d p =
   FileUtil.mkdir ~parent:true d;
-  PackageFiles.iter (fun path fullpath ->
+  PackageFiles.iteri ~f:(fun ~key:path ~data:fullpath ->
     let file_dst = FilePath.concat d path in
     Printf.printf "Copying %s to %s\n" fullpath file_dst;
     FileUtil.mkdir ~parent:true (FilePath.dirname file_dst);
     FileUtil.cp [fullpath] file_dst
   ) p.files;
-  PackageFiles.iter (fun path (_, h) ->
+  PackageFiles.iteri ~f:(fun ~key:path ~data:(_, h) ->
     let file_dst = FilePath.concat d path in
     Printf.printf "Generating %s\n" file_dst;
     FileUtil.mkdir ~parent:true (FilePath.dirname file_dst);

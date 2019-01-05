@@ -3,4 +3,4 @@
  (synopsis "Internal Satyrographos Library, do not use!")
  (inline_tests)
  (preprocess (staged_pps ppx_deriving.std ppx_jane))
- (libraries core fileutils uri uri.sexp yojson))
+ (libraries core fileutils json-derivers uri uri.sexp yojson))
