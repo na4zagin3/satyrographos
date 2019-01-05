@@ -3,107 +3,78 @@ open Core
 type package_name = string
 exception RegisteredAlready of package_name
 
+module StringSet = Set.Make(String)
+
 type t = {
-  package_dir: string;
+  registory: RegistoryStore.store;
+  metadata: RegistoryMetadata.store;
 }
 
-let list reg = FileUtil.ls reg.package_dir |> List.map ~f:FilePath.basename
-let directory reg name = Filename.concat reg.package_dir name
-let mem reg name = directory reg name |> FileUtil.test FileUtil.Is_dir
+(* Basic operations *)
+let list reg = RegistoryMetadata.list reg.metadata
+(* TODO get data from metadata *)
+let directory reg name = RegistoryStore.directory reg.registory name
+let mem reg name = RegistoryMetadata.mem reg.metadata name
+(* TODO lock *)
+let remove_multiple reg names =
+  RegistoryMetadata.remove_multiple reg.metadata names;
+  RegistoryStore.remove_multiple reg.registory names
 let remove reg name =
-  [directory reg name] |> FileUtil.rm ~force:Force ~recurse:true
+  remove_multiple reg [name]
+
 let add_dir reg name dir =
-  let add_dir reg name dir = FileUtil.cp ~recurse:true [dir] (directory reg name) in
-  match mem reg name, FileUtil.test FileUtil.Is_dir dir with
-  | true, _ -> remove reg name; add_dir reg name dir
-  | _, false -> failwith (dir ^ " is not a directory")
-  | false, true -> add_dir reg name dir
-  (* | false, false -> FileUtil.cp ~recurse:true [dir] (directory reg name) *)
+  let abs_dir = Filename.realpath dir in
+  let uri = Uri.make ~scheme:"file" ~path:abs_dir () in
+  (* RegistoryStore.add_dir reg.registory name dir;  *)
+  RegistoryMetadata.add reg.metadata name {
+    url = uri;
+  }
 
-let initialize dir =
-  FileUtil.mkdir ~parent:true dir
+let build_package reg name =
+  match RegistoryMetadata.find reg.metadata name with
+  | None -> failwith (Printf.sprintf "Package %s is not found" name)
+  | Some metadata ->
+    let dir = Uri.path metadata.url in
+    let package = Package.read_dir dir in
+    [%derive.show: Package.t] package |> print_endline;
+    RegistoryStore.remove reg.registory name;
+    RegistoryStore.add_package reg.registory name package
 
-let read package_dir = {
-    package_dir = package_dir;
+(* TODO build only obsoleted packages *)
+let update_all reg =
+  let updated_packages = list reg in
+  List.iter ~f:(build_package reg) updated_packages;
+  Some updated_packages
+
+(* Advanced operations *)
+(* TODO Implement lock *)
+let add reg name uri =
+  if RegistoryMetadata.mem reg.metadata name
+  then failwith (Printf.sprintf "%s is already registered." name)
+  else begin match Uri.scheme uri with
+    | None | Some "file" ->
+      let path = Uri.path uri in
+      Printf.printf "Installing %s.\n" path;
+      add_dir reg name path
+    | Some s ->
+      failwith (Printf.sprintf "Unknown scheme %s." s)
+  end;
+  update_all reg
+
+let gc reg =
+  let current_packages = list reg |> StringSet.of_list in
+  let valid_packages = RegistoryMetadata.list reg.metadata |> StringSet.of_list in
+  let broken_packages = StringSet.diff current_packages valid_packages in
+  StringSet.to_list broken_packages
+  |> remove_multiple reg
+
+let initialize packages_dir metadata_file =
+  RegistoryStore.initialize packages_dir;
+  RegistoryMetadata.initialize metadata_file
+
+let read package_dir metadata_file = {
+    registory = RegistoryStore.read package_dir;
+    metadata = metadata_file;
   }
 
 (* Tests *)
-open Core
-let create_new_reg dir =
-  initialize dir; read dir
-let with_new_reg f =
-  let dir = Filename.temp_dir "Satyrographos" "Registory" in
-  protect ~f:(fun () -> create_new_reg dir |> f) ~finally:(fun () -> FileUtil.rm ~force:Force ~recurse:true [dir])
-
-let test_package_list ~expect reg =
-  [%test_result: string list] ~expect (list reg)
-let test_package_content ~expect reg p =
-  [%test_result: string list] ~expect begin
-    let target_dir = directory reg p in
-    target_dir |> FileUtil.ls |> List.map ~f:(FilePath.make_relative target_dir)
-  end
-
-let%test "registory: initialize" = with_new_reg (fun _ -> true)
-let%test "registory: list: empty" = with_new_reg begin fun reg ->
-    list reg = []
-  end
-let%test_unit "registory: add empty dir" = with_new_reg begin fun reg ->
-    let dir = Filename.temp_dir "Satyrographos" "Package" in
-    add_dir reg "a" dir;
-    test_package_list ~expect:["a"] reg;
-    [%test_result: bool] ~expect:true (mem reg "a");
-    [%test_result: bool] ~expect:false (mem reg "b");
-    [%test_result: bool] ~expect:true (directory reg "a" |> FileUtil.(test Is_dir ))
-  end
-
-let%test_unit "registory: add nonempty dir" = with_new_reg begin fun reg ->
-    let dir = Filename.temp_dir "Satyrographos" "Package" in
-    FilePath.concat dir "c" |> FileUtil.touch;
-    add_dir reg "a" dir;
-    test_package_list ~expect:["a"] reg;
-    [%test_result: bool] ~expect:true (mem reg "a");
-    [%test_result: bool] ~expect:false (mem reg "b");
-    [%test_result: bool] ~expect:true (directory reg "a" |> FileUtil.(test Is_dir));
-    test_package_content ~expect:["c"] reg "a"
-  end
-
-let%test_unit "registory: add nonempty dir twice" = with_new_reg begin fun reg ->
-    let dir1 = Filename.temp_dir "Satyrographos" "Package" in
-    FilePath.concat dir1 "c" |> FileUtil.touch;
-    add_dir reg "a" dir1;
-    test_package_list ~expect:["a"] reg;
-    test_package_content ~expect:["c"] reg "a";
-    let dir2 = Filename.temp_dir "Satyrographos" "Package" in
-    FilePath.concat dir2 "d" |> FileUtil.touch;
-    add_dir reg "a" dir2;
-    test_package_list ~expect:["a"] reg;
-    test_package_content ~expect:["d"] reg "a"
-  end
-
-let%test_unit "registory: added dir must be copied" = with_new_reg begin fun reg ->
-    let dir = Filename.temp_dir "Satyrographos" "Package" in
-    FilePath.concat dir "c" |> FileUtil.touch;
-    add_dir reg "a" dir;
-    test_package_list ~expect:["a"] reg;
-    test_package_content ~expect:["c"] reg "a";
-    FilePath.concat dir "d" |> FileUtil.touch;
-    test_package_list ~expect:["a"] reg;
-    test_package_content ~expect:["c"] reg "a";
-    FileUtil.rm [FilePath.concat dir "c"];
-    test_package_list ~expect:["a"] reg;
-    test_package_content ~expect:["c"] reg "a";
-  end
-
-let%test_unit "registory: add the same directory twice with different contents" = with_new_reg begin fun reg ->
-    let dir = Filename.temp_dir "Satyrographos" "Package" in
-    FilePath.concat dir "c" |> FileUtil.touch;
-    add_dir reg "a" dir;
-    test_package_list ~expect:["a"] reg;
-    test_package_content ~expect:["c"] reg "a";
-    FilePath.concat dir "d" |> FileUtil.touch;
-    FileUtil.rm [FilePath.concat dir "c"];
-    add_dir reg "b" dir;
-    test_package_list ~expect:["a"; "b"] reg;
-    test_package_content ~expect:["c"] reg "a";
-    test_package_content ~expect:["d"] reg "b";
-  end

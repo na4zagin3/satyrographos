@@ -10,6 +10,7 @@ let prefix = match SatysfiDirs.home_dir () with
 let user_dir = Filename.concat prefix ".satysfi"
 let root_dir = Filename.concat prefix ".satyrographos"
 let package_dir = Filename.concat root_dir "packages"
+let metadata_file = Filename.concat root_dir "metadata"
 
 let current_scheme_version = Version.get_version root_dir
 
@@ -22,7 +23,7 @@ let opam_share_dir =
 let initialize () =
   match current_scheme_version with
   | None ->
-    Registory.initialize package_dir;
+    Registory.initialize package_dir metadata_file;
     Version.mark_version root_dir scheme_version
   | Some 0 -> Printf.sprintf "Semantics of `pin add` has been changed.\nPlease remove %s to continue." root_dir |> failwith
   | Some 1 -> ()
@@ -31,7 +32,7 @@ let initialize () =
 let () =
   initialize ()
 
-let reg = Registory.read package_dir
+let reg = Registory.read package_dir metadata_file
 let reg_opam =
   Printf.printf "opam dir: %s\n" opam_share_dir;
   {SatysfiRegistory.package_dir=Filename.concat opam_share_dir "satysfi"}
@@ -69,19 +70,21 @@ let pin_dir_command =
         pin_dir p ()
     ]
 
-let pin_add p dir () =
-  Registory.add_dir reg p dir;
-  Printf.printf "Added %s (%s)\n" p dir
+let pin_add p url () =
+  Uri.of_string url
+  |> Registory.add reg p
+  |> ignore;
+  Printf.printf "Added %s (%s)\n" p url
 let pin_add_command =
   let open Command.Let_syntax in
   Command.basic
-    ~summary:"Add package with name PACKAGE copying from DIR (experimental)"
+    ~summary:"Add package with name PACKAGE copying from URL (experimental)"
     [%map_open
       let p = anon ("PACKAGE" %: string)
-      and dir = anon ("DIR" %: file)
+      and url = anon ("URL" %: string) (* TODO define Url.t Arg_type.t *)
       in
       fun () ->
-        pin_add p dir ()
+        pin_add p url ()
     ]
 
 let pin_remove p () =
@@ -181,6 +184,15 @@ let install d () =
   let merged = packages
     |> List.fold_left ~f:Package.union ~init:Package.empty
   in
+  Printf.printf "Updating packages\n";
+  begin match Registory.update_all reg with
+  | Some updated_packages -> begin
+    Printf.printf "Updated packages\n";
+    [%derive.show: string list] updated_packages |> print_endline
+  end
+  | None ->
+    Printf.printf "No packages updated\n"
+  end;
   match FileUtil.test FileUtil.Is_dir d, Package.is_managed_dir d with
   | true, false ->
     Printf.printf "Directory %s is not managed by Satyrographos.\n" d;
@@ -232,7 +244,7 @@ let total_command =
       "package", package_command;
       "package-opam", package_opam_command;
       "status", status_command;
-      "pin", package_command;
+      "pin", pin_command;
       "install", install_command;
     ]
 
