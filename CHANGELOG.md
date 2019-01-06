@@ -5,8 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
-- Use new repository schema.
+### Added
 - Add compatibility gates and warnings.
+- Add `-system-font-prefix <system-font-name-prefix>` to install system fonts.
+- Add `-verbose` to control message verbosity.
+
+### Changed
+- Use new repository schema.
+- Installs symbolic links to files under the registory rather than their copies.
 
 ## [v0.0.1.1] - 2018-10-31
 ### Added
