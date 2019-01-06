@@ -87,7 +87,6 @@ let font_to_json_and_hash prefix f =
       let value = `Assoc ["src-dist", `String (filename f)] in
       [(name f, `Variant ("Single", Some value)), (filepath f, f.file)]
     | `Collection fs ->
-      [%sexp_of: Font.t list] fs |> Sexp.to_string |> print_endline;
       List.map fs ~f:(fun f ->
         let value = `Assoc [
           "src-dist", `String (filename f);
@@ -116,7 +115,7 @@ let fonts_to_package prefix fonts =
     hashes = PackageFiles.singleton hash_filename_fonts ([hash_path_fonts], `Assoc hash);
     files = PackageFiles.of_alist_reduce files ~f:(fun f1 f2 ->
       begin if not (String.equal f1 f2)
-        then Printf.printf "%s and %s have conflicting filename.\n" f1 f2
+        then Printf.printf "WARNING: %s and %s have conflicting filename.\n" f1 f2
       end;
       f1
     )

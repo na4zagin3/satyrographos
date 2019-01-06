@@ -200,12 +200,12 @@ let package_opam_command =
     ]
 
 
-let install d font_name_prefix () =
+let install d ~system_font_prefix ~verbose () =
   (* TODO build all *)
   Printf.printf "Updating packages\n";
   begin match Repository.update_all repo with
   | Some updated_packages -> begin
-    Printf.printf "Updated packages\n";
+    Printf.printf "Updated packages: ";
     [%derive.show: string list] updated_packages |> print_endline
   end
   | None ->
@@ -214,7 +214,7 @@ let install d font_name_prefix () =
   Printf.printf "Building updated packages\n";
   begin match Registory.update_all reg with
   | Some updated_packages -> begin
-    Printf.printf "built packages\n";
+    Printf.printf "Built packages: ";
     [%derive.show: string list] updated_packages |> print_endline
   end
   | None ->
@@ -229,7 +229,7 @@ let install d font_name_prefix () =
   let packages = List.append user_packages dist_packages
     |> List.map ~f:Package.read_dir
   in
-  let packages = match font_name_prefix with
+  let packages = match system_font_prefix with
     | None -> Printf.printf "Not gathering system fonts\n"; packages
     | Some(prefix) ->
       Printf.printf "Gathering system fonts with prefix %s\n" prefix;
@@ -244,20 +244,23 @@ let install d font_name_prefix () =
     Printf.printf "Directory %s is not managed by Satyrographos.\n" d;
     Printf.printf "Please remove %s first.\n" d
   | _, _ ->
-    Printf.printf "Remove destination %s \n" d;
+    Printf.printf "Removing destination %s\n" d;
     FileUtil.(rm ~force:Force ~recurse:true [d]);
     Package.mark_managed_dir d;
-    Printf.printf "Loaded packages\n";
-    [%sexp_of: Package.t list] packages
-    |> Sexp.to_string_hum
-    |> print_endline;
-    Printf.printf "Installing to %s\n" d;
-    [%sexp_of: Package.t] merged
-    |> Sexp.to_string_hum
-    |> print_endline;
+    if verbose
+    then begin
+      Printf.printf "Loaded packages\n";
+      [%sexp_of: Package.t list] packages
+      |> Sexp.to_string_hum
+      |> print_endline;
+      Printf.printf "Installing %s\n" d;
+      [%sexp_of: Package.t] merged
+      |> Sexp.to_string_hum
+      |> print_endline
+    end;
     Package.write_dir ~symlink:true d merged;
-    Printf.printf "Installation completed!\n";
-    List.iter ~f:(Printf.printf "(WARNING) %s") (Package.validate merged)
+    List.iter ~f:(Printf.printf "WARNING: %s") (Package.validate merged);
+    Printf.printf "Installation completed!\n"
 
 let install_command =
   let open Command.Let_syntax in
@@ -273,9 +276,10 @@ let install_command =
     [%map_open
       let system_font_prefix = flag "system-font-prefix" (optional string) ~doc:"FONT_NAME_PREFIX Installing system fonts with names with the given prefix"
       and target_dir = anon (maybe_with_default default_target_dir ("DIR" %: file))
+      and verbose = flag "verbose" no_arg ~doc:"Make verbose"
       in
       fun () ->
-        install target_dir system_font_prefix ()
+        install target_dir ~system_font_prefix ~verbose ()
     ]
 
 let status_command =

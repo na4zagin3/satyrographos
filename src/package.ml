@@ -132,7 +132,7 @@ let read_dir d =
   then FileUtil.(find ~follow:Follow Is_file d add empty)
   else failwith (d ^ " is not a package directory")
 
-let write_dir ?(symlink=false) d p =
+let write_dir ?(verbose=false) ?(symlink=false) d p =
   let p = normalize p in
   FileUtil.mkdir ~parent:true d;
   PackageFiles.iteri ~f:(fun ~key:path ~data:fullpath ->
@@ -141,7 +141,9 @@ let write_dir ?(symlink=false) d p =
       then "Linking"
       else "Copying"
     in
-    Printf.printf "%s %s to %s\n" action fullpath file_dst;
+    begin if verbose
+      then Printf.printf "%s %s to %s\n" action fullpath file_dst
+    end;
     FileUtil.mkdir ~parent:true (FilePath.dirname file_dst);
     if symlink
     then Unix.symlink ~src:fullpath ~dst:file_dst
@@ -149,7 +151,9 @@ let write_dir ?(symlink=false) d p =
   ) p.files;
   PackageFiles.iteri ~f:(fun ~key:path ~data:(_, h) ->
     let file_dst = FilePath.concat d path in
-    Printf.printf "Generating %s\n" file_dst;
+    begin if verbose
+      then Printf.printf "Generating %s\n" file_dst
+    end;
     FileUtil.mkdir ~parent:true (FilePath.dirname file_dst);
     Json.to_file file_dst h
   ) p.hashes
