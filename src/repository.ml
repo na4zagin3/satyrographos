@@ -37,7 +37,7 @@ let update reg name =
     | Some "file" ->
       let dir = Uri.path metadata.url in
       let package = Package.read_dir dir in
-      [%derive.show: Package.t] package |> print_endline;
+      Package.to_string package |> print_endline;
       Store.remove reg.cache name;
       Store.add_package reg.cache name package
     | None ->

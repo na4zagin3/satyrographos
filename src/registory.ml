@@ -30,7 +30,7 @@ let build_package reg name =
     (* TODO properly build the package *)
     let dir = Repository.directory reg.repository name in
     let package = Package.read_dir dir in
-    [%derive.show: Package.t] package |> print_endline;
+    Package.to_string package |> print_endline;
     Store.remove reg.registory name;
     Store.add_package reg.registory name package
 

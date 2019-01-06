@@ -164,7 +164,8 @@ let package_show p () =
   compatibility_optin ();
   Registory.directory reg p
     |> Package.read_dir
-    |> [%derive.show: Package.t]
+    |> [%sexp_of: Package.t]
+    |> Sexp.to_string_hum
     |> print_endline
 let package_show_command =
   package_show_command_g package_show
@@ -186,7 +187,8 @@ let package_opam_show p () =
   compatibility_optin ();
   SatysfiRegistory.directory reg_opam p
     |> Package.read_dir
-    |> [%derive.show: Package.t]
+    |> [%sexp_of: Package.t]
+    |> Sexp.to_string_hum
     |> print_endline
 let package_opam_show_command =
   package_show_command_g package_opam_show
@@ -198,7 +200,26 @@ let package_opam_command =
     ]
 
 
-let install d () =
+let install d ~system_font_prefix ~verbose () =
+  (* TODO build all *)
+  Printf.printf "Updating packages\n";
+  begin match Repository.update_all repo with
+  | Some updated_packages -> begin
+    Printf.printf "Updated packages: ";
+    [%derive.show: string list] updated_packages |> print_endline
+  end
+  | None ->
+    Printf.printf "No packages updated\n"
+  end;
+  Printf.printf "Building updated packages\n";
+  begin match Registory.update_all reg with
+  | Some updated_packages -> begin
+    Printf.printf "Built packages: ";
+    [%derive.show: string list] updated_packages |> print_endline
+  end
+  | None ->
+    Printf.printf "No packages built\n"
+  end;
   let user_packages = Registory.list reg
     |> List.map ~f:(Registory.directory reg)
   in
@@ -208,43 +229,38 @@ let install d () =
   let packages = List.append user_packages dist_packages
     |> List.map ~f:Package.read_dir
   in
+  let packages = match system_font_prefix with
+    | None -> Printf.printf "Not gathering system fonts\n"; packages
+    | Some(prefix) ->
+      Printf.printf "Gathering system fonts with prefix %s\n" prefix;
+      let systemFontPackage = SystemFontPackage.get_package prefix () in
+      List.cons systemFontPackage packages
+  in
   let merged = packages
     |> List.fold_left ~f:Package.union ~init:Package.empty
   in
-  (* TODO build all *)
-  Printf.printf "Updating packages\n";
-  begin match Repository.update_all repo with
-  | Some updated_packages -> begin
-    Printf.printf "Updated packages\n";
-    [%derive.show: string list] updated_packages |> print_endline
-  end
-  | None ->
-    Printf.printf "No packages updated\n"
-  end;
-  Printf.printf "Building updated packages\n";
-  begin match Registory.update_all reg with
-  | Some updated_packages -> begin
-    Printf.printf "built packages\n";
-    [%derive.show: string list] updated_packages |> print_endline
-  end
-  | None ->
-    Printf.printf "No packages built\n"
-  end;
   match FileUtil.test FileUtil.Is_dir d, Package.is_managed_dir d with
   | true, false ->
     Printf.printf "Directory %s is not managed by Satyrographos.\n" d;
     Printf.printf "Please remove %s first.\n" d
   | _, _ ->
-    Printf.printf "Remove destination %s \n" d;
+    Printf.printf "Removing destination %s\n" d;
     FileUtil.(rm ~force:Force ~recurse:true [d]);
     Package.mark_managed_dir d;
-    Printf.printf "Loaded packages\n";
-    [%derive.show: Package.t list] packages |> print_endline;
-    Printf.printf "Installing to %s\n" d;
-    [%derive.show: Package.t] merged |> print_endline;
-    Package.write_dir d merged;
-    Printf.printf "Installation completed!\n";
-    List.iter ~f:(Printf.printf "(WARNING) %s") (Package.validate merged)
+    if verbose
+    then begin
+      Printf.printf "Loaded packages\n";
+      [%sexp_of: Package.t list] packages
+      |> Sexp.to_string_hum
+      |> print_endline;
+      Printf.printf "Installing %s\n" d;
+      [%sexp_of: Package.t] merged
+      |> Sexp.to_string_hum
+      |> print_endline
+    end;
+    Package.write_dir ~symlink:true d merged;
+    List.iter ~f:(Printf.printf "WARNING: %s") (Package.validate merged);
+    Printf.printf "Installation completed!\n"
 
 let install_command =
   let open Command.Let_syntax in
@@ -258,10 +274,12 @@ let install_command =
     ~summary:"Install SATySFi runtime"
     ~readme
     [%map_open
-      let target_dir = anon (maybe_with_default default_target_dir ("DIR" %: file))
+      let system_font_prefix = flag "system-font-prefix" (optional string) ~doc:"FONT_NAME_PREFIX Installing system fonts with names with the given prefix"
+      and target_dir = anon (maybe_with_default default_target_dir ("DIR" %: file))
+      and verbose = flag "verbose" no_arg ~doc:"Make verbose"
       in
       fun () ->
-        install target_dir ()
+        install target_dir ~system_font_prefix ~verbose ()
     ]
 
 let status_command =
