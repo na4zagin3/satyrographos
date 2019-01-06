@@ -52,7 +52,7 @@ let validate_hash f abs_fs = function
     List.map ~f:hash_map_singleton a
     |> List.fold_left ~f:hash_map_union ~init:StringMap.empty
     |> StringMap.filter ~f:(fun v -> JsonSet.length v > 1)
-    |> StringMap.mapi ~f:(fun ~key:k ~data:v -> Printf.sprintf "Error in %s:\nField: %s\nValues: %s\nOriginally from: %s\n\n"
+    |> StringMap.mapi ~f:(fun ~key:k ~data:v -> Printf.sprintf "Conflict values in %s:\nField: %s\nValues: %s\nOriginally from: %s\n\n"
       f
       k
       (Json.to_string (`List (JsonSet.elements v)))
@@ -67,6 +67,25 @@ let validate p =
     ~f:(fun ~key:f ~data:(abs_fs, h) -> validate_hash f abs_fs h)
   |> PackageFiles.data
   |> List.concat
+
+let normalize_hash = function
+  | (`Assoc a) ->
+    let map = StringMap.of_alist_reduce a ~f:(fun v1 v2 ->
+      Printf.printf "WARNING: Conflict values. Choosing first.\n%s\n%s\n\n"
+        (Json.to_string v1)
+        (Json.to_string v2);
+      v1
+    ) in
+    `Assoc (StringMap.to_alist map)
+  | j ->
+    Printf.printf "Invalid value: %s\n\n"
+        (Json.to_string j);
+      j
+
+let normalize p = {
+  hashes = PackageFiles.map p.hashes ~f:(fun (paths, json) -> paths, normalize_hash json);
+  files = p.files;
+}
 
 let add_file f absolute_path p =
   if FilePath.is_relative absolute_path
