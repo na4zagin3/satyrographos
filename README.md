@@ -3,7 +3,7 @@ A naive package manager for SATySFi.
 
 _WARNING: Command line interfaces except for `satyrographos install` are EXPERIMENTAL and subject to change and removal._
 
-It composes files under `~/.opam/<ocaml-version>/share/satysfi/<package>` installed by OPAM and copy them into ``~/.satysfi/dist`.
+It composes files under `~/.opam/<ocaml-version>/share/satysfi/<package>` installed by OPAM and copy them into `~/.satysfi/dist`.
 It also sets up environments so that SATySFi can use system fonts. See Section [Install System Fonts](#Install-System-Fonts).
 
 Satyrographos simplifies installation of SATySFi. For example, @zr-tex8r’s [`make-satysfi.sh`](https://gist.github.com/zr-tex8r/0ab0d24255ecf631692c1f0cbc5ca026) will be like this.
