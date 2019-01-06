@@ -1,5 +1,5 @@
 # Satyrographos
-A naive package manager for SATySFi.
+A naive package manager for [SATySFi](https://github.com/gfngfn/SATySFi).
 
 _WARNING: Command line interfaces except for `satyrographos install` are EXPERIMENTAL and subject to change and removal._
 
