@@ -248,7 +248,7 @@ let install d () =
     [%sexp_of: Package.t] merged
     |> Sexp.to_string_hum
     |> print_endline;
-    Package.write_dir d merged;
+    Package.write_dir ~symlink:true d merged;
     Printf.printf "Installation completed!\n";
     List.iter ~f:(Printf.printf "(WARNING) %s") (Package.validate merged)
 

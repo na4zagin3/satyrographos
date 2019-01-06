@@ -113,13 +113,20 @@ let read_dir d =
   then FileUtil.(find ~follow:Follow Is_file d add empty)
   else failwith (d ^ " is not a package directory")
 
-let write_dir d p =
+let write_dir ?(symlink=false) d p =
+  let p = normalize p in
   FileUtil.mkdir ~parent:true d;
   PackageFiles.iteri ~f:(fun ~key:path ~data:fullpath ->
     let file_dst = FilePath.concat d path in
-    Printf.printf "Copying %s to %s\n" fullpath file_dst;
+    let action = if symlink
+      then "Linking"
+      else "Copying"
+    in
+    Printf.printf "%s %s to %s\n" action fullpath file_dst;
     FileUtil.mkdir ~parent:true (FilePath.dirname file_dst);
-    FileUtil.cp [fullpath] file_dst
+    if symlink
+    then Unix.symlink ~src:fullpath ~dst:file_dst
+    else FileUtil.cp [fullpath] file_dst
   ) p.files;
   PackageFiles.iteri ~f:(fun ~key:path ~data:(_, h) ->
     let file_dst = FilePath.concat d path in
