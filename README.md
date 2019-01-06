@@ -1,4 +1,4 @@
-# satyrographos
+# Satyrographos
 A naive package manager for SATySFi.
 
 _WARNING: Command line interfaces except for `satyrographos install` are EXPERIMENTAL and subject to change and removal._
