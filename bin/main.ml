@@ -200,19 +200,7 @@ let package_opam_command =
     ]
 
 
-let install d () =
-  let user_packages = Registory.list reg
-    |> List.map ~f:(Registory.directory reg)
-  in
-  let dist_packages = SatysfiRegistory.list reg_opam
-    |> List.map ~f:(SatysfiRegistory.directory reg_opam)
-  in
-  let packages = List.append user_packages dist_packages
-    |> List.map ~f:Package.read_dir
-  in
-  let merged = packages
-    |> List.fold_left ~f:Package.union ~init:Package.empty
-  in
+let install d font_name_prefix () =
   (* TODO build all *)
   Printf.printf "Updating packages\n";
   begin match Repository.update_all repo with
@@ -232,6 +220,25 @@ let install d () =
   | None ->
     Printf.printf "No packages built\n"
   end;
+  let user_packages = Registory.list reg
+    |> List.map ~f:(Registory.directory reg)
+  in
+  let dist_packages = SatysfiRegistory.list reg_opam
+    |> List.map ~f:(SatysfiRegistory.directory reg_opam)
+  in
+  let packages = List.append user_packages dist_packages
+    |> List.map ~f:Package.read_dir
+  in
+  let packages = match font_name_prefix with
+    | None -> Printf.printf "Not gathering system fonts\n"; packages
+    | Some(prefix) ->
+      Printf.printf "Gathering system fonts with prefix %s\n" prefix;
+      let systemFontPackage = SystemFontPackage.get_package prefix () in
+      List.cons systemFontPackage packages
+  in
+  let merged = packages
+    |> List.fold_left ~f:Package.union ~init:Package.empty
+  in
   match FileUtil.test FileUtil.Is_dir d, Package.is_managed_dir d with
   | true, false ->
     Printf.printf "Directory %s is not managed by Satyrographos.\n" d;
@@ -264,10 +271,11 @@ let install_command =
     ~summary:"Install SATySFi runtime"
     ~readme
     [%map_open
-      let target_dir = anon (maybe_with_default default_target_dir ("DIR" %: file))
+      let system_font_prefix = flag "system-font-prefix" (optional string) ~doc:"FONT_NAME_PREFIX Installing system fonts with names with the given prefix"
+      and target_dir = anon (maybe_with_default default_target_dir ("DIR" %: file))
       in
       fun () ->
-        install target_dir ()
+        install target_dir system_font_prefix ()
     ]
 
 let status_command =
