@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
+
+## [v0.0.1.2] - 2019-01-07
 ### Added
 - Add compatibility gates and warnings.
 - Add `-system-font-prefix <system-font-name-prefix>` to install system fonts.
@@ -27,6 +29,7 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 - Detect duplicated package files
 - Detect duplicated hash definitions
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.1...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.2...HEAD
+[v0.0.1.2]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.1...v0.0.1.2
 [v0.0.1.1]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.0...v0.0.1.1
 [v0.0.1.0]: https://github.com/na4zagin3/satyrographos/tree/v0.0.1.0
