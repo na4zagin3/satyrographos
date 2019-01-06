@@ -25,6 +25,6 @@ depends: [
   "ppx_inline_test" {build}
   "ppx_jane" {build}
   "satysfi" {>= "0.0.3" & < "0.0.4"}
-  "uri"
+  "uri" {>= "2.0.0"}
   "yojson"
 ]
