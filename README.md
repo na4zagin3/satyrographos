@@ -1,10 +1,10 @@
 # Satyrographos
 A naive package manager for [SATySFi](https://github.com/gfngfn/SATySFi).
 
-_WARNING: Command line interfaces except for `satyrographos install` are EXPERIMENTAL and subject to change and removal._
+_WARNING: Command line interfaces, except for the `satyrographos install`, are EXPERIMENTAL and subject to change and removal._
 
-It composes files under `~/.opam/<ocaml-version>/share/satysfi/<package>` installed by OPAM and copy them into `~/.satysfi/dist`.
-It also sets up environments so that SATySFi can use system fonts. See Section [Install System Fonts](#Install-System-Fonts).
+It composes files under directories `~/.opam/<ocaml-version>/share/satysfi/<package>` installed by OPAM and copies them into directory `~/.satysfi/dist`.
+It also sets up environments so that SATySFi can use system fonts. See Section [Install System Fonts](#Install-System-Fonts) below.
 
 Satyrographos simplifies installation of SATySFi. For example, @zr-tex8r’s [`make-satysfi.sh`](https://gist.github.com/zr-tex8r/0ab0d24255ecf631692c1f0cbc5ca026) will be like this.
 
@@ -31,26 +31,26 @@ opam install -y satyrographos
 satyrographos install
 ```
 
-If you want to use the latest version, you can pin this repository like this.
+To use the latest version of Satyrographos, pin the repository like this:
 
 ```
 opam pin add https://github.com/na4zagin3/satyrographos.git
 ```
 
 ## Install System Fonts
-_This feature is still experimental and interface would be changed later._
+_This feature is still experimental and its interface and/or behaviour may be changed later._
 
-If your machine has configured with [Fontconfig](https://www.freedesktop.org/wiki/Software/fontconfig/), i.e., using Mac or Linux Desktop Environment, Satyrographos can configure so that SATySFi can use fonts installed in your system.
+If your machine is using [Fontconfig](https://www.freedesktop.org/wiki/Software/fontconfig/), i.e., using Mac or Linux Desktop Environment, Satyrographos can set up SATySFi to utilise your existing system fonts.
 
-You can add `-system-font-prefix <system-font-name-prefix>` option to tell Satyrographos gather system fonts and set up SATySFi sees those font with prefix `<system-font-name-prefix>`.
+Satyrographos offers the `-system-font-prefix <system-font-name-prefix>` option of gathering system fonts to enable them for use with names prefixed with `<system-font-name-prefix>` with SATySFi.
 
-For example, the following command installs system fonts with prefix `system:`.
+For example, the following command installs system fonts with the prefix `system:`.
 
 ```
 $ satyrographos install -system-font-prefix 'system:'
 ```
 
-Then you can use system fonts, for example, Arial as `system:Arial`. (Technically, a font will have a SATySFi name which consists of the given prefix and the font's PostScript name. This behavior would be changed in near future.)
+Then you can use the system fonts, for example, Arial as `system:Arial`. (Technically, a font will have a SATySFi name which consists of the given prefix and the font's PostScript name. This behavior may be changed in the near future.)
 
 ```
 @require: stdjabook
@@ -88,7 +88,7 @@ document (|
 
 ```
 
-## How Does It Works?
+## How Does It Work?
 Satyrographos links all files under `~/.opam/<ocaml-version>/share/satysfi/<package>` and  `~/.satyrographos/packages/<package>` into `~/.satysfi/dist`.
 
 Satyrographos also does duplication detection and hash file merging, `satyrographos install` behaves as
