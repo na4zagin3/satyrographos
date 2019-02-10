@@ -1,4 +1,6 @@
 # Satyrographos
+[![Build Status](https://travis-ci.com/na4zagin3/satyrographos.svg?branch=master)](https://travis-ci.com/na4zagin3/satyrographos)
+
 A naive package manager for [SATySFi](https://github.com/gfngfn/SATySFi).
 
 _WARNING: Command line interfaces, except for the `satyrographos install`, are EXPERIMENTAL and subject to change and removal._
