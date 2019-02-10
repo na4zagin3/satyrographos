@@ -11,7 +11,7 @@ end
 
 module Json = struct
   include Yojson.Safe
-  include Json_derivers.Yojson
+  let ( sexp_of_t, t_of_sexp, compare, hash ) = Json_derivers.Yojson.( sexp_of_t, t_of_sexp, compare, hash )
 end
 
 module StringMap = Map.Make(String)
