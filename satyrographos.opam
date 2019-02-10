@@ -1,5 +1,5 @@
 opam-version: "2.0"
-name: "styrographos"
+name: "satyrographos"
 version: "0.0.1.2"
 maintainer: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
 authors: [
@@ -24,7 +24,7 @@ depends: [
   "ppx_deriving" {build}
   "ppx_inline_test" {build}
   "ppx_jane" {build}
-  "satysfi" {>= "0.0.3" & < "0.0.4"}
+  (* "satysfi" {>= "0.0.3" & < "0.0.4"} *)
   "uri" {>= "2.0.0"}
   "yojson"
 ]
