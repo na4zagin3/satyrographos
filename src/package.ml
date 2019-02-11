@@ -10,8 +10,12 @@ module PackageFiles = struct
 end
 
 module Json = struct
+  (*
   include Yojson.Safe
-  let ( sexp_of_t, t_of_sexp, compare, hash ) = Json_derivers.Yojson.( sexp_of_t, t_of_sexp, compare, hash )
+  let ( sexp_of_t, t_of_sexp, compare, hash ) = Json_erivers.Yojson.( sexp_of_t, t_of_sexp, compare, hash )
+  *)
+  let ( to_string, from_file, to_file ) = Yojson.Safe.( to_string, from_file, to_file )
+  include Json_derivers.Yojson
 end
 
 module StringMap = Map.Make(String)

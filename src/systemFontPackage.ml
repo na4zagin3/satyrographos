@@ -66,10 +66,6 @@ let satysfi_name (font: Font.t) =
   font.postscriptname
 
 module FileMap = Map.Make(String)
-module Json = struct
-  include Yojson.Safe
-  let ( sexp_of_t, t_of_sexp, compare, hash ) = Json_derivers.Yojson.( sexp_of_t, t_of_sexp, compare, hash )
-end
 
 let font_dir = "fonts/"
 let font_filename_prefix = "system-"
