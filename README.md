@@ -1,6 +1,8 @@
 # Satyrographos
 [![Build Status](https://travis-ci.com/na4zagin3/satyrographos.svg?branch=master)](https://travis-ci.com/na4zagin3/satyrographos)
 
+[日本語版 README はこちら](https://github.com/na4zagin3/satyrographos/blob/master/README-ja.md)
+
 A naive package manager for [SATySFi](https://github.com/gfngfn/SATySFi).
 
 _WARNING: Command line interfaces, except for the `satyrographos install`, are EXPERIMENTAL and subject to change and removal._
@@ -117,7 +119,7 @@ In this section, we are going to register a new library `great-package` like thi
 ```
 
 ### OPAM Package
-Create a new package which installs the file into `<prefix>/usr/share/satysfi/great-package/packages/your-great-package.satyh`.
+Create a new package which installs the file into `%{share}%/satysfi/great-package/packages/your-great-package.satyh`.
 
 Examples:
 - SATySFi-fonts-theano: https://github.com/na4zagin3/SATySFi-fonts-theano
