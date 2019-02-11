@@ -67,8 +67,8 @@ let satysfi_name (font: Font.t) =
 
 module FileMap = Map.Make(String)
 
-let font_dir = "fonts/"
-let font_filename_prefix = "system-"
+let font_dir = "fonts/system/"
+let font_filename_prefix = ""
 
 (* TODO handle filename collision *)
 let font_to_json_and_hash prefix f =
@@ -80,12 +80,12 @@ let font_to_json_and_hash prefix f =
   in
   match f with
     | `Single f ->
-      let value = `Assoc ["src-dist", `String (filename f)] in
+      let value = `Assoc ["src", `String ("dist/" ^ filename f)] in
       [(name f, `Variant ("Single", Some value)), (filepath f, f.file)]
     | `Collection fs ->
       List.map fs ~f:(fun f ->
         let value = `Assoc [
-          "src-dist", `String (filename f);
+          "src", `String ("dist/" ^ filename f);
           "index", `Int f.index
         ] in
         (name f, `Variant ("Collection", Some value)), (filepath f, f.file)
