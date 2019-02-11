@@ -6,6 +6,11 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.1.4] - 2019-02-11
+### Fixed
+- Fix build error with YoJson 1.4.1+satysfi
+- Updated README
+
 ## [v0.0.1.3] - 2019-02-10
 ### Fixed
 - Fix build error with YoJson 1.6.0
@@ -33,7 +38,8 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 - Detect duplicated package files
 - Detect duplicated hash definitions
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.3...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.4...HEAD
+[v0.0.1.4]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.2...v0.0.1.4
 [v0.0.1.3]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.2...v0.0.1.3
 [v0.0.1.2]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.1...v0.0.1.2
 [v0.0.1.1]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.0...v0.0.1.1
