@@ -24,11 +24,6 @@ let compatibility_optin () =
     Printf.printf "You have to opt in by setting env variable SATYROGRAPHOS_EXPERIMENTAL=1 to test this feature.\n";
     exit 1
 
-let opam_share_dir =
-  Unix.open_process_in "opam var share"
-  |> In_channel.input_all
-  |> String.strip
-
 (* TODO Move this to a new module *)
 let initialize () =
   match current_scheme_version with
@@ -45,9 +40,10 @@ let () =
 
 let repo = Repository.read repository_dir metadata_file
 let reg = Registory.read package_dir repo metadata_file
-let reg_opam =
-  Printf.printf "opam dir: %s\n" opam_share_dir;
-  {SatysfiRegistory.package_dir=Filename.concat opam_share_dir "satysfi"}
+let reg_dist =
+  let satysfi_dist_dir = SatysfiDirs.satysfi_dist_dir () in
+  Printf.printf "satysfi lib dist dir: %s\n" satysfi_dist_dir;
+  {SatysfiRegistory.package_dir=Filename.concat satysfi_dist_dir "satysfi"}
 
 let status () =
   printf "scheme version: ";
@@ -177,26 +173,26 @@ let package_command =
     ]
 
 
-let package_opam_list () =
+let package_dist_list () =
   compatibility_optin ();
-  [%derive.show: string list] (SatysfiRegistory.list reg_opam) |> print_endline
-let package_opam_list_command =
-  package_list_command_g package_opam_list
+  [%derive.show: string list] (SatysfiRegistory.list reg_dist) |> print_endline
+let package_dist_list_command =
+  package_list_command_g package_dist_list
 
-let package_opam_show p () =
+let package_dist_show p () =
   compatibility_optin ();
-  SatysfiRegistory.directory reg_opam p
+  SatysfiRegistory.directory reg_dist p
     |> Package.read_dir
     |> [%sexp_of: Package.t]
     |> Sexp.to_string_hum
     |> print_endline
-let package_opam_show_command =
-  package_show_command_g package_opam_show
+let package_dist_show_command =
+  package_show_command_g package_dist_show
 
-let package_opam_command =
-  Command.group ~summary:"Inspect packages installed with OPAM (experimental)"
-    [ "list", package_opam_list_command; (* ToDo: use this default*)
-      "show", package_opam_show_command;
+let package_dist_command =
+  Command.group ~summary:"Inspect packages installed in the standard library (experimental)"
+    [ "list", package_dist_list_command; (* ToDo: use this default*)
+      "show", package_dist_show_command;
     ]
 
 
@@ -223,8 +219,8 @@ let install d ~system_font_prefix ~verbose () =
   let user_packages = Registory.list reg
     |> List.map ~f:(Registory.directory reg)
   in
-  let dist_packages = SatysfiRegistory.list reg_opam
-    |> List.map ~f:(SatysfiRegistory.directory reg_opam)
+  let dist_packages = SatysfiRegistory.list reg_dist
+    |> List.map ~f:(SatysfiRegistory.directory reg_dist)
   in
   let packages = List.append user_packages dist_packages
     |> List.map ~f:Package.read_dir
@@ -297,7 +293,7 @@ let total_command =
   Command.group ~summary:"Simple SATySFi Package Manager"
     [
       "package", package_command;
-      "package-opam", package_opam_command;
+      "package-dist", package_dist_command;
       "status", status_command;
       "pin", pin_command;
       "install", install_command;
