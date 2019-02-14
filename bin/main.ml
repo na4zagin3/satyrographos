@@ -40,18 +40,21 @@ let () =
 
 let repo = Repository.read repository_dir metadata_file
 let reg = Registory.read package_dir repo metadata_file
-let reg_dist =
-  let satysfi_dist_dir = SatysfiDirs.satysfi_dist_dir () in
-  Printf.printf "satysfi lib dist dir: %s\n" satysfi_dist_dir;
-  {SatysfiRegistory.package_dir=Filename.concat satysfi_dist_dir "satysfi"}
+let reg_opam =
+  let opam_share_dir = SatysfiDirs.opam_share_dir () in
+  Printf.printf "opam share dir: %s\n" opam_share_dir;
+  {SatysfiRegistory.package_dir=Filename.concat opam_share_dir "satysfi"}
 
 let status () =
   printf "scheme version: ";
   [%derive.show: int option] current_scheme_version |> print_endline;
   [%derive.show: string list] (Repository.list repo) |> print_endline;
   [%derive.show: string list] (Registory.list reg) |> print_endline;
+  printf "SATySFi runtime directories: ";
   [%derive.show: string list] (SatysfiDirs.runtime_dirs ()) |> print_endline;
-  [%derive.show: string option] (SatysfiDirs.user_dir ()) |> print_endline
+  printf "SATySFi user directory: ";
+  [%derive.show: string option] (SatysfiDirs.user_dir ()) |> print_endline;
+  printf "selected SATySFi runtime distribution: %s\n" (SatysfiDirs.satysfi_dist_dir ())
 
 let pin_list () =
   compatibility_optin ();
@@ -173,26 +176,26 @@ let package_command =
     ]
 
 
-let package_dist_list () =
+let package_opam_list () =
   compatibility_optin ();
-  [%derive.show: string list] (SatysfiRegistory.list reg_dist) |> print_endline
-let package_dist_list_command =
-  package_list_command_g package_dist_list
+  [%derive.show: string list] (SatysfiRegistory.list reg_opam) |> print_endline
+let package_opam_list_command =
+  package_list_command_g package_opam_list
 
-let package_dist_show p () =
+let package_opam_show p () =
   compatibility_optin ();
-  SatysfiRegistory.directory reg_dist p
+  SatysfiRegistory.directory reg_opam p
     |> Package.read_dir
     |> [%sexp_of: Package.t]
     |> Sexp.to_string_hum
     |> print_endline
-let package_dist_show_command =
-  package_show_command_g package_dist_show
+let package_opam_show_command =
+  package_show_command_g package_opam_show
 
-let package_dist_command =
+let package_opam_command =
   Command.group ~summary:"Inspect packages installed in the standard library (experimental)"
-    [ "list", package_dist_list_command; (* ToDo: use this default*)
-      "show", package_dist_show_command;
+    [ "list", package_opam_list_command; (* ToDo: use this default*)
+      "show", package_opam_show_command;
     ]
 
 
@@ -216,13 +219,16 @@ let install d ~system_font_prefix ~verbose () =
   | None ->
     Printf.printf "No packages built\n"
   end;
+  let dist_package = SatysfiDirs.satysfi_dist_dir () in
+  Printf.printf "Reading runtime dist: %s\n" dist_package;
   let user_packages = Registory.list reg
     |> List.map ~f:(Registory.directory reg)
   in
-  let dist_packages = SatysfiRegistory.list reg_dist
-    |> List.map ~f:(SatysfiRegistory.directory reg_dist)
+  let opam_packages = SatysfiRegistory.list reg_opam
+    |> List.filter ~f:(fun name -> String.equal "dist" name |> not)
+    |> List.map ~f:(SatysfiRegistory.directory reg_opam)
   in
-  let packages = List.append user_packages dist_packages
+  let packages = dist_package :: List.append user_packages opam_packages
     |> List.map ~f:Package.read_dir
   in
   let packages = match system_font_prefix with
@@ -293,7 +299,7 @@ let total_command =
   Command.group ~summary:"Simple SATySFi Package Manager"
     [
       "package", package_command;
-      "package-dist", package_dist_command;
+      "package-opam", package_opam_command;
       "status", status_command;
       "pin", pin_command;
       "install", install_command;
