@@ -131,3 +131,9 @@ Register your local library with `satyrographos pin add <local-dir>`.
 $ satyrographos pin add ~/src/great-package
 $ satyrographos install
 ```
+
+## Supported Versions
+
+|SATySFi|Satyrographos|
+|-------|-------------|
+|v0.0.3 series|latest|
