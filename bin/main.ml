@@ -24,11 +24,6 @@ let compatibility_optin () =
     Printf.printf "You have to opt in by setting env variable SATYROGRAPHOS_EXPERIMENTAL=1 to test this feature.\n";
     exit 1
 
-let opam_share_dir =
-  Unix.open_process_in "opam var share"
-  |> In_channel.input_all
-  |> String.strip
-
 (* TODO Move this to a new module *)
 let initialize () =
   match current_scheme_version with
@@ -46,8 +41,9 @@ let () =
 let repo = Repository.read repository_dir metadata_file
 let reg = Registory.read package_dir repo metadata_file
 let reg_opam =
-  Printf.printf "opam dir: %s\n" opam_share_dir;
-  {SatysfiRegistory.package_dir=Filename.concat opam_share_dir "satysfi"}
+  let satysfi_dist_dir = SatysfiDirs.satysfi_dist_dir () in
+  Printf.printf "satysfi lib dist dir: %s\n" satysfi_dist_dir;
+  {SatysfiRegistory.package_dir=Filename.concat satysfi_dist_dir "satysfi"}
 
 let status () =
   printf "scheme version: ";

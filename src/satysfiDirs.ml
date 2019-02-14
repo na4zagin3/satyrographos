@@ -14,3 +14,22 @@ let home_dir () = if Sys.os_type = "Win32"
 
 let user_dir () =
     Option.map ~f:(fun s -> Filename.concat s ".satysfi") (home_dir ())
+
+let is_runtime_dir dir =
+  FileUtil.(test Is_dir) (Filename.concat dir "packages")
+
+let opam_share_dir () =
+  Unix.open_process_in "opam var share"
+  |> In_channel.input_all
+  |> String.strip
+
+let satysfi_dist_dir () =
+  let shares = [opam_share_dir (); "/usr/local/share"; "/usr/share"] in
+  let rec f = function
+    | [] -> failwith "Can't find SATySFi lib. Please install it."
+    | (d :: ds) ->
+      if Filename.concat d "satysfi" |> (fun d -> Filename.concat d "dist") |> is_runtime_dir
+        then d
+        else f ds
+  in
+  f shares
