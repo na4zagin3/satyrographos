@@ -8,7 +8,7 @@ type store = {
 }
 
 (* Basic operations *)
-let list reg = FileUtil.ls reg.package_dir |> List.map ~f:FilePath.basename
+let list reg = FileUtil.ls reg.package_dir |> List.map ~f:FilePath.basename |> List.sort ~compare:String.compare
 let directory reg name = Filename.concat reg.package_dir name
 let mem reg name = directory reg name |> FileUtil.test FileUtil.Is_dir
 let remove_multiple reg names =
