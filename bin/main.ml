@@ -306,4 +306,4 @@ let total_command =
     ]
 
 let () =
-  Command.run ~version:"0.0.1.4" ~build_info:"RWO" total_command
+  Command.run ~version:"0.0.1.5" total_command
