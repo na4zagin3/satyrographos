@@ -1,4 +1,4 @@
-# Satyrographos サテュログラポス
+# Satyrographos サテュログラポ̣ス
 
 [![Build Status](https://travis-ci.com/na4zagin3/satyrographos.svg?branch=master)](https://travis-ci.com/na4zagin3/satyrographos)
 
