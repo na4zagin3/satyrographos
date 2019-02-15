@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/na4zagin3/satyrographos.svg?branch=master)](https://travis-ci.com/na4zagin3/satyrographos)
 
-[SATySFi](https://github.com/gfngfn/SATySFi)用の簡易パッケージマネージャー
+[SATySFi](https://github.com/gfngfn/SATySFi)用パッケージマネージャー
 
 **警告 `satyrographos install` を除くコマンドラインインターフェースは実験的なものであり、今後、変更・削除されえます**
 

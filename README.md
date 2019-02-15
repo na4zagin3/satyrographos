@@ -3,7 +3,7 @@
 
 [日本語版 README はこちら](https://github.com/na4zagin3/satyrographos/blob/master/README-ja.md)
 
-A naive package manager for [SATySFi](https://github.com/gfngfn/SATySFi).
+A package manager for [SATySFi](https://github.com/gfngfn/SATySFi).
 
 _WARNING: Command line interfaces, except for the `satyrographos install`, are EXPERIMENTAL and subject to change and removal._
 
@@ -29,8 +29,7 @@ opam update
 
 # opam pin add https://github.com/na4zagin3/satyrographos.git # run this line if you want to try the latest Satyrographos
 
-opam install -y satysfi
-opam install -y satyrographos
+opam install -y satysfi satysfi-lib-dist satyrographos
 
 satyrographos install
 ```

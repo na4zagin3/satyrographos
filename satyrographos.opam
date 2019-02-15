@@ -26,9 +26,9 @@ depends: [
   "uri" {>= "2.0.0"}
   "yojson"
 ]
-synopsis: "A naive package manager for SATySFi"
+synopsis: "A package manager for SATySFi"
 description: """
-Satyrographos is a naive package manager for [SATySFi].
+Satyrographos is a package manager for [SATySFi].
 
 Satyrographos is distributed under the LGPL-3.0 license.
 
