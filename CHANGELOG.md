@@ -6,6 +6,10 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.1.6] - 2019-04-09
+### Added
+- Add `install -copy` to copy files rather than create symlinks.
+
 ## [v0.0.1.5] - 2019-02-13
 ### Changed
 - When satysfi dist does not exist in the OPAM registory, Satyrographos use one in either `/usr/local/share/satysfi/dist` or `/usr/share/satysfi/dist`.
@@ -46,7 +50,8 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 - Detect duplicated package files
 - Detect duplicated hash definitions
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.5...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.6...HEAD
+[v0.0.1.6]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.5...v0.0.1.6
 [v0.0.1.5]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.4...v0.0.1.5
 [v0.0.1.4]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.3...v0.0.1.4
 [v0.0.1.3]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.2...v0.0.1.3
