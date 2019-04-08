@@ -199,7 +199,7 @@ let package_opam_command =
     ]
 
 
-let install d ~system_font_prefix ~verbose () =
+let install d ~system_font_prefix ~verbose ~copy () =
   (* TODO build all *)
   Printf.printf "Updating packages\n";
   begin match Repository.update_all repo with
@@ -260,7 +260,7 @@ let install d ~system_font_prefix ~verbose () =
       |> Sexp.to_string_hum
       |> print_endline
     end;
-    Package.write_dir ~symlink:true d merged;
+    Package.write_dir ~symlink:(not copy) d merged;
     List.iter ~f:(Printf.printf "WARNING: %s") (Package.validate merged);
     Printf.printf "Installation completed!\n"
 
@@ -279,9 +279,10 @@ let install_command =
       let system_font_prefix = flag "system-font-prefix" (optional string) ~doc:"FONT_NAME_PREFIX Installing system fonts with names with the given prefix"
       and target_dir = anon (maybe_with_default default_target_dir ("DIR" %: file))
       and verbose = flag "verbose" no_arg ~doc:"Make verbose"
+      and copy = flag "copy" no_arg ~doc:"Copy files instead of making symlinks"
       in
       fun () ->
-        install target_dir ~system_font_prefix ~verbose ()
+        install target_dir ~system_font_prefix ~verbose ~copy ()
     ]
 
 let status_command =
