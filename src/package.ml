@@ -128,7 +128,8 @@ let%test "union: p + empty = empty" =
 let read_dir d =
   let add acc f =
     let rel_f = FilePath.make_relative d f in
-    if FilePath.is_subdir rel_f "hash"
+    if String.equal rel_f ".satyrographos" then acc
+    else if FilePath.is_subdir rel_f "hash"
     then add_hash rel_f f acc
     else add_file rel_f f acc
   in
