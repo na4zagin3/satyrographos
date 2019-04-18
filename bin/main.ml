@@ -41,9 +41,10 @@ let () =
 let repo = Repository.read repository_dir metadata_file
 let reg = Registory.read package_dir repo metadata_file
 let reg_opam =
-  let opam_share_dir = SatysfiDirs.opam_share_dir () in
-  Printf.printf "opam share dir: %s\n" opam_share_dir;
-  {SatysfiRegistory.package_dir=Filename.concat opam_share_dir "satysfi"}
+  SatysfiDirs.opam_share_dir ()
+  |> Option.map ~f:(fun opam_share_dir ->
+    Printf.printf "opam share dir: %s\n" opam_share_dir;
+    {SatysfiRegistory.package_dir=Filename.concat opam_share_dir "satysfi"})
 
 let status () =
   printf "scheme version: ";
@@ -178,17 +179,21 @@ let package_command =
 
 let package_opam_list () =
   compatibility_optin ();
-  [%derive.show: string list] (SatysfiRegistory.list reg_opam) |> print_endline
+  Option.iter reg_opam ~f:(fun reg_opam ->
+    [%derive.show: string list] (SatysfiRegistory.list reg_opam) |> print_endline
+  )
 let package_opam_list_command =
   package_list_command_g package_opam_list
 
 let package_opam_show p () =
   compatibility_optin ();
-  SatysfiRegistory.directory reg_opam p
-    |> Package.read_dir
-    |> [%sexp_of: Package.t]
-    |> Sexp.to_string_hum
-    |> print_endline
+  Option.iter reg_opam ~f:(fun reg_opam ->
+    SatysfiRegistory.directory reg_opam p
+      |> Package.read_dir
+      |> [%sexp_of: Package.t]
+      |> Sexp.to_string_hum
+      |> print_endline
+  )
 let package_opam_show_command =
   package_show_command_g package_opam_show
 
@@ -224,9 +229,12 @@ let install d ~system_font_prefix ~verbose ~copy () =
   let user_packages = Registory.list reg
     |> List.map ~f:(Registory.directory reg)
   in
-  let opam_packages = SatysfiRegistory.list reg_opam
-    |> List.filter ~f:(fun name -> String.equal "dist" name |> not)
-    |> List.map ~f:(SatysfiRegistory.directory reg_opam)
+  let opam_packages = match reg_opam with
+    | None -> []
+    | Some reg_opam ->
+      SatysfiRegistory.list reg_opam
+        |> List.filter ~f:(fun name -> String.equal "dist" name |> not)
+        |> List.map ~f:(SatysfiRegistory.directory reg_opam)
   in
   let packages = dist_package :: List.append user_packages opam_packages
     |> List.map ~f:Package.read_dir
