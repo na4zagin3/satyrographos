@@ -276,7 +276,8 @@ let install_command =
   let open Command.Let_syntax in
   let default_target_dir =
     Sys.getenv "SATYSFI_RUNTIME"
-    |> Option.value ~default:(Filename.concat user_dir "dist") in
+    |> Option.value ~default:user_dir
+    |> (fun dir -> Filename.concat dir "dist") in
   let readme () =
     sprintf "Install SATySFi Libraries to a directory environmental variable SATYSFI_RUNTIME has or %s. Currently it accepts an argument DIR, but this is experimental." default_target_dir
   in
