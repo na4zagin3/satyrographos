@@ -22,7 +22,8 @@ depends: [
   "json-derivers"
   "ppx_deriving"
   "ppx_jane" {< "v0.13"}
-  "uri" {>= "2.0.0"}
+  "uri" {>= "3.0.0"}
+  "uri-sexp" {>= "3.0.0"}
   "yojson"
 ]
 synopsis: "A package manager for SATySFi"
