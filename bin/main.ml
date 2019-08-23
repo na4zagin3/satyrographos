@@ -7,22 +7,13 @@ let prefix = match SatysfiDirs.home_dir () with
   | Some(d) -> d
   | None -> failwith "Cannot find home directory"
 
-let user_dir = Filename.concat prefix ".satysfi"
+let target_dist_dir = Filename.concat prefix ".satysfi"
 let root_dir = Filename.concat prefix ".satyrographos"
 let repository_dir = Filename.concat root_dir "repo"
 let package_dir = Filename.concat root_dir "packages"
 let metadata_file = Filename.concat root_dir "metadata"
 
 let current_scheme_version = Version.get_version root_dir
-
-let compatibility_optin () =
-  match Sys.getenv "SATYROGRAPHOS_EXPERIMENTAL" with
-  | Some "1" ->
-    Printf.printf "Compatibility warning: You have opted in to use experimental features.\n"
-  | _ ->
-    Printf.printf "Compatibility warning: This is an experimental feature.\n";
-    Printf.printf "You have to opt in by setting env variable SATYROGRAPHOS_EXPERIMENTAL=1 to test this feature.\n";
-    exit 1
 
 (* TODO Move this to a new module *)
 let initialize () =
@@ -58,7 +49,7 @@ let status () =
   printf "selected SATySFi runtime distribution: %s\n" (SatysfiDirs.satysfi_dist_dir ())
 
 let pin_list () =
-  compatibility_optin ();
+  Compatibility.optin ();
   [%derive.show: string list] (Repository.list repo) |> print_endline
 let pin_list_command =
   let open Command.Let_syntax in
@@ -72,7 +63,7 @@ let pin_list_command =
     ]
 
 let pin_dir p () =
-  compatibility_optin ();
+  Compatibility.optin ();
   Repository.directory repo p |> print_endline
 let pin_dir_command =
   let open Command.Let_syntax in
@@ -86,7 +77,7 @@ let pin_dir_command =
     ]
 
 let pin_add p url () =
-  compatibility_optin ();
+  Compatibility.optin ();
   Printf.printf "Compatibility warning: Although currently Satyrographos simply copies the given directory,\n";
   Printf.printf "it will have a build script to control package installation, which is a breaking change.";
   Uri.of_string url
@@ -109,7 +100,7 @@ let pin_add_command =
     ]
 
 let pin_remove p () =
-  compatibility_optin ();
+  Compatibility.optin ();
   (* TODO remove the package *)
   Repository.remove repo p;
   Printf.printf "Removed %s\n" p
@@ -155,13 +146,13 @@ let package_list_command_g p_list =
     ]
 
 let package_list () =
-  compatibility_optin ();
+  Compatibility.optin ();
   [%derive.show: string list] (Registory.list reg) |> print_endline
 let package_list_command =
   package_list_command_g package_list
 
 let package_show p () =
-  compatibility_optin ();
+  Compatibility.optin ();
   Registory.directory reg p
     |> Package.read_dir
     |> [%sexp_of: Package.t]
@@ -178,7 +169,7 @@ let package_command =
 
 
 let package_opam_list () =
-  compatibility_optin ();
+  Compatibility.optin ();
   Option.iter reg_opam ~f:(fun reg_opam ->
     [%derive.show: string list] (SatysfiRegistory.list reg_opam) |> print_endline
   )
@@ -186,7 +177,7 @@ let package_opam_list_command =
   package_list_command_g package_opam_list
 
 let package_opam_show p () =
-  compatibility_optin ();
+  Compatibility.optin ();
   Option.iter reg_opam ~f:(fun reg_opam ->
     SatysfiRegistory.directory reg_opam p
       |> Package.read_dir
@@ -276,7 +267,7 @@ let install_command =
   let open Command.Let_syntax in
   let default_target_dir =
     Sys.getenv "SATYSFI_RUNTIME"
-    |> Option.value ~default:user_dir
+    |> Option.value ~default:target_dist_dir
     |> (fun dir -> Filename.concat dir "dist") in
   let readme () =
     sprintf "Install SATySFi Libraries to a directory environmental variable SATYSFI_RUNTIME has or %s. Currently it accepts an argument DIR, but this is experimental." default_target_dir
