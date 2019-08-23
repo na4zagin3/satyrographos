@@ -3,4 +3,4 @@
  (public_name satyrographos)
  (preprocess (pps ppx_deriving.std ppx_jane))
  (libraries core satyrographos uri)
- (modules compatibility main))
+ (modules setup compatibility commandInstall commandPackage commandPin commandStatus main))
