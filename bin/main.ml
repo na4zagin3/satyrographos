@@ -40,15 +40,17 @@ let reg_opam =
     {SatysfiRegistry.package_dir=Filename.concat opam_share_dir "satysfi"})
 
 let status () =
-  printf "scheme version: ";
+  printf "Scheme version: ";
   [%derive.show: int option] current_scheme_version |> print_endline;
+  printf "Source repository: ";
   [%derive.show: string list] (Repository.list repo) |> print_endline;
+  printf "Built package registry: ";
   [%derive.show: string list] (Registry.list reg) |> print_endline;
   printf "SATySFi runtime directories: ";
   [%derive.show: string list] (SatysfiDirs.runtime_dirs ()) |> print_endline;
   printf "SATySFi user directory: ";
   [%derive.show: string option] (SatysfiDirs.user_dir ()) |> print_endline;
-  printf "selected SATySFi runtime distribution: %s\n" (SatysfiDirs.satysfi_dist_dir ())
+  printf "Selected SATySFi runtime distribution: %s\n" (SatysfiDirs.satysfi_dist_dir ())
 
 let pin_list () =
   Compatibility.optin ();
