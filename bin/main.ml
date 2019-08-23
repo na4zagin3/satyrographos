@@ -20,7 +20,7 @@ let initialize () =
   match current_scheme_version with
   | None ->
     Repository.initialize repository_dir metadata_file;
-    Registory.initialize package_dir metadata_file;
+    Registry.initialize package_dir metadata_file;
     Version.mark_version root_dir scheme_version
   | Some 0 -> Printf.sprintf "Semantics of `pin add` has been changed.\nPlease remove %s to continue." root_dir |> failwith
   | Some 1 -> ()
@@ -29,19 +29,21 @@ let initialize () =
 let () =
   initialize ()
 
+(* Source repository *)
 let repo = Repository.read repository_dir metadata_file
-let reg = Registory.read package_dir repo metadata_file
+(* Binary registry *)
+let reg = Registry.read package_dir repo metadata_file
 let reg_opam =
   SatysfiDirs.opam_share_dir ()
   |> Option.map ~f:(fun opam_share_dir ->
     Printf.printf "opam share dir: %s\n" opam_share_dir;
-    {SatysfiRegistory.package_dir=Filename.concat opam_share_dir "satysfi"})
+    {SatysfiRegistry.package_dir=Filename.concat opam_share_dir "satysfi"})
 
 let status () =
   printf "scheme version: ";
   [%derive.show: int option] current_scheme_version |> print_endline;
   [%derive.show: string list] (Repository.list repo) |> print_endline;
-  [%derive.show: string list] (Registory.list reg) |> print_endline;
+  [%derive.show: string list] (Registry.list reg) |> print_endline;
   printf "SATySFi runtime directories: ";
   [%derive.show: string list] (SatysfiDirs.runtime_dirs ()) |> print_endline;
   printf "SATySFi user directory: ";
@@ -84,7 +86,7 @@ let pin_add p url () =
   |> Repository.add repo p
   |> ignore;
   Printf.printf "Added %s (%s)\n" p url;
-  Registory.update_all reg
+  Registry.update_all reg
   |> [%derive.show: string list option]
   |> Printf.printf "Built packages: %s\n"
 let pin_add_command =
@@ -147,13 +149,13 @@ let package_list_command_g p_list =
 
 let package_list () =
   Compatibility.optin ();
-  [%derive.show: string list] (Registory.list reg) |> print_endline
+  [%derive.show: string list] (Registry.list reg) |> print_endline
 let package_list_command =
   package_list_command_g package_list
 
 let package_show p () =
   Compatibility.optin ();
-  Registory.directory reg p
+  Registry.directory reg p
     |> Package.read_dir
     |> [%sexp_of: Package.t]
     |> Sexp.to_string_hum
@@ -171,7 +173,7 @@ let package_command =
 let package_opam_list () =
   Compatibility.optin ();
   Option.iter reg_opam ~f:(fun reg_opam ->
-    [%derive.show: string list] (SatysfiRegistory.list reg_opam) |> print_endline
+    [%derive.show: string list] (SatysfiRegistry.list reg_opam) |> print_endline
   )
 let package_opam_list_command =
   package_list_command_g package_opam_list
@@ -179,7 +181,7 @@ let package_opam_list_command =
 let package_opam_show p () =
   Compatibility.optin ();
   Option.iter reg_opam ~f:(fun reg_opam ->
-    SatysfiRegistory.directory reg_opam p
+    SatysfiRegistry.directory reg_opam p
       |> Package.read_dir
       |> [%sexp_of: Package.t]
       |> Sexp.to_string_hum
@@ -207,7 +209,7 @@ let install d ~system_font_prefix ~verbose ~copy () =
     Printf.printf "No packages updated\n"
   end;
   Printf.printf "Building updated packages\n";
-  begin match Registory.update_all reg with
+  begin match Registry.update_all reg with
   | Some updated_packages -> begin
     Printf.printf "Built packages: ";
     [%derive.show: string list] updated_packages |> print_endline
@@ -217,15 +219,15 @@ let install d ~system_font_prefix ~verbose ~copy () =
   end;
   let dist_package = SatysfiDirs.satysfi_dist_dir () in
   Printf.printf "Reading runtime dist: %s\n" dist_package;
-  let user_packages = Registory.list reg
-    |> List.map ~f:(Registory.directory reg)
+  let user_packages = Registry.list reg
+    |> List.map ~f:(Registry.directory reg)
   in
   let opam_packages = match reg_opam with
     | None -> []
     | Some reg_opam ->
-      SatysfiRegistory.list reg_opam
+      SatysfiRegistry.list reg_opam
         |> List.filter ~f:(fun name -> String.equal "dist" name |> not)
-        |> List.map ~f:(SatysfiRegistory.directory reg_opam)
+        |> List.map ~f:(SatysfiRegistry.directory reg_opam)
   in
   let packages = dist_package :: List.append user_packages opam_packages
     |> List.map ~f:Package.read_dir

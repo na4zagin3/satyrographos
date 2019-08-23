@@ -6,20 +6,20 @@ exception RegisteredAlready of package_name
 module StringSet = Set.Make(String)
 
 type t = {
-  registory: Store.store;
-  repository: Repository.t;
+  registry: Store.store; (* Stores compiled blob *)
+  repository: Repository.t; (* Stores sources *)
   metadata: Metadata.store;
 }
 
 (* Basic operations *)
 (* TODO get from metadata*)
-let list reg = Store.list reg.registory
-let directory reg name = Store.directory reg.registory name
-let mem reg name = Store.mem reg.registory name
+let list reg = Store.list reg.registry
+let directory reg name = Store.directory reg.registry name
+let mem reg name = Store.mem reg.registry name
 (* TODO lock *)
 let remove_multiple reg names =
   (* TODO remove from metadata *)
-  Store.remove_multiple reg.registory names
+  Store.remove_multiple reg.registry names
 let remove reg name =
   remove_multiple reg [name]
 
@@ -31,8 +31,8 @@ let build_package reg name =
     let dir = Repository.directory reg.repository name in
     let package = Package.read_dir dir in
     Package.to_string package |> print_endline;
-    Store.remove reg.registory name;
-    Store.add_package reg.registory name package
+    Store.remove reg.registry name;
+    Store.add_package reg.registry name package
 
 (* TODO build only obsoleted packages *)
 let update_all reg =
@@ -53,7 +53,7 @@ let initialize packages_dir metadata_file =
   Metadata.initialize metadata_file
 
 let read package_dir repository metadata_file = {
-    registory = Store.read package_dir;
+    registry = Store.read package_dir;
     repository = repository;
     metadata = metadata_file;
   }
