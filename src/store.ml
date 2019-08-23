@@ -42,7 +42,7 @@ let create_new_reg dir =
   initialize packages_dir;
   read packages_dir
 let with_new_reg f =
-  let dir = Filename.temp_dir "Satyrographos" "Registory" in
+  let dir = Filename.temp_dir "Satyrographos" "Store" in
   protect ~f:(fun () -> create_new_reg dir |> f) ~finally:(fun () -> FileUtil.rm ~force:Force ~recurse:true [dir])
 
 let test_package_list ~expect reg =
@@ -53,11 +53,11 @@ let test_package_content ~expect reg p =
     target_dir |> FileUtil.ls |> List.map ~f:(FilePath.make_relative target_dir)
   end
 
-let%test "registory: initialize" = with_new_reg (fun _ -> true)
-let%test "registory: list: empty" = with_new_reg begin fun reg ->
+let%test "store: initialize" = with_new_reg (fun _ -> true)
+let%test "store: list: empty" = with_new_reg begin fun reg ->
     list reg = []
   end
-let%test_unit "registory: add empty dir" = with_new_reg begin fun reg ->
+let%test_unit "store: add empty dir" = with_new_reg begin fun reg ->
     let dir = Filename.temp_dir "Satyrographos" "Package" in
     add_dir reg "a" dir;
     test_package_list ~expect:["a"] reg;
@@ -66,7 +66,7 @@ let%test_unit "registory: add empty dir" = with_new_reg begin fun reg ->
     [%test_result: bool] ~expect:true (directory reg "a" |> FileUtil.(test Is_dir ))
   end
 
-let%test_unit "registory: add nonempty dir" = with_new_reg begin fun reg ->
+let%test_unit "store: add nonempty dir" = with_new_reg begin fun reg ->
     let dir = Filename.temp_dir "Satyrographos" "Package" in
     FilePath.concat dir "c" |> FileUtil.touch;
     add_dir reg "a" dir;
@@ -77,7 +77,7 @@ let%test_unit "registory: add nonempty dir" = with_new_reg begin fun reg ->
     test_package_content ~expect:["c"] reg "a"
   end
 
-let%test_unit "registory: add nonempty dir twice" = with_new_reg begin fun reg ->
+let%test_unit "store: add nonempty dir twice" = with_new_reg begin fun reg ->
     let dir1 = Filename.temp_dir "Satyrographos" "Package" in
     FilePath.concat dir1 "c" |> FileUtil.touch;
     add_dir reg "a" dir1;
@@ -90,7 +90,7 @@ let%test_unit "registory: add nonempty dir twice" = with_new_reg begin fun reg -
     test_package_content ~expect:["d"] reg "a"
   end
 
-let%test_unit "registory: added dir must be copied" = with_new_reg begin fun reg ->
+let%test_unit "store: added dir must be copied" = with_new_reg begin fun reg ->
     let dir = Filename.temp_dir "Satyrographos" "Package" in
     FilePath.concat dir "c" |> FileUtil.touch;
     add_dir reg "a" dir;
@@ -104,7 +104,7 @@ let%test_unit "registory: added dir must be copied" = with_new_reg begin fun reg
     test_package_content ~expect:["c"] reg "a";
   end
 
-let%test_unit "registory: add the same directory twice with different contents" = with_new_reg begin fun reg ->
+let%test_unit "store: add the same directory twice with different contents" = with_new_reg begin fun reg ->
     let dir = Filename.temp_dir "Satyrographos" "Package" in
     FilePath.concat dir "c" |> FileUtil.touch;
     add_dir reg "a" dir;
