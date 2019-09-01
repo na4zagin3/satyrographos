@@ -38,3 +38,8 @@ let reg_opam =
   |> Option.map ~f:(fun opam_share_dir ->
       Printf.printf "opam share dir: %s\n" opam_share_dir;
       {SatysfiRegistry.package_dir=Filename.concat opam_share_dir "satysfi"})
+
+let default_target_dir =
+  Sys.getenv "SATYSFI_RUNTIME"
+  |> Option.value ~default:target_dist_dir
+  |> (fun dir -> Filename.concat dir "dist")
