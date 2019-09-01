@@ -114,7 +114,8 @@ let fonts_to_package prefix fonts =
         then Printf.printf "WARNING: %s and %s have conflicting filename.\n" f1 f2
       end;
       f1
-    )
+    );
+    dependencies = Package.Dependency.empty;
   }
 
 let get_package prefix () =
