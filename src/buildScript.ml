@@ -95,3 +95,16 @@ let input ch =
 let from_file f =
   Unix.(with_file f ~mode:[O_RDONLY] ~f:(fun fd ->
     input (in_channel_of_descr fd)))
+
+let package_to_opam_file p =
+  let name = OpamPackage.Name.of_string ("satysfi-" ^ p.name) in
+  OpamFile.OPAM.empty
+  |> OpamFile.OPAM.with_name name
+
+let export_opam_package p =
+  let file = OpamFilename.raw p.opam in
+  package_to_opam_file p
+  |> OpamFile.OPAM.write (OpamFile.make file)
+
+let export_opam bs =
+  StringMap.iter bs ~f:export_opam_package

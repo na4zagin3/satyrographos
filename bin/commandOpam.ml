@@ -86,9 +86,26 @@ let opam_buildfile_command =
         buildfile f ()
     ]
 
+let export f () =
+  Compatibility.optin ();
+  let s = BuildScript.from_file f in
+  s |> BuildScript.export_opam
+
+let opam_export_command =
+  let open Command.Let_syntax in
+  Command.basic
+    ~summary:"Export build file (experimental)"
+    [%map_open
+      let f = anon ("BUILD_FILE" %: string) (* ToDo: Remove this *)
+      in
+      fun () ->
+        export f ()
+    ]
+
 let opam_command =
   Command.group ~summary:"OPAM related functionalities (experimental)"
     [ "install", opam_install_command;
       "uninstall", opam_uninstall_command;
       "buildfile", opam_buildfile_command;
+      "export", opam_export_command;
     ]
