@@ -108,3 +108,19 @@ let export_opam_package p =
 
 let export_opam bs =
   StringMap.iter bs ~f:export_opam_package
+
+let read_package p ~src_dir =
+  let map_file dst_dir = List.map ~f:(fun (dst, src) -> (Filename.concat dst_dir dst, Filename.concat src_dir src)) in
+  let other_files = map_file "" p.sources.files in
+  let hashes =
+    map_file "hash" p.sources.hashes
+    |> List.fold ~init:Package.empty ~f:(fun a (dst, src) -> Package.add_hash dst src a)
+  in
+  let fonts = map_file (Filename.concat "fonts" p.name) p.sources.fonts in
+  let packages = map_file (Filename.concat "packages" p.name) p.sources.packages in
+  Package.{
+   files=List.concat [other_files; fonts; packages] |> Package.PackageFiles.of_alist_exn;
+   hashes=PackageFiles.empty;
+   dependencies=Dependency.empty;
+  }
+  |> Package.union hashes
