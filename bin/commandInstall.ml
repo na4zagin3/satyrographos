@@ -5,6 +5,7 @@ open Setup
 
 module StringSet = Set.Make(String)
 
+(* TODO Install transitive dependencies *)
 let get_packages ~reg ~reg_opam ~packages =
   let dist_package = SatysfiDirs.satysfi_dist_dir () in
   Printf.printf "Reading runtime dist: %s\n" dist_package;
