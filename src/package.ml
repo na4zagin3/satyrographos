@@ -18,18 +18,21 @@ module Json = struct
   include Json_derivers.Yojson
 end
 
+module Dependency = Set.Make(String)
 module StringMap = Map.Make(String)
 module JsonSet = Set.Make(Json)
 
 type t = {
   hashes: (string list * Json.t) PackageFiles.t;
   files: string PackageFiles.t;
+  dependencies: Dependency.t;
 }
 [@@deriving sexp, compare]
 
 let empty = {
   hashes = PackageFiles.empty;
   files = PackageFiles.empty;
+  dependencies = Dependency.empty;
 }
 
 
@@ -89,6 +92,7 @@ let normalize_hash = function
 let normalize p = {
   hashes = PackageFiles.map p.hashes ~f:(fun (paths, json) -> paths, normalize_hash json);
   files = p.files;
+  dependencies = p.dependencies;
 }
 
 let add_file f absolute_path p =
@@ -112,6 +116,7 @@ let union p1 p2 =
   in
   { hashes = PackageFiles.union handle_hash_conflict p1.hashes p2.hashes;
     files = PackageFiles.union handle_file_conflict p1.files p2.files;
+    dependencies = Dependency.union p1.dependencies p2.dependencies
   }
 
 let%test "union: empty + empty = empty" =
@@ -125,10 +130,30 @@ let%test "union: p + empty = empty" =
   let p = add_file "a" "/b" empty in
   [%compare.equal: t] p (union p empty)
 
+type metadata = {
+  version: int;
+  dependencies: (string * unit (* for future extension *)) list;
+}
+[@@deriving sexp, compare]
+let current_version = 1
+
+let add_metadata f (p: t) =
+  (* TODO Handle failure *)
+  let metadata = Sexp.load_sexp_conv_exn f [%of_sexp: metadata] in
+  let ds = List.map ~f:fst metadata.dependencies in
+  { p with dependencies = Dependency.of_list ds |> Dependency.union p.dependencies }
+let save_metadata f (p: t) =
+  let dependencies = Dependency.to_list p.dependencies |> List.map ~f:(fun f -> (f, ())) in
+  let metadata = { version = current_version; dependencies = dependencies } in
+  [%sexp_of: metadata] metadata |> Sexp.save_hum f
+
+let metadata_filename = "metadata"
+
 let read_dir d =
   let add acc f =
     let rel_f = FilePath.make_relative d f in
     if String.equal rel_f ".satyrographos" then acc
+    else if String.equal rel_f metadata_filename then add_metadata f acc
     else if FilePath.is_subdir rel_f "hash"
     then add_hash rel_f f acc
     else add_file rel_f f acc
@@ -167,7 +192,8 @@ let write_dir ?(verbose=false) ?(symlink=false) d p =
     end;
     FileUtil.mkdir ~parent:true (FilePath.dirname file_dst);
     Json.to_file file_dst h
-  ) p.hashes
+  ) p.hashes;
+  save_metadata (FilePath.concat d metadata_filename) p
 
 
 let mark_filename = ".satyrographos"

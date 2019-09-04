@@ -36,7 +36,6 @@ let reg = Registry.read package_dir repo metadata_file
 let reg_opam =
   SatysfiDirs.opam_share_dir ()
   |> Option.map ~f:(fun opam_share_dir ->
-      Printf.printf "opam share dir: %s\n" opam_share_dir;
       {SatysfiRegistry.package_dir=Filename.concat opam_share_dir "satysfi"})
 
 let default_target_dir =

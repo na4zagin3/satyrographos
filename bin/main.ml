@@ -4,6 +4,7 @@ open Core
 let total_command =
   Command.group ~summary:"Simple SATySFi Package Manager"
     [
+      "opam", CommandOpam.opam_command;
       "package", CommandPackage.package_command;
       "package-opam", CommandPackage.package_opam_command;
       "status", CommandStatus.status_command;
