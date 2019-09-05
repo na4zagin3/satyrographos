@@ -5,43 +5,59 @@ open Setup
 
 module StringSet = Set.Make(String)
 
+(* TODO Abstract this *)
+module StringMap = Map.Make(String)
+
+let transitive_closure map =
+  let rec f visited queue = match StringSet.choose queue with
+    | None -> visited
+    | Some cur ->
+      match Map.find map cur with
+      | None -> failwithf "Packages %s is not found\n" cur ();
+      | Some nexts ->
+        let visited = StringSet.add visited cur in
+        let queue =  StringSet.union (StringSet.remove queue cur) (StringSet.diff nexts visited) in
+        f visited queue in
+  f StringSet.empty
+
+
 (* TODO Install transitive dependencies *)
 let get_packages ~reg ~reg_opam ~packages =
-  let dist_package = SatysfiDirs.satysfi_dist_dir () in
-  Printf.printf "Reading runtime dist: %s\n" dist_package;
-  let user_package_names = Registry.list reg |> StringSet.of_list in
-  let opam_package_names = match reg_opam with
-    | None -> StringSet.empty
-    | Some reg_opam ->
-      SatysfiRegistry.list reg_opam
-        |> StringSet.of_list
-        |> (fun names -> StringSet.diff names user_package_names)
-        |> (fun names -> StringSet.remove names "dist")
+  let dist_package_dir = SatysfiDirs.satysfi_dist_dir () in
+  Printf.printf "Reading runtime dist: %s\n" dist_package_dir;
+  let dist_package = Package.read_dir dist_package_dir in
+  let user_packages = Registry.list reg
+    |> StringSet.of_list
+    |> StringSet.to_map ~f:(Registry.directory reg)
   in
-  let all_package_names = (StringSet.union user_package_names opam_package_names) in
-  let packages = match packages with
-    | None -> all_package_names
-    | Some ps -> StringSet.remove (StringSet.of_list ps) "dist"
-  in
-  if StringSet.is_subset packages ~of_:all_package_names |> not
-  then failwithf "Packages %s are not found\n" (StringSet.diff packages all_package_names |> [%sexp_of: StringSet.t] |> Sexp.to_string_hum) ();
-  let user_package_names = StringSet.inter user_package_names packages in
-  let opam_package_names = StringSet.inter opam_package_names packages in
-  Printf.printf "Reading user packages: %s\n" (user_package_names |> [%sexp_of: StringSet.t] |> Sexp.to_string_hum);
-  let user_packages = StringSet.inter user_package_names packages
-    |> StringSet.to_list
-    |> List.map ~f:(Registry.directory reg)
-  in
-  Printf.printf "Reading opam packages: %s\n" (opam_package_names |> [%sexp_of: StringSet.t] |> Sexp.to_string_hum);
+  Printf.printf "Read user packages: %s\n" (user_packages |> Map.keys |> [%sexp_of: string list] |> Sexp.to_string_hum);
   let opam_packages = match reg_opam with
-    | None -> []
+    | None -> StringSet.to_map StringSet.empty ~f:ident
     | Some reg_opam ->
-      StringSet.inter opam_package_names packages
-        |> StringSet.to_list
-        |> List.map ~f:(SatysfiRegistry.directory reg_opam)
+        SatysfiRegistry.list reg_opam
+        |> StringSet.of_list
+        |> StringSet.to_map ~f:(SatysfiRegistry.directory reg_opam)
   in
-  dist_package :: List.append user_packages opam_packages
-  |> List.map ~f:Package.read_dir
+  Printf.printf "Reading opam packages: %s\n" (opam_packages |> Map.keys |> [%sexp_of: string list] |> Sexp.to_string_hum);
+  let all_packages =
+    Map.merge opam_packages user_packages ~f:(fun ~key -> function
+      | `Left x -> Package.read_dir x |> Some
+      | `Right x -> Package.read_dir x |> Some
+      | `Both (_, x) ->
+        Printf.printf "Package %s is provided by both the user local and opam repositories\n" key;
+        Package.read_dir x |> Some) in
+  let required_packages = match packages with
+    | None -> all_packages
+    | Some packages -> let package_dependency =
+          Map.map all_packages ~f:(fun p -> p.Package.dependencies) in
+        let packages_to_install = transitive_closure package_dependency (StringSet.of_list packages) in
+        Map.filter_keys all_packages ~f:(StringSet.mem packages_to_install)
+  in
+  match Map.add required_packages ~key:"dist" ~data:dist_package with
+    | `Ok result -> result
+    | `Duplicate ->
+      Printf.printf "Overriding dist with user installed one";
+      required_packages
 
 let install d ~system_font_prefix ~packages ~verbose ~copy () =
   (* TODO build all *)
@@ -63,7 +79,10 @@ let install d ~system_font_prefix ~packages ~verbose ~copy () =
   | None ->
     Printf.printf "No packages built\n"
   end;
-  let packages = get_packages ~reg ~reg_opam ~packages in
+  let package_map = get_packages ~reg ~reg_opam ~packages in
+  let packages = package_map |> Map.data in
+  Printf.printf "Installing packages: ";
+  Map.keys package_map |> [%sexp_of: string list] |> Sexp.to_string_hum |> print_endline;
   let packages = match system_font_prefix with
     | None -> Printf.printf "Not gathering system fonts\n"; packages
     | Some(prefix) ->
