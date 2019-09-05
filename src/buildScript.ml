@@ -57,12 +57,16 @@ type package = {
   name: string;
   opam: string;
   sources: sources [@sexp.omit_nil];
+  dependencies: Package.Dependency.t [@sexp.omit_nil];
 } [@@deriving sexp]
 
 type section = Package of {
   name: string;
   opam: string;
-  sources: source list [@sexp.list] [@sexp.omit_nil];
+  sources: source list
+    [@sexp.list] [@sexp.omit_nil];
+  dependencies: (string * unit (* for future extension *)) list
+    [@sexp.list] [@sexp.omit_nil];
   (*
     sources: source list [@sexp.omit_nil];
   *)
@@ -74,20 +78,19 @@ module StringMap = Map.Make(String)
 
 type t = package StringMap.t [@@deriving sexp]
 
-(*
-*)
 let input ch =
   let sexp = Sexp.input_sexps ch in
   let modules = sexp |> List.concat_map ~f:(fun sexp ->
     match [%of_sexp: section] sexp with
-    | Package {name; opam; sources} ->
+    | Package {name; opam; sources; dependencies} ->
       let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
         | File (dst, src) -> add_files dst src acc
         | Font (dst, src) -> add_fonts dst src acc
         | Hash (dst, src) -> add_hashes dst src acc
         | Package (dst, src) -> add_packages dst src acc
       end sources in
-      [{name; opam; sources}]
+      let dependencies = List.map dependencies ~f:fst |> Package.Dependency.of_list in
+      [{name; opam; sources; dependencies}]
   ) in
   List.map ~f:(fun m -> m.name, m) modules
   |> StringMap.of_alist_exn
@@ -121,6 +124,6 @@ let read_package p ~src_dir =
   Package.{
    files=List.concat [other_files; fonts; packages] |> Package.PackageFiles.of_alist_exn;
    hashes=PackageFiles.empty;
-   dependencies=Dependency.empty;
+   dependencies=p.dependencies;
   }
   |> Package.union hashes
