@@ -31,33 +31,13 @@ type source =
   | Package of string * string
 [@@deriving sexp]
 
-(*
-let sexp_of_source = function
-  | File (dst, src) ->
-    ["file"; dst; src] |> [%sexp_of: string list]
-  | Font (dst, src) ->
-    ["font"; dst; src] |> [%sexp_of: string list]
-  | Hash (dst, src) ->
-    ["hash"; dst; src] |> [%sexp_of: string list]
-  | Package (dst, src) ->
-    ["package"; dst; src] |> [%sexp_of: string list]
-
-let source_of_source sexp =
-  let list = [%of_sexp: string list] sexp in
-  match list with
-  | ["file"; dst; src] -> File (dst, src)
-  | ["font"; dst; src] -> Font (dst, src)
-  | ["hash"; dst; src] -> Hash (dst, src)
-  | ["package"; dst; src] -> Package (dst, src)
-  | _ -> Error.create "Source must be (<type> <dst> <src>) where <type> is either file, font, hash, or package" sexp ident
-      |> Error.raise
-*)
-
+module CompatibilityIdents = Set.Make(String)
 type package = {
   name: string;
   opam: string;
   sources: sources [@sexp.omit_nil];
   dependencies: Library.Dependency.t [@sexp.omit_nil];
+  compatibility: CompatibilityIdents.t [@sexp.omit_nil];
 } [@@deriving sexp]
 
 type section = Library of {
@@ -67,6 +47,7 @@ type section = Library of {
     [@sexp.list] [@sexp.omit_nil];
   dependencies: (string * unit (* for future extension *)) list
     [@sexp.list] [@sexp.omit_nil];
+  compatibility: CompatibilityIdents.t [@sexp.omit_nil];
   (*
     sources: source list [@sexp.omit_nil];
   *)
@@ -75,6 +56,7 @@ type section = Library of {
 [@@deriving sexp]
 
 module StringMap = Map.Make(String)
+module StringSet = Set.Make(String)
 
 type t = package StringMap.t [@@deriving sexp]
 
@@ -82,7 +64,7 @@ let input ch =
   let sexp = Sexp.input_sexps ch in
   let modules = sexp |> List.concat_map ~f:(fun sexp ->
     match [%of_sexp: section] sexp with
-    | Library {name; opam; sources; dependencies} ->
+    | Library {name; opam; sources; dependencies; compatibility} ->
       let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
         | File (dst, src) -> add_files dst src acc
         | Font (dst, src) -> add_fonts dst src acc
@@ -90,7 +72,7 @@ let input ch =
         | Package (dst, src) -> add_packages dst src acc
       end sources in
       let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
-      [{name; opam; sources; dependencies}]
+      [{name; opam; sources; dependencies; compatibility}]
   ) in
   List.map ~f:(fun m -> m.name, m) modules
   |> StringMap.of_alist_exn
@@ -112,6 +94,25 @@ let export_opam_package p =
 let export_opam bs =
   StringMap.iter bs ~f:export_opam_package
 
+(* Compatibility treatment *)
+let compatibility_treatment p l =
+  match CompatibilityIdents.to_list p.compatibility with
+    | [] -> l
+    | ["satyrographos-0.0.1"] -> begin
+      { Library.empty with
+        compatibility = p.compatibility }
+      |> Library.union l
+    end
+    | _ -> begin
+      let unknown_symbols =
+      Set.remove p.compatibility "satyrographos-0.0.1"
+      |> [%sexp_of: CompatibilityIdents.t]
+      |> Sexp.to_string_hum
+      in
+      failwithf "Unknown compatibility symbols: %s\n" unknown_symbols ()
+    end
+
+(* Read *)
 let read_library p ~src_dir =
   let map_file dst_dir = List.map ~f:(fun (dst, src) -> (Filename.concat dst_dir dst, Filename.concat src_dir src)) in
   let other_files = map_file "" p.sources.files in
@@ -121,9 +122,9 @@ let read_library p ~src_dir =
   in
   let fonts = map_file (Filename.concat "fonts" p.name) p.sources.fonts in
   let packages = map_file (Filename.concat "packages" p.name) p.sources.packages in
-  Library.{
+  Library.{ empty with
    files=List.concat [other_files; fonts; packages] |> Library.LibraryFiles.of_alist_exn;
-   hashes=LibraryFiles.empty;
    dependencies=p.dependencies;
   }
   |> Library.union hashes
+  |> compatibility_treatment p

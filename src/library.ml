@@ -19,12 +19,14 @@ module Json = struct
 end
 
 module Dependency = Set.Make(String)
+module Compatibility = Set.Make(String)
 module StringMap = Map.Make(String)
 module JsonSet = Set.Make(Json)
 
 type t = {
   hashes: (string list * Json.t) LibraryFiles.t;
   files: string LibraryFiles.t;
+  compatibility: Compatibility.t;
   dependencies: Dependency.t;
 }
 [@@deriving sexp, compare]
@@ -32,6 +34,7 @@ type t = {
 let empty = {
   hashes = LibraryFiles.empty;
   files = LibraryFiles.empty;
+  compatibility = Compatibility.empty;
   dependencies = Dependency.empty;
 }
 
@@ -92,6 +95,7 @@ let normalize_hash = function
 let normalize p = {
   hashes = LibraryFiles.map p.hashes ~f:(fun (paths, json) -> paths, normalize_hash json);
   files = p.files;
+  compatibility = p.compatibility;
   dependencies = p.dependencies;
 }
 
@@ -116,7 +120,8 @@ let union p1 p2 =
   in
   { hashes = LibraryFiles.union handle_hash_conflict p1.hashes p2.hashes;
     files = LibraryFiles.union handle_file_conflict p1.files p2.files;
-    dependencies = Dependency.union p1.dependencies p2.dependencies
+    compatibility = Compatibility.union p1.compatibility p2.compatibility;
+    dependencies = Dependency.union p1.dependencies p2.dependencies;
   }
 
 let%test "union: empty + empty = empty" =
@@ -132,6 +137,7 @@ let%test "union: p + empty = empty" =
 
 type metadata = {
   version: int;
+  compatibility: Compatibility.t;
   dependencies: (string * unit (* for future extension *)) list;
 }
 [@@deriving sexp, compare]
@@ -141,11 +147,17 @@ let add_metadata f (p: t) =
   (* TODO Handle failure *)
   let metadata = Sexp.load_sexp_conv_exn f [%of_sexp: metadata] in
   let ds = List.map ~f:fst metadata.dependencies in
-  { p with dependencies = Dependency.of_list ds |> Dependency.union p.dependencies }
+  { p with
+    dependencies = Dependency.of_list ds |> Dependency.union p.dependencies;
+    compatibility = Compatibility.union p.compatibility metadata.compatibility
+  }
 let save_metadata f (p: t) =
   let dependencies = Dependency.to_list p.dependencies |> List.map ~f:(fun f -> (f, ())) in
-  let metadata = { version = current_version; dependencies = dependencies } in
-  [%sexp_of: metadata] metadata |> Sexp.save_hum f
+  { version = current_version;
+    dependencies = dependencies;
+    compatibility = p.compatibility }
+  |> [%sexp_of: metadata]
+  |> Sexp.save_hum f
 
 let metadata_filename = "metadata"
 
