@@ -69,7 +69,7 @@ let package_opam_show_command =
   package_show_command_g package_opam_show
 
 let package_opam_command =
-  Command.group ~summary:"Inspect packages installed in the standard library (experimental)"
+  Command.group ~summary:"Inspect packages installed in the OPAM managed directory (experimental)"
     [ "list", package_opam_list_command; (* ToDo: use this default*)
       "show", package_opam_show_command;
     ]
