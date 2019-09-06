@@ -5,8 +5,8 @@ let total_command =
   Command.group ~summary:"Simple SATySFi Package Manager"
     [
       "opam", CommandOpam.opam_command;
-      "package", CommandPackage.package_command;
-      "package-opam", CommandPackage.package_opam_command;
+      "library", CommandLibrary.library_command;
+      "library-opam", CommandLibrary.library_opam_command;
       "status", CommandStatus.status_command;
       "pin", CommandPin.pin_command;
       "install", CommandInstall.install_command;

@@ -1,7 +1,7 @@
 open Core
 
-type package_name = string
-exception RegisteredAlready of package_name
+type library_name = string
+exception RegisteredAlready of library_name
 
 module StringSet = Set.Make(String)
 
@@ -32,25 +32,25 @@ let add_dir reg name dir =
 
 let update reg name =
   match Metadata.find reg.metadata name with
-  | None -> failwith (Printf.sprintf "Package %s is not found" name)
+  | None -> failwith (Printf.sprintf "Library %s is not found" name)
   | Some metadata -> begin match Uri.scheme metadata.url with
     | Some "file" ->
       let dir = Uri.path metadata.url in
-      let package = Package.read_dir dir in
-      Package.to_string package |> print_endline;
+      let library = Library.read_dir dir in
+      Library.to_string library |> print_endline;
       Store.remove reg.cache name;
-      Store.add_package reg.cache name package
+      Store.add_library reg.cache name library
     | None ->
-      failwith (Printf.sprintf "BUG: URL scheme of package %s is unknown." name)
+      failwith (Printf.sprintf "BUG: URL scheme of library %s is unknown." name)
     | Some s ->
       failwith (Printf.sprintf "Unknown scheme %s." s)
   end
 
-(* TODO build only obsoleted packages *)
+(* TODO build only obsoleted libraries *)
 let update_all reg =
-  let updated_packages = list reg in
-  List.iter ~f:(update reg) updated_packages;
-  Some updated_packages
+  let updated_libraries = list reg in
+  List.iter ~f:(update reg) updated_libraries;
+  Some updated_libraries
 
 (* Advanced operations *)
 (* TODO Implement lock *)
@@ -68,18 +68,18 @@ let add reg name uri =
   update_all reg
 
 let gc reg =
-  let current_packages = list reg |> StringSet.of_list in
-  let valid_packages = Metadata.list reg.metadata |> StringSet.of_list in
-  let broken_packages = StringSet.diff current_packages valid_packages in
-  StringSet.to_list broken_packages
+  let current_libraries = list reg |> StringSet.of_list in
+  let valid_libraries = Metadata.list reg.metadata |> StringSet.of_list in
+  let broken_libraries = StringSet.diff current_libraries valid_libraries in
+  StringSet.to_list broken_libraries
   |> remove_multiple reg
 
-let initialize packages_dir metadata_file =
-  Store.initialize packages_dir;
+let initialize libraries_dir metadata_file =
+  Store.initialize libraries_dir;
   Metadata.initialize metadata_file
 
-let read package_dir metadata_file = {
-    cache = Store.read package_dir;
+let read library_dir metadata_file = {
+    cache = Store.read library_dir;
     metadata = metadata_file;
   }
 

@@ -57,10 +57,10 @@ type package = {
   name: string;
   opam: string;
   sources: sources [@sexp.omit_nil];
-  dependencies: Package.Dependency.t [@sexp.omit_nil];
+  dependencies: Library.Dependency.t [@sexp.omit_nil];
 } [@@deriving sexp]
 
-type section = Package of {
+type section = Library of {
   name: string;
   opam: string;
   sources: source list
@@ -82,14 +82,14 @@ let input ch =
   let sexp = Sexp.input_sexps ch in
   let modules = sexp |> List.concat_map ~f:(fun sexp ->
     match [%of_sexp: section] sexp with
-    | Package {name; opam; sources; dependencies} ->
+    | Library {name; opam; sources; dependencies} ->
       let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
         | File (dst, src) -> add_files dst src acc
         | Font (dst, src) -> add_fonts dst src acc
         | Hash (dst, src) -> add_hashes dst src acc
         | Package (dst, src) -> add_packages dst src acc
       end sources in
-      let dependencies = List.map dependencies ~f:fst |> Package.Dependency.of_list in
+      let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
       [{name; opam; sources; dependencies}]
   ) in
   List.map ~f:(fun m -> m.name, m) modules
@@ -112,18 +112,18 @@ let export_opam_package p =
 let export_opam bs =
   StringMap.iter bs ~f:export_opam_package
 
-let read_package p ~src_dir =
+let read_library p ~src_dir =
   let map_file dst_dir = List.map ~f:(fun (dst, src) -> (Filename.concat dst_dir dst, Filename.concat src_dir src)) in
   let other_files = map_file "" p.sources.files in
   let hashes =
     map_file "hash" p.sources.hashes
-    |> List.fold ~init:Package.empty ~f:(fun a (dst, src) -> Package.add_hash dst src a)
+    |> List.fold ~init:Library.empty ~f:(fun a (dst, src) -> Library.add_hash dst src a)
   in
   let fonts = map_file (Filename.concat "fonts" p.name) p.sources.fonts in
   let packages = map_file (Filename.concat "packages" p.name) p.sources.packages in
-  Package.{
-   files=List.concat [other_files; fonts; packages] |> Package.PackageFiles.of_alist_exn;
-   hashes=PackageFiles.empty;
+  Library.{
+   files=List.concat [other_files; fonts; packages] |> Library.LibraryFiles.of_alist_exn;
+   hashes=LibraryFiles.empty;
    dependencies=p.dependencies;
   }
-  |> Package.union hashes
+  |> Library.union hashes

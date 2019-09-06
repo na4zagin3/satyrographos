@@ -1,6 +1,6 @@
 open Core
 
-module PackageFiles = struct
+module LibraryFiles = struct
   include Map.Make(String)
 
   let union f = merge ~f:(fun ~key:key -> function
@@ -23,15 +23,15 @@ module StringMap = Map.Make(String)
 module JsonSet = Set.Make(Json)
 
 type t = {
-  hashes: (string list * Json.t) PackageFiles.t;
-  files: string PackageFiles.t;
+  hashes: (string list * Json.t) LibraryFiles.t;
+  files: string LibraryFiles.t;
   dependencies: Dependency.t;
 }
 [@@deriving sexp, compare]
 
 let empty = {
-  hashes = PackageFiles.empty;
-  files = PackageFiles.empty;
+  hashes = LibraryFiles.empty;
+  files = LibraryFiles.empty;
   dependencies = Dependency.empty;
 }
 
@@ -70,9 +70,9 @@ let validate_hash f abs_fs = function
   | _ -> [f ^ " is not an object. Originally from " ^ show_file_list abs_fs]
 
 let validate p =
-  PackageFiles.mapi p.hashes
+  LibraryFiles.mapi p.hashes
     ~f:(fun ~key:f ~data:(abs_fs, h) -> validate_hash f abs_fs h)
-  |> PackageFiles.data
+  |> LibraryFiles.data
   |> List.concat
 
 let normalize_hash = function
@@ -90,7 +90,7 @@ let normalize_hash = function
       j
 
 let normalize p = {
-  hashes = PackageFiles.map p.hashes ~f:(fun (paths, json) -> paths, normalize_hash json);
+  hashes = LibraryFiles.map p.hashes ~f:(fun (paths, json) -> paths, normalize_hash json);
   files = p.files;
   dependencies = p.dependencies;
 }
@@ -98,11 +98,11 @@ let normalize p = {
 let add_file f absolute_path p =
   if FilePath.is_relative absolute_path
   then failwith ("BUG: FilePath must be absolute but got " ^ absolute_path)
-  else { p with files = PackageFiles.add_exn ~key:f ~data:absolute_path p.files }
+  else { p with files = LibraryFiles.add_exn ~key:f ~data:absolute_path p.files }
 
 let add_hash f abs_f p =
   let json = Json.from_file abs_f in
-  { p with hashes = PackageFiles.add_exn ~key:f ~data:([abs_f], json) p.hashes }
+  { p with hashes = LibraryFiles.add_exn ~key:f ~data:([abs_f], json) p.hashes }
 
 let union p1 p2 =
   let handle_file_conflict f f1 f2 = match FileUtil.cmp f1 f2 with
@@ -114,8 +114,8 @@ let union p1 p2 =
     | `Assoc a1, `Assoc a2 -> Some(List.append f1 f2, `Assoc (List.append a1 a2)) (* TODO: Handle conflicting cases*)
     | _, _ -> failwith ("Conflicting file " ^ f ^ "\n  " ^ show_file_list f1 ^ "\n and \n  " ^ show_file_list f2)
   in
-  { hashes = PackageFiles.union handle_hash_conflict p1.hashes p2.hashes;
-    files = PackageFiles.union handle_file_conflict p1.files p2.files;
+  { hashes = LibraryFiles.union handle_hash_conflict p1.hashes p2.hashes;
+    files = LibraryFiles.union handle_file_conflict p1.files p2.files;
     dependencies = Dependency.union p1.dependencies p2.dependencies
   }
 
@@ -160,12 +160,12 @@ let read_dir d =
   in
   if FileUtil.test FileUtil.Is_dir d
   then FileUtil.(find ~follow:Follow Is_file d add empty)
-  else failwith (d ^ " is not a package directory")
+  else failwith (d ^ " is not a library directory")
 
 let write_dir ?(verbose=false) ?(symlink=false) d p =
   let p = normalize p in
   FileUtil.mkdir ~parent:true d;
-  PackageFiles.iteri ~f:(fun ~key:path ~data:fullpath ->
+  LibraryFiles.iteri ~f:(fun ~key:path ~data:fullpath ->
     let file_dst = FilePath.concat d path in
     let action = if symlink
       then "Linking"
@@ -185,7 +185,7 @@ let write_dir ?(verbose=false) ?(symlink=false) d p =
       UnixLabels.symlink ~to_dir:false ~src:fullpath ~dst:file_dst
     else FileUtil.cp [fullpath] file_dst
   ) p.files;
-  PackageFiles.iteri ~f:(fun ~key:path ~data:(_, h) ->
+  LibraryFiles.iteri ~f:(fun ~key:path ~data:(_, h) ->
     let file_dst = FilePath.concat d path in
     begin if verbose
       then Printf.printf "Generating %s\n" file_dst

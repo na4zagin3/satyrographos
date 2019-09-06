@@ -4,19 +4,19 @@ open Core
 
 module StringMap = Map.Make(String)
 
-let package_dir prefix buildscript =
+let library_dir prefix buildscript =
   let libdir = Filename.concat prefix "share/satysfi" in
   Filename.concat libdir buildscript.BuildScript.name
 
 let install_opam ~verbose ~prefix ~build_module ~buildscript_path =
   let src_dir = Filename.dirname buildscript_path in
-  let p = BuildScript.read_package ~src_dir build_module in
-  if verbose then [%sexp_of: Package.t] p |> Sexp.to_string_hum |> Printf.printf "Read package:\n%s\n";
-  let dir = package_dir prefix build_module in
-  Package.write_dir ~verbose ~symlink:false dir p
+  let p = BuildScript.read_library ~src_dir build_module in
+  if verbose then [%sexp_of: Library.t] p |> Sexp.to_string_hum |> Printf.printf "Read library:\n%s\n";
+  let dir = library_dir prefix build_module in
+  Library.write_dir ~verbose ~symlink:false dir p
 
 let uninstall_opam ~verbose:_ ~prefix ~build_module ~buildscript_path:_ =
-  let dir = package_dir prefix build_module in
+  let dir = library_dir prefix build_module in
   FileUtil.(rm ~force:Force ~recurse:true [dir])
 
 let default_script_path () =
