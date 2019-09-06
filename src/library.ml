@@ -19,9 +19,21 @@ module Json = struct
 end
 
 module Dependency = Set.Make(String)
-module Compatibility = Set.Make(String)
 module StringMap = Map.Make(String)
 module JsonSet = Set.Make(Json)
+module Compatibility = struct
+  type t = {
+    rename_packages: (string * string) list
+  }
+  [@@deriving sexp, compare]
+  let empty = {
+    rename_packages = []
+  }
+  let union c1 c2 = {
+    rename_packages = c1.rename_packages @ c2.rename_packages
+  }
+end
+
 
 type t = {
   hashes: (string list * Json.t) LibraryFiles.t;

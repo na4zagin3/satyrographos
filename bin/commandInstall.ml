@@ -24,13 +24,13 @@ let transitive_closure map =
 (* TODO Install transitive dependencies *)
 let get_libraries ~reg ~reg_opam ~libraries =
   let dist_library_dir = SatysfiDirs.satysfi_dist_dir () in
-  Printf.printf "Reading runtime dist: %s\n" dist_library_dir;
+  Format.printf "Reading runtime dist: %s\n" dist_library_dir;
   let dist_library = Library.read_dir dist_library_dir in
   let user_libraries = Registry.list reg
     |> StringSet.of_list
     |> StringSet.to_map ~f:(Registry.directory reg)
   in
-  Printf.printf "Read user libraries: %s\n" (user_libraries |> Map.keys |> [%sexp_of: string list] |> Sexp.to_string_hum);
+  Format.printf "Read user libraries: %s\n" (user_libraries |> Map.keys |> [%sexp_of: string list] |> Sexp.to_string_hum);
   let opam_libraries = match reg_opam with
     | None -> StringSet.to_map StringSet.empty ~f:ident
     | Some reg_opam ->
@@ -38,13 +38,13 @@ let get_libraries ~reg ~reg_opam ~libraries =
         |> StringSet.of_list
         |> StringSet.to_map ~f:(OpamSatysfiRegistry.directory reg_opam)
   in
-  Printf.printf "Reading opam libraries: %s\n" (opam_libraries |> Map.keys |> [%sexp_of: string list] |> Sexp.to_string_hum);
+  Format.printf "Reading opam libraries: %s\n" (opam_libraries |> Map.keys |> [%sexp_of: string list] |> Sexp.to_string_hum);
   let all_libraries =
     Map.merge opam_libraries user_libraries ~f:(fun ~key -> function
       | `Left x -> Library.read_dir x |> Some
       | `Right x -> Library.read_dir x |> Some
       | `Both (_, x) ->
-        Printf.printf "Library %s is provided by both the user local and opam repositories\n" key;
+        Format.printf "Library %s is provided by both the user local and opam repositories\n" key;
         Library.read_dir x |> Some) in
   let required_libraries = match libraries with
     | None -> all_libraries
@@ -56,65 +56,82 @@ let get_libraries ~reg ~reg_opam ~libraries =
   match Map.add required_libraries ~key:"dist" ~data:dist_library with
     | `Ok result -> result
     | `Duplicate ->
-      Printf.printf "Overriding dist with user installed one";
+      Format.printf "Overriding dist with user installed one";
       required_libraries
+
+let show_compatibility_warnings ~libraries =
+  Map.iteri libraries ~f:(fun ~key:library_name ~data:library ->
+    let renames = (library: Library.t).compatibility.rename_packages in
+    if List.is_empty renames |> not
+    then begin
+      Format.printf "\n\027[1;33mCompatibility notice\027[0m for library %s:" library_name;
+      Format.printf "@[<v 2>@,Packages have been renamed.@,@[<v 2>";
+      List.iter renames ~f:(fun (from, to_) ->
+        Format.printf "@,package %s -> package %s." from to_;
+      );
+      Format.printf "@]@]@,";
+      Format.print_newline ();
+    end
+  )
 
 let install d ~system_font_prefix ~libraries ~verbose ~copy () =
   (* TODO build all *)
-  Printf.printf "Updating libraries\n";
+  Format.open_vbox 0;
+  Format.printf "Updating libraries@,";
   begin match Repository.update_all repo with
   | Some updated_libraries -> begin
-    Printf.printf "Updated libraries: ";
-    [%derive.show: string list] updated_libraries |> print_endline
+    [%derive.show: string list] updated_libraries
+    |> Format.printf "Updated libraries: %s@,";
   end
   | None ->
-    Printf.printf "No libraries updated\n"
+    Format.printf "No libraries updated@,"
   end;
-  Printf.printf "Building updated libraries\n";
+  Format.printf "Building updated libraries@,";
   begin match Registry.update_all reg with
   | Some updated_libraries -> begin
-    Printf.printf "Built libraries: ";
-    [%derive.show: string list] updated_libraries |> print_endline
+    [%derive.show: string list] updated_libraries
+    |> Format.printf "Built libraries: %s@,";
   end
   | None ->
-    Printf.printf "No libraries built\n"
+    Format.printf "No libraries built@,"
   end;
   let library_map = get_libraries ~reg ~reg_opam ~libraries in
   let libraries = library_map |> Map.data in
-  Printf.printf "Installing libraries: ";
-  Map.keys library_map |> [%sexp_of: string list] |> Sexp.to_string_hum |> print_endline;
+  Map.keys library_map |> [%sexp_of: string list] |> Sexp.to_string_hum
+  |> Format.printf "Installing libraries: %s@,";
   let libraries = match system_font_prefix with
-    | None -> Printf.printf "Not gathering system fonts\n"; libraries
+    | None -> Format.printf "Not gathering system fonts\n"; libraries
     | Some(prefix) ->
-      Printf.printf "Gathering system fonts with prefix %s\n" prefix;
+      Format.printf "Gathering system fonts with prefix %s\n" prefix;
       let systemFontLibrary = SystemFontLibrary.get_library prefix () in
       List.cons systemFontLibrary libraries
   in
   let merged = libraries
     |> List.fold_left ~f:Library.union ~init:Library.empty
   in
-  match FileUtil.test FileUtil.Is_dir d, Library.is_managed_dir d with
+  begin match FileUtil.test FileUtil.Is_dir d, Library.is_managed_dir d with
   | true, false ->
-    Printf.printf "Directory %s is not managed by Satyrographos.\n" d;
-    Printf.printf "Please remove %s first.\n" d
+    Format.printf "Directory %s is not managed by Satyrographos.\n" d;
+    Format.printf "Please remove %s first.\n" d
   | _, _ ->
-    Printf.printf "Removing destination %s\n" d;
+    Format.printf "Removing destination %s\n" d;
     FileUtil.(rm ~force:Force ~recurse:true [d]);
     Library.mark_managed_dir d;
     if verbose
     then begin
-      Printf.printf "Loaded libraries\n";
       [%sexp_of: Library.t list] libraries
       |> Sexp.to_string_hum
-      |> print_endline;
-      Printf.printf "Installing %s\n" d;
+      |> Format.printf "Loaded libraries@,%s";
       [%sexp_of: Library.t] merged
       |> Sexp.to_string_hum
-      |> print_endline
+      |> Format.printf "Installing %s@,";
     end;
     Library.write_dir ~symlink:(not copy) d merged;
-    List.iter ~f:(Printf.printf "WARNING: %s") (Library.validate merged);
-    Printf.printf "Installation completed!\n"
+    List.iter ~f:(Format.printf "WARNING: %s") (Library.validate merged);
+    Format.printf "Installation completed!\n";
+    show_compatibility_warnings ~libraries:library_map;
+  end;
+  Format.close_box ()
 
 let install_command =
   let open Command.Let_syntax in

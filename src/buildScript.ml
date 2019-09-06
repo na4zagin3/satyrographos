@@ -99,8 +99,16 @@ let compatibility_treatment p l =
   match CompatibilityIdents.to_list p.compatibility with
     | [] -> l
     | ["satyrographos-0.0.1"] -> begin
+      let rename_packages = List.map p.sources.packages ~f:(fun (name, _) ->
+        let old_package_name = name in
+        let new_package_name = p.name ^ "/" ^ name in
+        (old_package_name, new_package_name)
+      ) in
       { Library.empty with
-        compatibility = p.compatibility }
+        compatibility = Library.Compatibility.{
+          rename_packages
+        }
+      }
       |> Library.union l
     end
     | _ -> begin
