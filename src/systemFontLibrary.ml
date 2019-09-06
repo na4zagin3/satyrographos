@@ -107,7 +107,7 @@ let fonts_to_library prefix fonts =
   in
   let hash_filename_fonts = "hash/fonts.satysfi-hash" in
   let hash_path_fonts = "#Automatically generated from the system fonts#" in
-  Library.{
+  Library.{ empty with
     hashes = LibraryFiles.singleton hash_filename_fonts ([hash_path_fonts], `Assoc hash);
     files = LibraryFiles.of_alist_reduce files ~f:(fun f1 f2 ->
       begin if not (String.equal f1 f2)
@@ -115,7 +115,6 @@ let fonts_to_library prefix fonts =
       end;
       f1
     );
-    dependencies = Library.Dependency.empty;
   }
 
 let get_library prefix () =

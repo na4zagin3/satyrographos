@@ -53,11 +53,19 @@ let opam_install_command =
 let opam_uninstall_command =
   opam_with_build_module_command uninstall_opam
 
-let buildfile f () =
+let buildfile ~process f () =
   Compatibility.optin ();
   let s = BuildScript.from_file f in
   s |> [%sexp_of: BuildScript.t] |> Sexp.to_string_hum
-  |> Printf.printf "Build file: %s\n"
+  |> Printf.printf "Build file: %s\n";
+  if process
+  then
+    let src_dir = Filename.dirname f in
+    Map.iteri s ~f:(fun ~key ~data ->
+      BuildScript.read_library ~src_dir data
+      |> [%sexp_of: Library.t] |> Sexp.to_string_hum
+      |> Printf.printf "Library %s: %s\n" key)
+
 
 let opam_buildfile_command =
   let open Command.Let_syntax in
@@ -65,9 +73,10 @@ let opam_buildfile_command =
     ~summary:"Inspect build file (experimental)"
     [%map_open
       let f = anon ("BUILD_FILE" %: string) (* ToDo: Remove this *)
+      and process = flag "process" no_arg ~doc:"Process the script"
       in
       fun () ->
-        buildfile f ()
+        buildfile ~process f ()
     ]
 
 let export f () =
