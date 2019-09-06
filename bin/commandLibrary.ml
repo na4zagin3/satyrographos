@@ -51,7 +51,7 @@ let library_command =
 let library_opam_list () =
   Compatibility.optin ();
   Option.iter reg_opam ~f:(fun reg_opam ->
-    [%derive.show: string list] (SatysfiRegistry.list reg_opam) |> print_endline
+    [%derive.show: string list] (OpamSatysfiRegistry.list reg_opam) |> print_endline
   )
 let library_opam_list_command =
   library_list_command_g library_opam_list
@@ -59,7 +59,7 @@ let library_opam_list_command =
 let library_opam_show p () =
   Compatibility.optin ();
   Option.iter reg_opam ~f:(fun reg_opam ->
-    SatysfiRegistry.directory reg_opam p
+    OpamSatysfiRegistry.directory reg_opam p
       |> Library.read_dir
       |> [%sexp_of: Library.t]
       |> Sexp.to_string_hum

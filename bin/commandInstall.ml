@@ -34,9 +34,9 @@ let get_libraries ~reg ~reg_opam ~libraries =
   let opam_libraries = match reg_opam with
     | None -> StringSet.to_map StringSet.empty ~f:ident
     | Some reg_opam ->
-        SatysfiRegistry.list reg_opam
+        OpamSatysfiRegistry.list reg_opam
         |> StringSet.of_list
-        |> StringSet.to_map ~f:(SatysfiRegistry.directory reg_opam)
+        |> StringSet.to_map ~f:(OpamSatysfiRegistry.directory reg_opam)
   in
   Printf.printf "Reading opam libraries: %s\n" (opam_libraries |> Map.keys |> [%sexp_of: string list] |> Sexp.to_string_hum);
   let all_libraries =

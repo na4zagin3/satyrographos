@@ -36,7 +36,7 @@ let reg = Registry.read library_dir repo metadata_file
 let reg_opam =
   SatysfiDirs.opam_share_dir ()
   |> Option.map ~f:(fun opam_share_dir ->
-      SatysfiRegistry.read (Filename.concat opam_share_dir "satysfi"))
+      OpamSatysfiRegistry.read (Filename.concat opam_share_dir "satysfi"))
 
 let default_target_dir =
   Sys.getenv "SATYSFI_RUNTIME"
