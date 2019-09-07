@@ -20,13 +20,30 @@ let read_module ~verbose ~build_module ~buildscript_path =
   end;
   (src_dir, p)
 
+let test_satysfi_option options =
+  let open P in
+  run_exit_code "satysfi" (options @ ["--version"])
+  |> map ~f:(fun code -> code = 0)
+
+let assert_satysfi_option ~message options =
+  let open P in
+  test_satysfi_option options
+  |> map ~f:(function
+    | true -> ()
+    | false -> failwith message)
+
+let assert_satysfi_option_C dir =
+  assert_satysfi_option ~message:"satysfi.0.0.3+dev2019.02.27 and newer is required in order to build library docs."
+    ["-C"; dir]
+
 let run_build_commands ~verbose ~libraries ~workingDir buildCommands =
   let open P in
   let open P.Infix in
   let commands satysfi_runtime = P.List.iter buildCommands ~f:(function
     | "make" :: args -> P.run "make" args
     | "satysfi" :: args ->
-      P.run "satysfi" (["-C"; satysfi_runtime] @ args)
+      assert_satysfi_option_C satysfi_runtime
+      >> P.run "satysfi" (["-C"; satysfi_runtime] @ args)
     | cmd -> failwithf "command %s is not yet supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
   ) in
   let with_env c =
