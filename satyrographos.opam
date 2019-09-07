@@ -25,6 +25,7 @@ depends: [
   "opam-format" {>= "2.0" & < "2.1"}
   "uri" {>= "3.0.0"}
   "uri-sexp" {>= "3.0.0"}
+  "shexp" {< "v0.13"}
   "yojson"
 ]
 synopsis: "A package manager for SATySFi"
