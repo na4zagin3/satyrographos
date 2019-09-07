@@ -4,14 +4,18 @@ open Core
 
 module StringMap = Map.Make(String)
 
-let library_dir prefix buildscript =
+let library_dir prefix (buildscript: BuildScript.m) =
   let libdir = Filename.concat prefix "share/satysfi" in
-  Filename.concat libdir buildscript.BuildScript.name
+  Filename.concat libdir (BuildScript.get_name buildscript)
 
 let install_opam ~verbose ~prefix ~build_module ~buildscript_path =
   let src_dir = Filename.dirname buildscript_path in
-  let p = BuildScript.read_library ~src_dir build_module in
-  if verbose then [%sexp_of: Library.t] p |> Sexp.to_string_hum |> Printf.printf "Read library:\n%s\n";
+  let p = BuildScript.read_module ~src_dir build_module in
+
+  if verbose
+  then Format.printf "Read library:@.";
+    [%sexp_of: Library.t] p |> Sexp.pp_hum Format.std_formatter;
+    Format.printf "@.";
   let dir = library_dir prefix build_module in
   Library.write_dir ~verbose ~symlink:false dir p
 
@@ -38,13 +42,15 @@ let opam_with_build_module_command f =
         match name with
         | None -> begin
           if StringMap.length builsscript = 1
-          then f ~verbose ~prefix ~build_module:(StringMap.nth_exn builsscript 0 |> snd) ~buildscript_path
+          then let build_module = StringMap.nth_exn builsscript 0 |> snd in
+            f ~verbose ~prefix ~build_module ~buildscript_path
           else failwith "Please specify module name with -name option"
         end
         | Some name ->
-          StringMap.find builsscript name
-          |> Option.value_exn ~message:"Build file does not contains modules with the given name"
-          |> (fun build_module -> f ~verbose ~prefix ~build_module ~buildscript_path)
+          match StringMap.find builsscript name with
+            | Some build_module -> f ~verbose ~prefix ~build_module ~buildscript_path
+            | _ ->
+              failwithf "Build file does not contains library %s" name ()
     ]
 
 let opam_install_command =
@@ -56,15 +62,17 @@ let opam_uninstall_command =
 let buildfile ~process f () =
   Compatibility.optin ();
   let s = BuildScript.from_file f in
-  s |> [%sexp_of: BuildScript.t] |> Sexp.to_string_hum
-  |> Printf.printf "Build file: %s\n";
+  Format.printf "Build file:@.";
+  s |> [%sexp_of: BuildScript.t] |> Sexp.pp_hum Format.std_formatter;
+  Format.printf "@.";
   if process
   then
     let src_dir = Filename.dirname f in
     Map.iteri s ~f:(fun ~key ~data ->
-      BuildScript.read_library ~src_dir data
-      |> [%sexp_of: Library.t] |> Sexp.to_string_hum
-      |> Printf.printf "Library %s: %s\n" key)
+      Format.printf "Library %s:@." key;
+      BuildScript.read_module ~src_dir data
+      |> [%sexp_of: Library.t] |> Sexp.pp_hum Format.std_formatter;
+      Format.printf "@.";)
 
 
 let opam_buildfile_command =

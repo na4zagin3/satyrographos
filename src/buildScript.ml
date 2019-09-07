@@ -32,7 +32,7 @@ type source =
 [@@deriving sexp]
 
 module CompatibilityIdents = Set.Make(String)
-type package = {
+type library = {
   name: string;
   opam: string;
   sources: sources [@sexp.omit_nil];
@@ -40,32 +40,60 @@ type package = {
   compatibility: CompatibilityIdents.t [@sexp.omit_nil];
 } [@@deriving sexp]
 
-type section =
-| Version of string
-| Library of {
+type documentSource =
+  | Doc of string * string
+[@@deriving sexp]
+
+type libraryDoc = {
   name: string;
   opam: string;
-  sources: source list
-    [@sexp.omit_nil];
-  dependencies: (string * unit (* for future extension *)) list
-    [@sexp.omit_nil];
-  compatibility: CompatibilityIdents.t [@sexp.omit_nil];
-  (*
-    sources: source list [@sexp.omit_nil];
-  *)
-  (* sources: source sexp_list; *)
-} [@sexpr.list]
-[@@deriving sexp]
+  workingDirectory: string;
+  build: string list list [@sexp.omit_nil];
+  sources: documentSource list [@sexp.omit_nil];
+  dependencies: Library.Dependency.t [@sexp.omit_nil];
+} [@@deriving sexp]
+
+type m = Library of library | LibraryDoc of libraryDoc
+  [@@deriving sexp]
+
+module Section = struct
+  type t =
+  | Version of string
+  | Library of {
+    name: string;
+    opam: string;
+    sources: source list
+      [@sexp.omit_nil];
+    dependencies: (string * unit (* for future extension *)) list
+      [@sexp.omit_nil];
+    compatibility: CompatibilityIdents.t [@sexp.omit_nil];
+    (*
+      sources: source list [@sexp.omit_nil];
+    *)
+    (* sources: source sexp_list; *)
+  } [@sexpr.list]
+  | LibraryDoc of {
+    name: string;
+    opam: string;
+    workingDirectory: string [@default "."];
+    build: string list list [@sexp.omit_nil];
+    sources: documentSource list
+      [@sexp.omit_nil];
+    dependencies: (string * unit (* for future extension *)) list
+      [@sexp.omit_nil];
+  } [@sexpr.list]
+  [@@deriving sexp]
+end
 
 module StringMap = Map.Make(String)
 module StringSet = Set.Make(String)
 
-type t = package StringMap.t [@@deriving sexp]
+type t = m StringMap.t [@@deriving sexp]
 
 let input ch =
   let sexp = Sexp.input_sexps ch in
   let modules = sexp |> List.concat_map ~f:(fun sexp ->
-    match [%of_sexp: section] sexp with
+    match [%of_sexp: Section.t] sexp with
     | Version "1" -> []
     | Version v ->
       failwithf "This Saytorgraphos only supports build script version 1, but got %s" v ()
@@ -77,30 +105,49 @@ let input ch =
         | Package (dst, src) -> add_packages dst src acc
       end sources in
       let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
-      [{name; opam; sources; dependencies; compatibility}]
+      [name, Library {name; opam; sources; dependencies; compatibility}]
+    | LibraryDoc {name; opam; workingDirectory: string; build; sources; dependencies;} ->
+      if String.suffix name 4 |> String.equal "-doc" |> not
+      then failwithf "libradiDoc must have suffic -doc but got %s" name ();
+      let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
+      [name, LibraryDoc {name; opam; workingDirectory: string; build; sources; dependencies;}]
   ) in
-  List.map ~f:(fun m -> m.name, m) modules
+  modules
   |> StringMap.of_alist_exn
 
 let from_file f =
   Unix.(with_file f ~mode:[O_RDONLY] ~f:(fun fd ->
     input (in_channel_of_descr fd)))
 
-let package_to_opam_file p =
-  let name = OpamPackage.Name.of_string ("satysfi-" ^ p.name) in
+let library_to_opam_file name =
+  let name = OpamPackage.Name.of_string ("satysfi-" ^ name) in
   OpamFile.OPAM.empty
   |> OpamFile.OPAM.with_name name
 
-let export_opam_package p =
-  let file = OpamFilename.raw p.opam in
-  package_to_opam_file p
-  |> OpamFile.OPAM.write (OpamFile.make file)
+let library_doc_to_opam_file name =
+  let name = OpamPackage.Name.of_string ("satysfi-" ^ name ^ "-doc") in
+  OpamFile.OPAM.empty
+  |> OpamFile.OPAM.with_name name
+
+let export_opam_package = function
+  | Library p ->
+    let file = OpamFilename.raw p.opam in
+    library_to_opam_file p.name
+    |> OpamFile.OPAM.write (OpamFile.make file)
+  | LibraryDoc p ->
+    let file = OpamFilename.raw p.opam in
+    library_doc_to_opam_file p.name
+    |> OpamFile.OPAM.write (OpamFile.make file)
 
 let export_opam bs =
   StringMap.iter bs ~f:export_opam_package
 
+let get_name = function
+  | Library l -> l.name
+  | LibraryDoc l -> l.name
+
 (* Compatibility treatment *)
-let compatibility_treatment p l =
+let compatibility_treatment (p: library) l =
   match CompatibilityIdents.to_list p.compatibility with
     | [] -> l
     | ["satyrographos-0.0.1"] -> begin
@@ -126,7 +173,7 @@ let compatibility_treatment p l =
     end
 
 (* Read *)
-let read_library p ~src_dir =
+let read_library (p: library) ~src_dir =
   let map_file dst_dir = List.map ~f:(fun (dst, src) -> (Filename.concat dst_dir dst, Filename.concat src_dir src)) in
   let other_files = map_file "" p.sources.files in
   let hashes =
@@ -141,3 +188,19 @@ let read_library p ~src_dir =
   }
   |> Library.union hashes
   |> compatibility_treatment p
+
+let read_libraryDoc (p: libraryDoc) ~src_dir =
+  let map_file dst_dir = List.map ~f:(fun (dst, src) -> (Filename.concat dst_dir dst, Filename.concat src_dir src)) in
+  let docs =
+  p.sources
+  |> List.map ~f:(function Doc (dst, src) -> (dst, src))
+  |> map_file (Filename.concat "docs" p.name)
+  in
+  Library.{ empty with
+   files=Library.LibraryFiles.of_alist_exn docs;
+   dependencies=p.dependencies;
+  }
+
+let read_module = function
+  | Library l -> read_library l
+  | LibraryDoc l -> read_libraryDoc l
