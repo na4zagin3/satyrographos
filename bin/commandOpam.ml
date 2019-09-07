@@ -13,26 +13,31 @@ let library_dir prefix (buildscript: BuildScript.m) =
 let read_module ~verbose ~build_module ~buildscript_path =
   let src_dir = Filename.dirname buildscript_path in
   let p = BuildScript.read_module ~src_dir build_module in
-  begin if verbose
-  then Format.printf "Read library:@.";
+  if verbose
+  then begin Format.printf "Read library:@.";
     [%sexp_of: Library.t] p |> Sexp.pp_hum Format.std_formatter;
     Format.printf "@."
   end;
   (src_dir, p)
 
 let run_build_commands ~verbose ~libraries ~workingDir buildCommands =
-  let commands = P.List.iter buildCommands ~f:(function
+  let open P in
+  let open P.Infix in
+  let commands satysfi_runtime = P.List.iter buildCommands ~f:(function
     | "make" :: args -> P.run "make" args
-    | "satysfi" :: args -> P.run "satysfi" args
+    | "satysfi" :: args ->
+      P.run "satysfi" (["-C"; satysfi_runtime] @ args)
     | cmd -> failwithf "command %s is not yet supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
   ) in
   let with_env c =
-    let open P in
-    let open P.Infix in
-    with_temp_dir ~prefix:"Satyrographos" ~suffix:"build_opam" (fun d ->
-      return (Format.printf "Setting up SATySFi env at %s @." d;) >>
-      return (CommandInstall.install d ~system_font_prefix:None ~libraries ~verbose ~copy:false ()) >>
-      c)
+    let c satysfi_runtime =
+      return (Format.printf "Setting up SATySFi env at %s @." satysfi_runtime;) >>
+      let satysfi_dist = Filename.concat satysfi_runtime "dist" in
+      return (Library.mark_managed_dir satysfi_dist;) >>
+      return (CommandInstall.install satysfi_dist ~system_font_prefix:None ~libraries ~verbose ~copy:false ()) >>
+      c satysfi_runtime
+    in
+    with_temp_dir ~prefix:"Satyrographos" ~suffix:"build_opam" c
   in
   P.(chdir workingDir (with_env commands))
 
@@ -48,9 +53,10 @@ let build_opam ~verbose ~prefix:_ ~build_module ~buildscript_path =
       run_build_commands ~verbose ~workingDir ~libraries build_module.build
       |> P.Traced.eval_exn ~context in
     if verbose
-    then Format.printf "Executed commands:@.";
+    then begin Format.printf "Executed commands:@.";
       Sexp.pp_hum_indent 2 Format.std_formatter trace;
       Format.printf "@."
+    end
   | BuildScript.Library _ ->
     Format.printf "Building modules is not yet supported"
 
