@@ -40,13 +40,15 @@ type package = {
   compatibility: CompatibilityIdents.t [@sexp.omit_nil];
 } [@@deriving sexp]
 
-type section = Library of {
+type section =
+| Version of string
+| Library of {
   name: string;
   opam: string;
   sources: source list
-    [@sexp.list] [@sexp.omit_nil];
+    [@sexp.omit_nil];
   dependencies: (string * unit (* for future extension *)) list
-    [@sexp.list] [@sexp.omit_nil];
+    [@sexp.omit_nil];
   compatibility: CompatibilityIdents.t [@sexp.omit_nil];
   (*
     sources: source list [@sexp.omit_nil];
@@ -64,6 +66,9 @@ let input ch =
   let sexp = Sexp.input_sexps ch in
   let modules = sexp |> List.concat_map ~f:(fun sexp ->
     match [%of_sexp: section] sexp with
+    | Version "1" -> []
+    | Version v ->
+      failwithf "This Saytorgraphos only supports build script version 1, but got %s" v ()
     | Library {name; opam; sources; dependencies; compatibility} ->
       let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
         | File (dst, src) -> add_files dst src acc
