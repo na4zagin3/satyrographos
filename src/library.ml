@@ -40,6 +40,7 @@ module Compatibility = struct
   let union c1 c2 = {
     rename_packages = RenameSet.union c1.rename_packages c2.rename_packages
   }
+  let union_list = List.fold ~init:empty ~f:union
 end
 
 

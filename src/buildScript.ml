@@ -32,12 +32,21 @@ type source =
 [@@deriving sexp]
 
 module CompatibilityIdents = Set.Make(String)
+module Compatibility = struct
+  type t =
+    | Satyrographos of string
+    | RenamePackage of string * string
+    (* | RenameFont of string * string *)
+    [@@deriving sexp, compare]
+end
+module CompatibilitySet = Set.Make(Compatibility)
+
 type library = {
   name: string;
   opam: string;
   sources: sources [@sexp.omit_nil];
   dependencies: Library.Dependency.t [@sexp.omit_nil];
-  compatibility: CompatibilityIdents.t [@sexp.omit_nil];
+  compatibility: CompatibilitySet.t [@sexp.omit_nil];
 } [@@deriving sexp]
 
 type documentSource =
@@ -66,7 +75,7 @@ module Section = struct
       [@sexp.omit_nil];
     dependencies: (string * unit (* for future extension *)) list
       [@sexp.omit_nil];
-    compatibility: CompatibilityIdents.t [@sexp.omit_nil];
+    compatibility: CompatibilitySet.t [@sexp.omit_nil];
     (*
       sources: source list [@sexp.omit_nil];
     *)
@@ -142,31 +151,40 @@ let get_name = function
   | LibraryDoc l -> l.name
 
 (* Compatibility treatment *)
-let compatibility_treatment (p: library) l =
-  match CompatibilityIdents.to_list p.compatibility with
-    | [] -> l
-    | ["satyrographos-0.0.1"] -> begin
+let compatibility_treatment (p: library) (l: Library.t) =
+  let f = function
+    | Compatibility.RenamePackage (n, o) ->
+      Library.Compatibility.{
+        rename_packages = Library.RenameSet.singleton Library.Rename.{
+          new_name = n;
+          old_name = o;
+        }
+      }
+    | Satyrographos "0.0.1" ->
       let open Library in
       let rename_packages = List.map p.sources.packages ~f:(fun (name, _) ->
         let old_package_name = name in
         let new_package_name = p.name ^ "/" ^ name in
         Rename.{ old_name = old_package_name; new_name = new_package_name }
       ) |> RenameSet.of_list in
-      { empty with
-        compatibility = Compatibility.{
-          rename_packages
-        }
+      Compatibility.{
+        rename_packages
       }
-      |> union l
-    end
-    | _ -> begin
-      let unknown_symbols =
-      Set.remove p.compatibility "satyrographos-0.0.1"
-      |> [%sexp_of: CompatibilityIdents.t]
+    | unknown_symbol -> begin
+      let unknown_symbol =
+      unknown_symbol
+      |> [%sexp_of: Compatibility.t]
       |> Sexp.to_string_hum
       in
-      failwithf "Unknown compatibility symbols: %s\n" unknown_symbols ()
-    end
+      failwithf "Unknown compatibility symbols: %s\n" unknown_symbol ()
+  end
+  in
+  let compatibility =
+    CompatibilitySet.to_list p.compatibility
+    |> List.map ~f
+    |> Library.Compatibility.union_list
+  in
+  Library.(union l { empty with compatibility})
 
 (* Read *)
 let read_library (p: library) ~src_dir =
