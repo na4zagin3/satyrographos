@@ -61,13 +61,13 @@ let get_libraries ~reg ~reg_opam ~libraries =
 
 let show_compatibility_warnings ~libraries =
   Map.iteri libraries ~f:(fun ~key:library_name ~data:library ->
-    let renames = (library: Library.t).compatibility.rename_packages in
+    let renames = (library: Library.t).compatibility.rename_packages |> Library.RenameSet.to_list in
     if List.is_empty renames |> not
     then begin
       Format.printf "\n\027[1;33mCompatibility notice\027[0m for library %s:" library_name;
       Format.printf "@[<v 2>@,Packages have been renamed.@,@[<v 2>";
-      List.iter renames ~f:(fun (from, to_) ->
-        Format.printf "@,package %s -> package %s." from to_;
+      List.iter renames ~f:(fun { old_name; new_name } ->
+        Format.printf "@,package %s -> package %s." old_name new_name;
       );
       Format.printf "@]@]@,";
       Format.print_newline ();
