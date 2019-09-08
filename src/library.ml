@@ -31,14 +31,20 @@ end
 module RenameSet = Set.Make(Rename)
 module Compatibility = struct
   type t = {
-    rename_packages: RenameSet.t
+    rename_packages: RenameSet.t;
+    rename_fonts: RenameSet.t;
   }
   [@@deriving sexp, compare]
   let empty = {
-    rename_packages = RenameSet.empty
+    rename_packages = RenameSet.empty;
+    rename_fonts = RenameSet.empty;
   }
+  let is_empty c =
+    RenameSet.is_empty c.rename_packages
+    && RenameSet.is_empty c.rename_fonts
   let union c1 c2 = {
-    rename_packages = RenameSet.union c1.rename_packages c2.rename_packages
+    rename_packages = RenameSet.union c1.rename_packages c2.rename_packages;
+    rename_fonts = RenameSet.union c1.rename_fonts c2.rename_fonts;
   }
   let union_list = List.fold ~init:empty ~f:union
 end

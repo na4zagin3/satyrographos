@@ -60,16 +60,24 @@ let get_libraries ~reg ~reg_opam ~libraries =
       required_libraries
 
 let show_compatibility_warnings ~libraries =
-  Map.iteri libraries ~f:(fun ~key:library_name ~data:library ->
-    let renames = (library: Library.t).compatibility.rename_packages |> Library.RenameSet.to_list in
-    if List.is_empty renames |> not
+  Map.iteri libraries ~f:(fun ~key:library_name ~data:(library: Library.t) ->
+    let open Library in
+    let compatibility = library.compatibility in
+    if Compatibility.is_empty compatibility |> not
     then begin
+      let print_rename t renames =
+        if RenameSet.is_empty renames |> not
+        then begin
+          Format.printf "@[<v 2>@,%s have been renamed.@,@[<v 2>" t;
+          RenameSet.iter renames ~f:(fun { old_name; new_name } ->
+            Format.printf "@,%s -> %s" old_name new_name;
+          );
+          Format.printf "@]@]@,";
+        end
+      in
       Format.printf "\n\027[1;33mCompatibility notice\027[0m for library %s:" library_name;
-      Format.printf "@[<v 2>@,Packages have been renamed.@,@[<v 2>";
-      List.iter renames ~f:(fun { old_name; new_name } ->
-        Format.printf "@,package %s -> package %s." old_name new_name;
-      );
-      Format.printf "@]@]@,";
+      print_rename "Packages" compatibility.rename_packages;
+      print_rename "Fonts" compatibility.rename_fonts;
       Format.print_newline ();
     end
   )

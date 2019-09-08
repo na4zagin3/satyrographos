@@ -36,7 +36,7 @@ module Compatibility = struct
   type t =
     | Satyrographos of string
     | RenamePackage of string * string
-    (* | RenameFont of string * string *)
+    | RenameFont of string * string
     [@@deriving sexp, compare]
 end
 module CompatibilitySet = Set.Make(Compatibility)
@@ -154,8 +154,15 @@ let get_name = function
 let compatibility_treatment (p: library) (l: Library.t) =
   let f = function
     | Compatibility.RenamePackage (n, o) ->
-      Library.Compatibility.{
+      Library.Compatibility.{ empty with
         rename_packages = Library.RenameSet.singleton Library.Rename.{
+          new_name = n;
+          old_name = o;
+        }
+      }
+    | Compatibility.RenameFont (n, o) ->
+      Library.Compatibility.{ empty with
+        rename_fonts = Library.RenameSet.singleton Library.Rename.{
           new_name = n;
           old_name = o;
         }
@@ -167,7 +174,7 @@ let compatibility_treatment (p: library) (l: Library.t) =
         let new_package_name = p.name ^ "/" ^ name in
         Rename.{ old_name = old_package_name; new_name = new_package_name }
       ) |> RenameSet.of_list in
-      Compatibility.{
+      Compatibility.{ empty with
         rename_packages
       }
     | unknown_symbol -> begin
