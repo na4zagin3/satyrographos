@@ -90,10 +90,9 @@ module StringSet = Set.Make(String)
 
 type t = m StringMap.t [@@deriving sexp]
 
-let input ch =
-  let sexp = Sexp.input_sexps ch in
-  let modules = sexp |> List.concat_map ~f:(fun sexp ->
-    match [%of_sexp: Section.t] sexp with
+let from_file f =
+  let sections = Sexp.load_sexps_conv_exn f [%of_sexp: Section.t] in
+  let modules = sections |> List.concat_map ~f:(function
     | Version "1" -> []
     | Version v ->
       failwithf "This Saytorgraphos only supports build script version 1, but got %s" v ()
@@ -114,10 +113,6 @@ let input ch =
   ) in
   modules
   |> StringMap.of_alist_exn
-
-let from_file f =
-  Unix.(with_file f ~mode:[O_RDONLY] ~f:(fun fd ->
-    input (in_channel_of_descr fd)))
 
 let library_to_opam_file name =
   let name = OpamPackage.Name.of_string ("satysfi-" ^ name) in
