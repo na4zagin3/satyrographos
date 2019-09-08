@@ -31,8 +31,8 @@ end
 module RenameSet = Set.Make(Rename)
 module Compatibility = struct
   type t = {
-    rename_packages: RenameSet.t;
-    rename_fonts: RenameSet.t;
+    rename_packages: RenameSet.t [@sexp.omit_nil];
+    rename_fonts: RenameSet.t [@sexp.omit_nil];
   }
   [@@deriving sexp, compare]
   let empty = {
@@ -51,10 +51,10 @@ end
 
 
 type t = {
-  hashes: (string list * Json.t) LibraryFiles.t;
-  files: string LibraryFiles.t;
-  compatibility: Compatibility.t;
-  dependencies: Dependency.t;
+  hashes: (string list * Json.t) LibraryFiles.t [@sexp.omit_nil];
+  files: string LibraryFiles.t [@sexp.omit_nil];
+  compatibility: Compatibility.t [@sexp.omit_nil];
+  dependencies: Dependency.t [@sexp.omit_nil];
 }
 [@@deriving sexp, compare]
 
