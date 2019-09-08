@@ -40,7 +40,7 @@ let run_build_commands ~verbose ~libraries ~workingDir buildCommands =
   let open P in
   let open P.Infix in
   let commands satysfi_runtime = P.List.iter buildCommands ~f:(function
-    | "make" :: args -> P.run "make" args
+    | "make" :: args -> P.run "make" (["SATYSFI_RUNTIME=" ^ satysfi_runtime] @ args)
     | "satysfi" :: args ->
       assert_satysfi_option_C satysfi_runtime
       >> P.run "satysfi" (["-C"; satysfi_runtime] @ args)
