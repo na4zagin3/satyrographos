@@ -32,12 +32,21 @@ type source =
 [@@deriving sexp]
 
 module CompatibilityIdents = Set.Make(String)
+module Compatibility = struct
+  type t =
+    | Satyrographos of string
+    | RenamePackage of string * string
+    | RenameFont of string * string
+    [@@deriving sexp, compare]
+end
+module CompatibilitySet = Set.Make(Compatibility)
+
 type library = {
   name: string;
   opam: string;
   sources: sources [@sexp.omit_nil];
   dependencies: Library.Dependency.t [@sexp.omit_nil];
-  compatibility: CompatibilityIdents.t [@sexp.omit_nil];
+  compatibility: CompatibilitySet.t [@sexp.omit_nil];
 } [@@deriving sexp]
 
 type documentSource =
@@ -66,7 +75,7 @@ module Section = struct
       [@sexp.omit_nil];
     dependencies: (string * unit (* for future extension *)) list
       [@sexp.omit_nil];
-    compatibility: CompatibilityIdents.t [@sexp.omit_nil];
+    compatibility: CompatibilitySet.t [@sexp.omit_nil];
     (*
       sources: source list [@sexp.omit_nil];
     *)
@@ -90,10 +99,9 @@ module StringSet = Set.Make(String)
 
 type t = m StringMap.t [@@deriving sexp]
 
-let input ch =
-  let sexp = Sexp.input_sexps ch in
-  let modules = sexp |> List.concat_map ~f:(fun sexp ->
-    match [%of_sexp: Section.t] sexp with
+let from_file f =
+  let sections = Sexp.load_sexps_conv_exn f [%of_sexp: Section.t] in
+  let modules = sections |> List.concat_map ~f:(function
     | Version "1" -> []
     | Version v ->
       failwithf "This Saytorgraphos only supports build script version 1, but got %s" v ()
@@ -114,10 +122,6 @@ let input ch =
   ) in
   modules
   |> StringMap.of_alist_exn
-
-let from_file f =
-  Unix.(with_file f ~mode:[O_RDONLY] ~f:(fun fd ->
-    input (in_channel_of_descr fd)))
 
 let library_to_opam_file name =
   let name = OpamPackage.Name.of_string ("satysfi-" ^ name) in
@@ -147,30 +151,47 @@ let get_name = function
   | LibraryDoc l -> l.name
 
 (* Compatibility treatment *)
-let compatibility_treatment (p: library) l =
-  match CompatibilityIdents.to_list p.compatibility with
-    | [] -> l
-    | ["satyrographos-0.0.1"] -> begin
+let compatibility_treatment (p: library) (l: Library.t) =
+  let f = function
+    | Compatibility.RenamePackage (n, o) ->
+      Library.Compatibility.{ empty with
+        rename_packages = Library.RenameSet.singleton Library.Rename.{
+          new_name = n;
+          old_name = o;
+        }
+      }
+    | Compatibility.RenameFont (n, o) ->
+      Library.Compatibility.{ empty with
+        rename_fonts = Library.RenameSet.singleton Library.Rename.{
+          new_name = n;
+          old_name = o;
+        }
+      }
+    | Satyrographos "0.0.1" ->
+      let open Library in
       let rename_packages = List.map p.sources.packages ~f:(fun (name, _) ->
         let old_package_name = name in
         let new_package_name = p.name ^ "/" ^ name in
-        (old_package_name, new_package_name)
-      ) in
-      { Library.empty with
-        compatibility = Library.Compatibility.{
-          rename_packages
-        }
+        Rename.{ old_name = old_package_name; new_name = new_package_name }
+      ) |> RenameSet.of_list in
+      Compatibility.{ empty with
+        rename_packages
       }
-      |> Library.union l
-    end
-    | _ -> begin
-      let unknown_symbols =
-      Set.remove p.compatibility "satyrographos-0.0.1"
-      |> [%sexp_of: CompatibilityIdents.t]
+    | unknown_symbol -> begin
+      let unknown_symbol =
+      unknown_symbol
+      |> [%sexp_of: Compatibility.t]
       |> Sexp.to_string_hum
       in
-      failwithf "Unknown compatibility symbols: %s\n" unknown_symbols ()
-    end
+      failwithf "Unknown compatibility symbols: %s\n" unknown_symbol ()
+  end
+  in
+  let compatibility =
+    CompatibilitySet.to_list p.compatibility
+    |> List.map ~f
+    |> Library.Compatibility.union_list
+  in
+  Library.(union l { empty with compatibility})
 
 (* Read *)
 let read_library (p: library) ~src_dir =

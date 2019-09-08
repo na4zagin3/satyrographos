@@ -21,17 +21,32 @@ end
 module Dependency = Set.Make(String)
 module StringMap = Map.Make(String)
 module JsonSet = Set.Make(Json)
+module Rename = struct
+  type t = {
+    new_name: string;
+    old_name: string;
+  }
+  [@@deriving sexp, compare]
+end
+module RenameSet = Set.Make(Rename)
 module Compatibility = struct
   type t = {
-    rename_packages: (string * string) list
+    rename_packages: RenameSet.t;
+    rename_fonts: RenameSet.t;
   }
   [@@deriving sexp, compare]
   let empty = {
-    rename_packages = []
+    rename_packages = RenameSet.empty;
+    rename_fonts = RenameSet.empty;
   }
+  let is_empty c =
+    RenameSet.is_empty c.rename_packages
+    && RenameSet.is_empty c.rename_fonts
   let union c1 c2 = {
-    rename_packages = c1.rename_packages @ c2.rename_packages
+    rename_packages = RenameSet.union c1.rename_packages c2.rename_packages;
+    rename_fonts = RenameSet.union c1.rename_fonts c2.rename_fonts;
   }
+  let union_list = List.fold ~init:empty ~f:union
 end
 
 
