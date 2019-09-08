@@ -102,9 +102,9 @@ type t = m StringMap.t [@@deriving sexp]
 let from_file f =
   let sections = Sexp.load_sexps_conv_exn f [%of_sexp: Section.t] in
   let modules = sections |> List.concat_map ~f:(function
-    | Version "1" -> []
+    | Version "0.0.2" -> []
     | Version v ->
-      failwithf "This Saytorgraphos only supports build script version 1, but got %s" v ()
+      failwithf "This Saytorgraphos only supports build script version 0.0.2, but got %s" v ()
     | Library {name; opam; sources; dependencies; compatibility} ->
       let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
         | File (dst, src) -> add_files dst src acc
