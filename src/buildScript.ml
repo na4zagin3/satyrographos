@@ -43,6 +43,7 @@ module CompatibilitySet = Set.Make(Compatibility)
 
 type library = {
   name: string;
+  version: string;
   opam: string;
   sources: sources [@sexp.omit_nil];
   dependencies: Library.Dependency.t [@sexp.omit_nil];
@@ -55,6 +56,7 @@ type documentSource =
 
 type libraryDoc = {
   name: string;
+  version: string;
   opam: string;
   workingDirectory: string;
   build: string list list [@sexp.omit_nil];
@@ -70,6 +72,7 @@ module Section = struct
   | Version of string
   | Library of {
     name: string;
+    version: string;
     opam: string;
     sources: source list
       [@sexp.omit_nil];
@@ -83,6 +86,7 @@ module Section = struct
   } [@sexpr.list]
   | LibraryDoc of {
     name: string;
+    version: string;
     opam: string;
     workingDirectory: string [@default "."];
     build: string list list [@sexp.omit_nil];
@@ -105,7 +109,7 @@ let from_file f =
     | Version "0.0.2" -> []
     | Version v ->
       failwithf "This Saytorgraphos only supports build script version 0.0.2, but got %s" v ()
-    | Library {name; opam; sources; dependencies; compatibility} ->
+    | Library {name; version; opam; sources; dependencies; compatibility} ->
       let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
         | File (dst, src) -> add_files dst src acc
         | Font (dst, src) -> add_fonts dst src acc
@@ -113,12 +117,12 @@ let from_file f =
         | Package (dst, src) -> add_packages dst src acc
       end sources in
       let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
-      [name, Library {name; opam; sources; dependencies; compatibility}]
-    | LibraryDoc {name; opam; workingDirectory: string; build; sources; dependencies;} ->
+      [name, Library {name; version; opam; sources; dependencies; compatibility}]
+    | LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies;} ->
       if String.suffix name 4 |> String.equal "-doc" |> not
       then failwithf "libradiDoc must have suffic -doc but got %s" name ();
       let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
-      [name, LibraryDoc {name; opam; workingDirectory: string; build; sources; dependencies;}]
+      [name, LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies;}]
   ) in
   modules
   |> StringMap.of_alist_exn
@@ -204,6 +208,8 @@ let read_library (p: library) ~src_dir =
   let fonts = map_file (Filename.concat "fonts" p.name) p.sources.fonts in
   let packages = map_file (Filename.concat "packages" p.name) p.sources.packages in
   Library.{ empty with
+   name = Some p.name;
+   version = Some p.version;
    files=List.concat [other_files; fonts; packages] |> Library.LibraryFiles.of_alist_exn;
    dependencies=p.dependencies;
   }
@@ -218,6 +224,8 @@ let read_libraryDoc (p: libraryDoc) ~src_dir =
   |> map_file (Filename.concat "docs" p.name)
   in
   Library.{ empty with
+   name = Some p.name;
+   version = Some p.version;
    files=Library.LibraryFiles.of_alist_exn docs;
    dependencies=p.dependencies;
   }

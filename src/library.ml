@@ -51,6 +51,10 @@ end
 
 
 type t = {
+  (* TODO (gh-50) make name and version into non-optional *)
+  name: string option [@sexp.option];
+  version: string option [@sexp.option];
+
   hashes: (string list * Json.t) LibraryFiles.t [@sexp.omit_nil];
   files: string LibraryFiles.t [@sexp.omit_nil];
   compatibility: Compatibility.t [@sexp.omit_nil];
@@ -59,6 +63,8 @@ type t = {
 [@@deriving sexp, compare]
 
 let empty = {
+  name = None;
+  version = None;
   hashes = LibraryFiles.empty;
   files = LibraryFiles.empty;
   compatibility = Compatibility.empty;
@@ -124,6 +130,8 @@ let normalize p = {
   files = p.files;
   compatibility = p.compatibility;
   dependencies = p.dependencies;
+  name = p.name;
+  version = p.version;
 }
 
 let add_file f absolute_path p =
@@ -149,6 +157,8 @@ let union p1 p2 =
     files = LibraryFiles.union handle_file_conflict p1.files p2.files;
     compatibility = Compatibility.union p1.compatibility p2.compatibility;
     dependencies = Dependency.union p1.dependencies p2.dependencies;
+    name = Core.Option.first_some p1.name p2.name;
+    version = Core.Option.first_some p1.version p2.version;
   }
 
 let%test "union: empty + empty = empty" =
@@ -164,6 +174,8 @@ let%test "union: p + empty = empty" =
 
 type metadata = {
   version: int;
+  libraryName: string [@default ""];
+  libraryVersion: string [@default ""];
   compatibility: Compatibility.t;
   dependencies: (string * unit (* for future extension *)) list;
 }
@@ -176,13 +188,18 @@ let add_metadata f (p: t) =
   let ds = List.map ~f:fst metadata.dependencies in
   { p with
     dependencies = Dependency.of_list ds |> Dependency.union p.dependencies;
-    compatibility = Compatibility.union p.compatibility metadata.compatibility
+    compatibility = Compatibility.union p.compatibility metadata.compatibility;
+    name = if String.is_empty metadata.libraryName then None else Some metadata.libraryName;
+    version = if String.is_empty metadata.libraryVersion then None else Some metadata.libraryVersion;
   }
 let save_metadata f (p: t) =
   let dependencies = Dependency.to_list p.dependencies |> List.map ~f:(fun f -> (f, ())) in
   { version = current_version;
     dependencies = dependencies;
-    compatibility = p.compatibility }
+    compatibility = p.compatibility;
+    libraryName = Option.value ~default:"" p.name;
+    libraryVersion = Option.value ~default:"" p.version;
+  }
   |> [%sexp_of: metadata]
   |> Sexp.save_hum f
 
