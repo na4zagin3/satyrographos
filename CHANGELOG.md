@@ -6,6 +6,20 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.2.0] - 2019-09-10
+### Added
+- Add `-package PACKAGE` option to `install` subcommand. ([#29], [#35])
+- Support build script `Satyristes` ([#30], [#33], [#41])
+- Show compatibility warnings ([#40], [#46])
+- Build library docs (require satysfi capable with `-C` option) ([#43])
+
+### Changed
+- Use consistent terminology. ([#39])
+- Changed metadata format stored in package registry, which requires removing existing `~/.satyrographos` directory ([#51])
+
+### Fixed
+- Fix install directory when environment variable `SATYSFI_RUNTIME` exists. ([#25])
+
 ## [v0.0.1.7] - 2019-04-19
 ### Fixed
 - Satyrographos does not fail even when OPAM does not exist
@@ -54,7 +68,20 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 - Detect duplicated package files
 - Detect duplicated hash definitions
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.7...HEAD
+[#25]: https://github.com/na4zagin3/satyrographos/pull/25
+[#29]: https://github.com/na4zagin3/satyrographos/pull/29
+[#30]: https://github.com/na4zagin3/satyrographos/pull/30
+[#33]: https://github.com/na4zagin3/satyrographos/pull/33
+[#35]: https://github.com/na4zagin3/satyrographos/pull/35
+[#39]: https://github.com/na4zagin3/satyrographos/pull/39
+[#40]: https://github.com/na4zagin3/satyrographos/pull/40
+[#41]: https://github.com/na4zagin3/satyrographos/pull/41
+[#43]: https://github.com/na4zagin3/satyrographos/pull/43
+[#46]: https://github.com/na4zagin3/satyrographos/pull/46
+[#51]: https://github.com/na4zagin3/satyrographos/pull/51
+
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.0...HEAD
+[v0.0.2.0]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.7...v0.0.2.0
 [v0.0.1.7]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.6...v0.0.1.7
 [v0.0.1.6]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.5...v0.0.1.6
 [v0.0.1.5]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.4...v0.0.1.5
