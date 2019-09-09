@@ -13,4 +13,4 @@ let total_command =
     ]
 
 let () =
-  Command.run ~version:"0.0.1.7" total_command
+  Command.run ~version:"0.0.2.0" total_command
