@@ -6,6 +6,13 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.2.1] - 2019-09-11
+### Added
+- Read SATYROGRAPHOS_DIR for Satyrographos registory ([#55])
+
+### Changed
+- Stop writing `~/.satyrographos` unless it is required ([#57])
+
 ## [v0.0.2.0] - 2019-09-10
 ### Added
 - Add `-package PACKAGE` option to `install` subcommand. ([#29], [#35])
@@ -79,8 +86,11 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#43]: https://github.com/na4zagin3/satyrographos/pull/43
 [#46]: https://github.com/na4zagin3/satyrographos/pull/46
 [#51]: https://github.com/na4zagin3/satyrographos/pull/51
+[#55]: https://github.com/na4zagin3/satyrographos/pull/55
+[#57]: https://github.com/na4zagin3/satyrographos/pull/57
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.0...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.1...HEAD
+[v0.0.2.1]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.0...v0.0.2.1
 [v0.0.2.0]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.7...v0.0.2.0
 [v0.0.1.7]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.6...v0.0.1.7
 [v0.0.1.6]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.5...v0.0.1.6

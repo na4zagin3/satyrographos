@@ -266,6 +266,7 @@ dev-repo: "<repo url>"
 depends: [
   "satysfi" {>= "0.0.3" & < "0.0.4"}
   "satyrographos" {>= "0.0.2" & < "0.0.3"}
+  "satysfi-lib-dist"
 
   # You may want to include the corresponding library
   "satysfi-great-library" {= "1.0"}
