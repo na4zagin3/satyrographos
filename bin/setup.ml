@@ -3,12 +3,12 @@ open Core
 
 let scheme_version = 1
 
-let prefix = match SatysfiDirs.home_dir () with
+let home_dir = match SatysfiDirs.home_dir () with
   | Some(d) -> d
   | None -> failwith "Cannot find home directory"
 
-let target_dist_dir = Filename.concat prefix ".satysfi"
-let root_dir = Filename.concat prefix ".satyrographos"
+let root_dir = Sys.getenv "SATYROGRAPHOS_DIR"
+  |> Option.value ~default:(Filename.concat home_dir ".satyrographos")
 let repository_dir = SatyrographosDirs.repository_dir root_dir
 let library_dir = SatyrographosDirs.library_dir root_dir
 let metadata_file = SatyrographosDirs.metadata_file root_dir
@@ -40,5 +40,5 @@ let reg_opam =
 
 let default_target_dir =
   Sys.getenv "SATYSFI_RUNTIME"
-  |> Option.value ~default:target_dist_dir
+  |> Option.value ~default:(Filename.concat home_dir ".satysfi")
   |> (fun dir -> Filename.concat dir "dist")
