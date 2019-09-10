@@ -27,12 +27,16 @@ let library_list_command_g p_list =
 
 let library_list () =
   Compatibility.optin ();
-  [%derive.show: string list] (Registry.list reg) |> print_endline
-let library_list_command =
-  library_list_command_g library_list
+  match try_read_repo () with
+  | Some { repo=_; reg; } ->
+    [%derive.show: string list] (Registry.list reg) |> print_endline
+  | None -> printf "No libraries"
+  let library_list_command =
+    library_list_command_g library_list
 
 let library_show p () =
   Compatibility.optin ();
+  let { repo=_; reg; } = read_repo () in
   Registry.directory reg p
     |> Library.read_dir
     |> [%sexp_of: Library.t]

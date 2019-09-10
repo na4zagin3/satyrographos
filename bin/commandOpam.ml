@@ -51,7 +51,9 @@ let run_build_commands ~verbose ~libraries ~workingDir buildCommands =
       return (Format.printf "Setting up SATySFi env at %s @." satysfi_runtime;) >>
       let satysfi_dist = Filename.concat satysfi_runtime "dist" in
       return (Library.mark_managed_dir satysfi_dist;) >>
-      return (CommandInstall.install satysfi_dist ~system_font_prefix:None ~libraries ~verbose ~copy:false ()) >>
+      return (
+        let library_map = CommandInstall.get_libraries ~maybe_reg:None ~reg_opam:Setup.reg_opam ~libraries in
+        CommandInstall.install_libraries satysfi_dist ~library_map ~verbose ~copy:false ()) >>
       c satysfi_runtime
     in
     with_temp_dir ~prefix:"Satyrographos" ~suffix:"build_opam" c
