@@ -22,15 +22,17 @@ let transitive_closure map =
 
 
 (* TODO Install transitive dependencies *)
-let get_libraries ~reg ~reg_opam ~libraries =
+let get_libraries ~maybe_reg ~reg_opam ~libraries =
   let dist_library_dir = SatysfiDirs.satysfi_dist_dir () in
   Format.printf "Reading runtime dist: %s\n" dist_library_dir;
   let dist_library = Library.read_dir dist_library_dir in
-  let user_libraries = Registry.list reg
+  let user_libraries = Option.map maybe_reg ~f:(fun reg -> Registry.list reg
     |> StringSet.of_list
-    |> StringSet.to_map ~f:(Registry.directory reg)
+    |> StringSet.to_map ~f:(Registry.directory reg))
   in
-  Format.printf "Read user libraries: %s\n" (user_libraries |> Map.keys |> [%sexp_of: string list] |> Sexp.to_string_hum);
+  Format.printf "Read user libraries: %s\n"
+    (Option.value_map ~default:[] ~f:Map.keys user_libraries
+    |> [%sexp_of: string list] |> Sexp.to_string_hum);
   let opam_libraries = match reg_opam with
     | None -> StringSet.to_map StringSet.empty ~f:ident
     | Some reg_opam ->
@@ -40,7 +42,8 @@ let get_libraries ~reg ~reg_opam ~libraries =
   in
   Format.printf "Reading opam libraries: %s\n" (opam_libraries |> Map.keys |> [%sexp_of: string list] |> Sexp.to_string_hum);
   let all_libraries =
-    Map.merge opam_libraries user_libraries ~f:(fun ~key -> function
+    Option.value ~default:(Map.empty (module StringSet.Elt)) user_libraries
+    |> Map.merge opam_libraries ~f:(fun ~key -> function
       | `Left x -> Library.read_dir x |> Some
       | `Right x -> Library.read_dir x |> Some
       | `Both (_, x) ->
@@ -82,38 +85,10 @@ let show_compatibility_warnings ~libraries =
     end
   )
 
-let install d ~system_font_prefix ~libraries ~verbose ~copy () =
-  (* TODO build all *)
-  Format.open_vbox 0;
-  Format.printf "Updating libraries@,";
-  begin match Repository.update_all repo with
-  | Some updated_libraries -> begin
-    [%derive.show: string list] updated_libraries
-    |> Format.printf "Updated libraries: %s@,";
-  end
-  | None ->
-    Format.printf "No libraries updated@,"
-  end;
-  Format.printf "Building updated libraries@,";
-  begin match Registry.update_all reg with
-  | Some updated_libraries -> begin
-    [%derive.show: string list] updated_libraries
-    |> Format.printf "Built libraries: %s@,";
-  end
-  | None ->
-    Format.printf "No libraries built@,"
-  end;
-  let library_map = get_libraries ~reg ~reg_opam ~libraries in
+let install_libraries d ~library_map  ~verbose ~copy () =
   let libraries = library_map |> Map.data in
   Map.keys library_map |> [%sexp_of: string list] |> Sexp.to_string_hum
   |> Format.printf "Installing libraries: %s@,";
-  let libraries = match system_font_prefix with
-    | None -> Format.printf "Not gathering system fonts\n"; libraries
-    | Some(prefix) ->
-      Format.printf "Gathering system fonts with prefix %s\n" prefix;
-      let systemFontLibrary = SystemFontLibrary.get_library prefix () in
-      List.cons systemFontLibrary libraries
-  in
   let merged = libraries
     |> List.fold_left ~f:Library.union ~init:Library.empty
   in
@@ -138,7 +113,42 @@ let install d ~system_font_prefix ~libraries ~verbose ~copy () =
     List.iter ~f:(Format.printf "WARNING: %s") (Library.validate merged);
     Format.printf "Installation completed!\n";
     show_compatibility_warnings ~libraries:library_map;
-  end;
+  end
+
+
+let install d ~system_font_prefix ~libraries ~verbose ~copy () =
+  (* TODO build all *)
+  Format.open_vbox 0;
+  let maybe_repo = try_read_repo () in
+  Option.iter maybe_repo ~f:(fun {repo; reg} ->
+    Format.printf "Updating libraries@,";
+    begin match Repository.update_all repo with
+    | Some updated_libraries -> begin
+      [%derive.show: string list] updated_libraries
+      |> Format.printf "Updated libraries: %s@,";
+    end
+    | None ->
+      Format.printf "No libraries updated@,"
+    end;
+    Format.printf "Building updated libraries@,";
+    begin match Registry.update_all reg with
+    | Some updated_libraries -> begin
+      [%derive.show: string list] updated_libraries
+      |> Format.printf "Built libraries: %s@,";
+    end
+    | None ->
+      Format.printf "No libraries built@,"
+    end);
+  let maybe_reg = Option.map maybe_repo ~f:(fun p -> p.reg) in
+  let library_map = get_libraries ~maybe_reg ~reg_opam ~libraries in
+  let library_map = match system_font_prefix with
+    | None -> Format.printf "Not gathering system fonts\n"; library_map
+    | Some(prefix) ->
+      Format.printf "Gathering system fonts with prefix %s\n" prefix;
+      let systemFontLibrary = SystemFontLibrary.get_library prefix () in
+      Map.add_exn ~key:"%fonts-system" ~data:systemFontLibrary library_map
+  in
+  install_libraries d ~verbose  ~library_map ~copy ();
   Format.close_box ()
 
 let install_command =
