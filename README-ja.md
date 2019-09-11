@@ -104,6 +104,20 @@ $ cp -r ~/.satyrographos/packages/*/* ~/.satysfi/dist
 
 加えて、 `-system-font-prefix <system-font-name-prefix>` が用いられると、 Satyrograph はシステムフォントの情報を `fc-list` コマンドを用いて得、インストールします。
 
+### 名前
+ライブラリ名は以下の形式に従って下さい。
+
+|種類|ライブラリ名|OPAMパッケージ名|
+|----|------------|----------|
+|クラスライブラリ|`class-*`|`satysfi-class-*`|
+|フォントライブラリ|`fonts-*`|`satysfi-fonts-*`|
+|他|`*`|`satysfi-*`|
+
+例
+- `class-stjarticle` `satysfi-class-stjarticle.opam`
+- `fonts-theano` `satysfi-fonts-theano.opam`
+- `zrbase` `satysfi-zrbase.opam`
+
 ### ライブラリの登録方法
 ライブラリは OPAM ライブラリとしてインストールする方法と、Satyrographos に直接登録する方法の二つがありますが、後者はまだ開発中です。
 
