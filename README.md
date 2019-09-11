@@ -123,6 +123,20 @@ $ cp -r ~/.satyrographos/packages/*/* ~/.satysfi/dist
 
 With `-system-font-prefix <system-font-name-prefix>`, Satyrograph query system fonts with `fc-list` and installs those fonts too.
 
+### Library Names
+Please follow the following formats.
+
+|Type|Library Name|OPAM Package Name|
+|----|------------|----------|
+|Class library|`class-*`|`satysfi-class-*`|
+|Font library|`fonts-*`|`satysfi-fonts-*`|
+|Etc.|`*`|`satysfi-*`|
+
+Examples:
+- `class-stjarticle` `satysfi-class-stjarticle.opam`
+- `fonts-theano` `satysfi-fonts-theano.opam`
+- `zrbase` `satysfi-zrbase.opam`
+
 ### Register Libraries
 You can add a new library for SATySFi as an OPAM library. (OPAM-independent managing is under development.)
 
