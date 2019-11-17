@@ -262,7 +262,7 @@ depends: [
   "satyrographos" {>= "0.0.2" & < "0.0.3"}
 
   # 対応するライブラリをここに書きましょう
-  "satysfi-great-library" {= "1.0"}
+  "satysfi-great-library" {= "%{version}%"}
 ]
 build: [
   ["satyrographos" "opam" "build"

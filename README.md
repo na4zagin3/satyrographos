@@ -254,12 +254,6 @@ install: [
    "-prefix" "%{prefix}%"
    "-script" "%{build}%/Satyristes"]
 ]
-remove: [
-  ["satyrographos" "opam" "uninstall"
-   "-name" "great-package"
-   "-prefix" "%{prefix}%"
-   "-script" "%{build}%/Satyristes"]
-]
 ```
 
 ```opam
@@ -283,7 +277,7 @@ depends: [
   "satysfi-lib-dist"
 
   # You may want to include the corresponding library
-  "satysfi-great-library" {= "1.0"}
+  "satysfi-great-library" {= "%{version}%"}
 ]
 build: [
   ["satyrographos" "opam" "build"
@@ -293,12 +287,6 @@ build: [
 ]
 install: [
   ["satyrographos" "opam" "install"
-   "-name" "great-package-doc"
-   "-prefix" "%{prefix}%"
-   "-script" "%{build}%/Satyristes"]
-]
-remove: [
-  ["satyrographos" "opam" "uninstall"
    "-name" "great-package-doc"
    "-prefix" "%{prefix}%"
    "-script" "%{build}%/Satyristes"]
