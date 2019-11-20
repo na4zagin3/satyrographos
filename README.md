@@ -236,7 +236,7 @@ Brilliant description comes here.
 """
 maintainer: "Your name <email@example.com>"
 authors: "Your name <email@example.com>"
-license: "LGPL-3+" # Choose what you want
+license: "LGPL-3.0-or-later" # Choose what you want
 homepage: "<product home page>"
 bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
@@ -267,7 +267,7 @@ Brilliant description comes here.
 """
 maintainer: "Your name <email@example.com>"
 authors: "Your name <email@example.com>"
-license: "LGPL-3+" # Choose what you want
+license: "LGPL-3.0-or-later" # Choose what you want
 homepage: "<product home page>"
 bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
@@ -292,6 +292,22 @@ install: [
    "-script" "%{build}%/Satyristes"]
 ]
 ```
+
+#### Development / Testing
+
+I assume your document files contain many use cases.
+You can install the package and build the document with the following command.
+
+```sh
+$ opam add  --verbose --yes "file://$PWD"
+
+OR
+
+$ opam add -vy "file://$PWD"
+```
+
+There’s ongoing ticket [#4](https://github.com/na4zagin3/satyrographos/issues/4) to run
+test cases without OPAM installation. Stay tuned!
 
 #### Register Satyrograpohs Repo
 `opam-publish` must work.

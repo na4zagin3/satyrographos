@@ -215,7 +215,7 @@ Brilliant description comes here.
 """
 maintainer: "Your name <email@example.com>"
 authors: "Your name <email@example.com>"
-license: "LGPL-3+" # お好きなライセンスを
+license: "LGPL-3.0-or-later" # お好きなライセンスを
 homepage: "<product home page>"
 bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
@@ -234,12 +234,6 @@ install: [
    "-prefix" "%{prefix}%"
    "-script" "%{build}%/Satyristes"]
 ]
-remove: [
-  ["satyrographos" "opam" "uninstall"
-   "-name" "great-package"
-   "-prefix" "%{prefix}%"
-   "-script" "%{build}%/Satyristes"]
-]
 ```
 
 ```opam
@@ -253,7 +247,7 @@ Brilliant description comes here.
 """
 maintainer: "Your name <email@example.com>"
 authors: "Your name <email@example.com>"
-license: "LGPL-3+" # お好きなライセンスを
+license: "LGPL-3.0-or-later" # お好きなライセンスを
 homepage: "<product home page>"
 bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
@@ -276,13 +270,20 @@ install: [
    "-prefix" "%{prefix}%"
    "-script" "%{build}%/Satyristes"]
 ]
-remove: [
-  ["satyrographos" "opam" "uninstall"
-   "-name" "great-package-doc"
-   "-prefix" "%{prefix}%"
-   "-script" "%{build}%/Satyristes"]
-]
 ```
+
+#### 開発・テスト方法
+
+大抵の場合、ドキュメントに使用方法が尽くされていることと思います。
+以下のコマンドを実行することで、パッケージのインストールからドキュメントのビルドまでを一括で行うことができます。
+
+```sh
+$ opam add  --verbose --yes "file://$PWD"
+又は
+$ opam add -vy "file://$PWD"
+```
+
+OPAMに頼らずテストを実行する方法については開発中（[#4](https://github.com/na4zagin3/satyrographos/issues/4)）です。
 
 #### Satyrograpohsレポへの登録
 https://opam.ocaml.org/doc/Packaging.html に従えば上手に行くはずです。
