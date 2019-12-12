@@ -222,7 +222,7 @@ dev-repo: "<repo url>"
 depends: [
   "satysfi" {>= "0.0.3" & < "0.0.4"}
   "satyrographos" {>= "0.0.2" & < "0.0.3"}
-  "satysfi-lib-dist"
+  "satysfi-dist"
 
   # もし他のライブラリに依存している場合にはここに記述して下さい
   "satysfi-fonts-theano" {>= "2.0+satysfi0.0.3+satyrograhos0.0.2"}
