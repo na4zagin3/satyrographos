@@ -1,6 +1,6 @@
 (executable
  (name main)
  (public_name satyrographos)
- (preprocess (pps ppx_deriving.std ppx_jane))
+ (preprocess (pps ppx_deriving.std ppx_jane -allow-unannotated-ignores))
  (libraries core satyrographos shexp.process uri)
  (modules setup compatibility commandInstall commandLibrary commandOpam commandPin commandStatus main))
