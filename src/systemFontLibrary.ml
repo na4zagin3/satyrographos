@@ -80,12 +80,12 @@ let font_to_json_and_hash prefix f =
   in
   match f with
     | `Single f ->
-      let value = `Assoc ["src", `String ("dist/" ^ filename f)] in
+      let value = `Assoc ["src", `String ("dist/" ^ filepath f)] in
       [(name f, `Variant ("Single", Some value)), (filepath f, f.file)]
     | `Collection fs ->
       List.map fs ~f:(fun f ->
         let value = `Assoc [
-          "src", `String ("dist/" ^ filename f);
+          "src", `String ("dist/" ^ filepath f);
           "index", `Int f.index
         ] in
         (name f, `Variant ("Collection", Some value)), (filepath f, f.file)
