@@ -38,9 +38,9 @@ let pin_add p url () =
   Printf.printf "Compatibility warning: Although currently Satyrographos simply copies the given directory,\n";
   Printf.printf "it will have a build script to control library installation, which is a breaking change.";
   let { repo; reg; } = read_repo () in
+  let (_: string list option) =
   Uri.of_string url
-  |> Repository.add repo p
-  |> ignore;
+  |> Repository.add repo p in
   Printf.printf "Added %s (%s)\n" p url;
   Registry.update_all reg
   |> [%derive.show: string list option]

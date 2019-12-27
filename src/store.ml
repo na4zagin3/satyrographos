@@ -55,7 +55,7 @@ let test_library_content ~expect reg p =
 
 let%test "store: initialize" = with_new_reg (fun _ -> true)
 let%test "store: list: empty" = with_new_reg begin fun reg ->
-    list reg = []
+    match list reg with [] -> true | _ :: _ -> false
   end
 let%test_unit "store: add empty dir" = with_new_reg begin fun reg ->
     let dir = Filename.temp_dir "Satyrographos" "Library" in
