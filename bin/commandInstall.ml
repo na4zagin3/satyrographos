@@ -161,7 +161,7 @@ let install_command =
     ~readme
     [%map_open
       let system_font_prefix = flag "system-font-prefix" (optional string) ~doc:"FONT_NAME_PREFIX Installing system fonts with names with the given prefix"
-      and library_list = flag "library" (listed string) ~doc:"LIBRARY Library"
+      and library_list = flag "library" (listed string) ~aliases:["l"] ~doc:"LIBRARY Library"
       and target_dir = anon (maybe_with_default default_target_dir ("DIR" %: string))
       and verbose = flag "verbose" no_arg ~doc:"Make verbose"
       and copy = flag "copy" no_arg ~doc:"Copy files instead of making symlinks"
