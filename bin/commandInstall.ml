@@ -59,7 +59,7 @@ let get_libraries ~maybe_reg ~reg_opam ~libraries =
   match Map.add required_libraries ~key:"dist" ~data:dist_library with
     | `Ok result -> result
     | `Duplicate ->
-      Format.printf "Overriding dist with user installed one";
+      Format.printf "Overriding dist with user installed one\n";
       required_libraries
 
 let show_compatibility_warnings ~libraries =
