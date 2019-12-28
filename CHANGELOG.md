@@ -6,9 +6,18 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.2.2] - 2019-12-28
+### Added
+- Add alias `-l` of `-library` option of `install` subcommand ([#74])
+- Support core v0.13 ([#70] by @xclerc & [#71])
+
+### Fixed
+- Fix filepath of installed system fonts ([#73] by @matonix)
+- Fix a message missing the line break ([#75])
+
 ## [v0.0.2.1] - 2019-09-11
 ### Added
-- Read SATYROGRAPHOS_DIR for Satyrographos registory ([#55])
+- Read SATYROGRAPHOS_DIR for Satyrographos registry ([#55])
 
 ### Changed
 - Stop writing `~/.satyrographos` unless it is required ([#57])
@@ -88,8 +97,14 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#51]: https://github.com/na4zagin3/satyrographos/pull/51
 [#55]: https://github.com/na4zagin3/satyrographos/pull/55
 [#57]: https://github.com/na4zagin3/satyrographos/pull/57
+[#70]: https://github.com/na4zagin3/satyrographos/pull/70
+[#71]: https://github.com/na4zagin3/satyrographos/pull/71
+[#73]: https://github.com/na4zagin3/satyrographos/pull/73
+[#74]: https://github.com/na4zagin3/satyrographos/pull/74
+[#75]: https://github.com/na4zagin3/satyrographos/pull/75
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.1...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.2...HEAD
+[v0.0.2.1]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.1...v0.0.2.2
 [v0.0.2.1]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.0...v0.0.2.1
 [v0.0.2.0]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.7...v0.0.2.0
 [v0.0.1.7]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.6...v0.0.1.7
