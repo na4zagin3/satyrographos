@@ -34,11 +34,6 @@ let initialize () =
     SatyrographosDirs.mark_scheme_version root_dir scheme_version
   end
 
-type repo = {
-  repo: Repository.t;
-  reg: Registry.t;
-}
-
 let reg_opam =
   SatysfiDirs.opam_share_dir ()
   |> Option.map ~f:(fun opam_share_dir ->
@@ -53,7 +48,7 @@ let try_read_repo () =
     let repo = Repository.read repository_dir metadata_file in
     (* Binary registry *)
     let reg = Registry.read library_dir repo metadata_file in
-    Some { repo; reg }
+    Some (Environment.{ repo; reg })
   end
 
 let read_repo () =
@@ -67,3 +62,8 @@ let default_target_dir =
   Sys.getenv "SATYSFI_RUNTIME"
   |> Option.value ~default:(Filename.concat home_dir ".satysfi")
   |> (fun dir -> Filename.concat dir "dist")
+
+let read_environment () =
+  let repo = try_read_repo () in
+  Environment.{ repo; opam_reg = reg_opam }
+

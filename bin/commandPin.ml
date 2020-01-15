@@ -1,11 +1,10 @@
 open Satyrographos
 open Core
 
-open Setup
 
 let pin_list () =
   Compatibility.optin ();
-  let { repo; reg=_; } = read_repo () in
+  let Environment.{ repo; reg=_; } = Setup.read_repo () in
   [%derive.show: string list] (Repository.list repo) |> print_endline
 let pin_list_command =
   let open Command.Let_syntax in
@@ -20,7 +19,7 @@ let pin_list_command =
 
 let pin_dir p () =
   Compatibility.optin ();
-  let { repo; reg=_; } = read_repo () in
+  let Environment.{ repo; reg=_; } = Setup.read_repo () in
   Repository.directory repo p |> print_endline
 let pin_dir_command =
   let open Command.Let_syntax in
@@ -37,7 +36,7 @@ let pin_add p url () =
   Compatibility.optin ();
   Printf.printf "Compatibility warning: Although currently Satyrographos simply copies the given directory,\n";
   Printf.printf "it will have a build script to control library installation, which is a breaking change.";
-  let { repo; reg; } = read_repo () in
+  let Environment.{ repo; reg; } = Setup.read_repo () in
   let (_: string list option) =
   Uri.of_string url
   |> Repository.add repo p in
@@ -59,7 +58,7 @@ let pin_add_command =
 
 let pin_remove p () =
   Compatibility.optin ();
-  let { repo; reg=_; } = read_repo () in
+  let Environment.{ repo; reg=_; } = Setup.read_repo () in
   (* TODO remove the library *)
   Repository.remove repo p;
   Printf.printf "Removed %s\n" p

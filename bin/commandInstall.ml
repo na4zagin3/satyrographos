@@ -1,8 +1,6 @@
 open Satyrographos
 open Core
 
-open Setup
-
 module StringSet = Set.Make(String)
 
 (* TODO Abstract this *)
@@ -22,7 +20,7 @@ let transitive_closure map =
 
 
 (* TODO Install transitive dependencies *)
-let get_libraries ~maybe_reg ~reg_opam ~libraries =
+let get_libraries ~maybe_reg ~opam_reg ~libraries =
   let dist_library_dir = SatysfiDirs.satysfi_dist_dir () in
   Format.printf "Reading runtime dist: %s\n" dist_library_dir;
   let dist_library = Library.read_dir dist_library_dir in
@@ -33,7 +31,7 @@ let get_libraries ~maybe_reg ~reg_opam ~libraries =
   Format.printf "Read user libraries: %s\n"
     (Option.value_map ~default:[] ~f:Map.keys user_libraries
     |> [%sexp_of: string list] |> Sexp.to_string_hum);
-  let opam_libraries = match reg_opam with
+  let opam_libraries = match opam_reg with
     | None -> StringSet.to_map StringSet.empty ~f:ident
     | Some reg_opam ->
         OpamSatysfiRegistry.list reg_opam
@@ -116,10 +114,10 @@ let install_libraries d ~library_map  ~verbose ~copy () =
   end
 
 
-let install d ~system_font_prefix ~libraries ~verbose ~copy () =
+let install d ~system_font_prefix ~libraries ~verbose ~copy ~(env: Environment.t) () =
   (* TODO build all *)
   Format.open_vbox 0;
-  let maybe_repo = try_read_repo () in
+  let maybe_repo = env.repo in
   Option.iter maybe_repo ~f:(fun {repo; reg} ->
     Format.printf "Updating libraries@,";
     begin match Repository.update_all repo with
@@ -140,7 +138,7 @@ let install d ~system_font_prefix ~libraries ~verbose ~copy () =
       Format.printf "No libraries built@,"
     end);
   let maybe_reg = Option.map maybe_repo ~f:(fun p -> p.reg) in
-  let library_map = get_libraries ~maybe_reg ~reg_opam ~libraries in
+  let library_map = get_libraries ~maybe_reg ~opam_reg:env.opam_reg ~libraries in
   let library_map = match system_font_prefix with
     | None -> Format.printf "Not gathering system fonts\n"; library_map
     | Some(prefix) ->
@@ -153,6 +151,7 @@ let install d ~system_font_prefix ~libraries ~verbose ~copy () =
 
 let install_command =
   let open Command.Let_syntax in
+  let default_target_dir = Setup.default_target_dir in
   let readme () =
     sprintf "Install SATySFi Libraries to a directory environmental variable SATYSFI_RUNTIME has or %s. Currently it accepts an argument DIR, but this is experimental." default_target_dir
   in
@@ -170,5 +169,6 @@ let install_command =
         let libraries = match library_list with
           | [] -> None
           | xs -> Some xs in
-        install target_dir ~system_font_prefix ~libraries ~verbose ~copy ()
+        let env = Setup.read_environment () in
+        install target_dir ~system_font_prefix ~libraries ~verbose ~copy ~env ()
     ]

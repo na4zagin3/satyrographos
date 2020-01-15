@@ -52,7 +52,7 @@ let run_build_commands ~verbose ~libraries ~workingDir buildCommands =
       let satysfi_dist = Filename.concat satysfi_runtime "dist" in
       return (Library.mark_managed_dir satysfi_dist;) >>
       return (
-        let library_map = CommandInstall.get_libraries ~maybe_reg:None ~reg_opam:Setup.reg_opam ~libraries in
+        let library_map = CommandInstall.get_libraries ~maybe_reg:None ~opam_reg:Setup.reg_opam ~libraries in
         CommandInstall.install_libraries satysfi_dist ~library_map ~verbose ~copy:false ()) >>
       c satysfi_runtime
     in

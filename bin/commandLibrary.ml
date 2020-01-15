@@ -1,7 +1,6 @@
 open Satyrographos
 open Core
 
-open Setup
 
 
 let library_show_command_g p_show =
@@ -27,8 +26,8 @@ let library_list_command_g p_list =
 
 let library_list () =
   Compatibility.optin ();
-  match try_read_repo () with
-  | Some { repo=_; reg; } ->
+  match Setup.try_read_repo () with
+  | Some Environment.{ repo=_; reg; } ->
     [%derive.show: string list] (Registry.list reg) |> print_endline
   | None -> printf "No libraries"
   let library_list_command =
@@ -36,7 +35,7 @@ let library_list () =
 
 let library_show p () =
   Compatibility.optin ();
-  let { repo=_; reg; } = read_repo () in
+  let Environment.{ repo=_; reg; } = Setup.read_repo () in
   Registry.directory reg p
     |> Library.read_dir
     |> [%sexp_of: Library.t]
@@ -54,7 +53,7 @@ let library_command =
 
 let library_opam_list () =
   Compatibility.optin ();
-  Option.iter reg_opam ~f:(fun reg_opam ->
+  Option.iter Setup.reg_opam ~f:(fun reg_opam ->
     [%derive.show: string list] (OpamSatysfiRegistry.list reg_opam) |> print_endline
   )
 let library_opam_list_command =
@@ -62,7 +61,7 @@ let library_opam_list_command =
 
 let library_opam_show p () =
   Compatibility.optin ();
-  Option.iter reg_opam ~f:(fun reg_opam ->
+  Option.iter Setup.reg_opam ~f:(fun reg_opam ->
     OpamSatysfiRegistry.directory reg_opam p
       |> Library.read_dir
       |> [%sexp_of: Library.t]
