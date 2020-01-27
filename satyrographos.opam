@@ -19,7 +19,11 @@ run-test: [
 
 depends: [
   "ocaml" {>= "4.06.0"}
-  "dune" {>= "1.4"}
+  (
+    "dune" {>= "1.11"} & "ocaml" {>= "4.07.0"}
+  | (* ppx_inline_test v0.11 requires dune 1 *)
+    "dune" {>= "1.11" & < "2" } & "ocaml" {< "4.07.0"}
+  )
   "fileutils"
   "json-derivers"
   "ppx_deriving"
