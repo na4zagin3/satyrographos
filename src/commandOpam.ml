@@ -9,13 +9,13 @@ let library_dir prefix (buildscript: BuildScript.m) =
   let libdir = Filename.concat prefix "share/satysfi" in
   Filename.concat libdir (BuildScript.get_name buildscript)
 
-let read_module ~verbose ~build_module ~buildscript_path =
+let read_module ~outf ~verbose ~build_module ~buildscript_path =
   let src_dir = Filename.dirname buildscript_path in
   let p = BuildScript.read_module ~src_dir build_module in
   if verbose
-  then begin Format.printf "Read library:@.";
-    [%sexp_of: Library.t] p |> Sexp.pp_hum Format.std_formatter;
-    Format.printf "@."
+  then begin Format.fprintf outf "Read library:@.";
+    [%sexp_of: Library.t] p |> Sexp.pp_hum outf;
+    Format.fprintf outf "@."
   end;
   (src_dir, p)
 
@@ -35,7 +35,7 @@ let assert_satysfi_option_C dir =
   assert_satysfi_option ~message:"satysfi.0.0.3+dev2019.02.27 and newer is required in order to build library docs."
     ["-C"; dir]
 
-let run_build_commands ~verbose ~libraries ~workingDir ~opam_reg buildCommands =
+let run_build_commands ~outf ~verbose ~libraries ~workingDir ~opam_reg buildCommands =
   let open P in
   let open P.Infix in
   let commands satysfi_runtime = P.List.iter buildCommands ~f:(function
@@ -47,20 +47,20 @@ let run_build_commands ~verbose ~libraries ~workingDir ~opam_reg buildCommands =
   ) in
   let with_env c =
     let c satysfi_runtime =
-      return (Format.printf "Setting up SATySFi env at %s @." satysfi_runtime;) >>
+      return (Format.fprintf outf "Setting up SATySFi env at %s @." satysfi_runtime;) >>
       let satysfi_dist = Filename.concat satysfi_runtime "dist" in
       return (Library.mark_managed_dir satysfi_dist;) >>
       return (
-        let library_map = CommandInstall.get_libraries ~maybe_reg:None ~opam_reg ~libraries in
-        CommandInstall.install_libraries satysfi_dist ~library_map ~verbose ~copy:false ()) >>
+        let library_map = CommandInstall.get_libraries ~outf ~maybe_reg:None ~opam_reg ~libraries in
+        CommandInstall.install_libraries satysfi_dist ~outf ~library_map ~verbose ~copy:false ()) >>
       c satysfi_runtime
     in
     with_temp_dir ~prefix:"Satyrographos" ~suffix:"build_opam" c
   in
   P.(chdir workingDir (with_env commands))
 
-let build_opam ~verbose ~prefix:_ ~build_module ~buildscript_path ~opam_reg =
-  let src_dir, p = read_module ~verbose ~build_module ~buildscript_path in
+let build_opam ~outf ~verbose ~prefix:_ ~build_module ~buildscript_path ~opam_reg =
+  let src_dir, p = read_module ~outf ~verbose ~build_module ~buildscript_path in
 
   match build_module with
   | BuildScript.LibraryDoc build_module ->
@@ -68,38 +68,38 @@ let build_opam ~verbose ~prefix:_ ~build_module ~buildscript_path ~opam_reg =
     let workingDir = Filename.concat src_dir build_module.workingDirectory in
     let libraries = Library.Dependency.to_list p.dependencies |> Some in
     let _, trace =
-      run_build_commands ~verbose ~workingDir ~libraries ~opam_reg build_module.build
+      run_build_commands ~outf ~verbose ~workingDir ~libraries ~opam_reg build_module.build
       |> P.Traced.eval_exn ~context in
     if verbose
-    then begin Format.printf "Executed commands:@.";
+    then begin Format.fprintf outf "Executed commands:@.";
       Sexp.pp_hum_indent 2 Format.std_formatter trace;
-      Format.printf "@."
+      Format.fprintf outf "@."
     end
   | BuildScript.Library _ ->
-    Format.printf "Building modules is not yet supported"
+    Format.fprintf outf "Building modules is not yet supported"
 
-let install_opam ~verbose ~prefix ~build_module ~buildscript_path ~opam_reg:_ =
-  let _, p = read_module ~verbose ~build_module ~buildscript_path in
+let install_opam ~outf ~verbose ~prefix ~build_module ~buildscript_path ~opam_reg:_ =
+  let _, p = read_module ~outf ~verbose ~build_module ~buildscript_path in
   let dir = library_dir prefix build_module in
-  Library.write_dir ~verbose ~symlink:false dir p
+  Library.write_dir ~outf ~verbose ~symlink:false dir p
 
-let uninstall_opam ~verbose:_ ~prefix ~build_module ~buildscript_path:_ ~opam_reg:_ =
+let uninstall_opam ~outf:_ ~verbose:_ ~prefix ~build_module ~buildscript_path:_ ~opam_reg:_ =
   let dir = library_dir prefix build_module in
   FileUtil.(rm ~force:Force ~recurse:true [dir])
 
-let buildfile ~process f () =
+let buildfile ~outf ~process f () =
   let s = BuildScript.from_file f in
-  Format.printf "Build file:@.";
-  s |> [%sexp_of: BuildScript.t] |> Sexp.pp_hum Format.std_formatter;
-  Format.printf "@.";
+  Format.fprintf outf "Build file:@.";
+  s |> [%sexp_of: BuildScript.t] |> Sexp.pp_hum outf;
+  Format.fprintf outf "@.";
   if process
   then
     let src_dir = Filename.dirname f in
     Map.iteri s ~f:(fun ~key ~data ->
-      Format.printf "Library %s:@." key;
+      Format.fprintf outf "Library %s:@." key;
       BuildScript.read_module ~src_dir data
-      |> [%sexp_of: Library.t] |> Sexp.pp_hum Format.std_formatter;
-      Format.printf "@.";)
+      |> [%sexp_of: Library.t] |> Sexp.pp_hum outf;
+      Format.fprintf outf "@.";)
 
 
 let export f () =

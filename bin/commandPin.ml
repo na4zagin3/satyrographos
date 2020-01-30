@@ -1,6 +1,7 @@
 open Satyrographos
 open Core
 
+let outf = Format.std_formatter
 
 let pin_list () =
   Compatibility.optin ();
@@ -39,9 +40,9 @@ let pin_add p url () =
   let Environment.{ repo; reg; } = Setup.read_repo () in
   let (_: string list option) =
   Uri.of_string url
-  |> Repository.add repo p in
+  |> Repository.add ~outf repo p in
   Printf.printf "Added %s (%s)\n" p url;
-  Registry.update_all reg
+  Registry.update_all ~outf reg
   |> [%derive.show: string list option]
   |> Printf.printf "Built libraries: %s\n"
 let pin_add_command =

@@ -23,5 +23,5 @@ let install_command =
           | [] -> None
           | xs -> Some xs in
         let env = Setup.read_environment () in
-        CommandInstall.install target_dir ~system_font_prefix ~libraries ~verbose ~copy ~env ()
+        CommandInstall.install target_dir ~outf:Format.std_formatter ~system_font_prefix ~libraries ~verbose ~copy ~env ()
     ]

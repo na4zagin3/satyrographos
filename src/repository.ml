@@ -30,7 +30,7 @@ let add_dir reg name dir =
     url = uri;
   }
 
-let update reg name =
+let update ~outf reg name =
   match Metadata.find reg.metadata name with
   | None -> failwith (Printf.sprintf "Library %s is not found" name)
   | Some metadata -> begin match Uri.scheme metadata.url with
@@ -39,7 +39,7 @@ let update reg name =
       let library = Library.read_dir dir in
       Library.to_string library |> print_endline;
       Store.remove reg.cache name;
-      Store.add_library reg.cache name library
+      Store.add_library ~outf reg.cache name library
     | None ->
       failwith (Printf.sprintf "BUG: URL scheme of library %s is unknown." name)
     | Some s ->
@@ -47,25 +47,24 @@ let update reg name =
   end
 
 (* TODO build only obsoleted libraries *)
-let update_all reg =
+let update_all ~outf reg =
   let updated_libraries = list reg in
-  List.iter ~f:(update reg) updated_libraries;
+  List.iter ~f:(update ~outf reg) updated_libraries;
   Some updated_libraries
 
 (* Advanced operations *)
 (* TODO Implement lock *)
-let add reg name uri =
+let add ~outf reg name uri =
   if Metadata.mem reg.metadata name
   then failwith (Printf.sprintf "%s is already registered." name)
   else begin match Uri.scheme uri with
     | None | Some "file" ->
       let path = Uri.path uri in
-      Printf.printf "Installing %s.\n" path;
       add_dir reg name path
     | Some s ->
       failwith (Printf.sprintf "Unknown scheme %s." s)
   end;
-  update_all reg
+  update_all ~outf reg
 
 let gc reg =
   let current_libraries = list reg |> StringSet.of_list in

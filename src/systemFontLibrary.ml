@@ -43,7 +43,7 @@ let fc_format_data =
 
 module DistinctFontMap = Map.Make(DistinctFont)
 
-let font_list () =
+let font_list ~outf =
   Printf.sprintf "fc-list -f '%s'" fc_format_data (* TODO escape quotes *)
   |> Unix.open_process_in
   |> In_channel.input_all
@@ -56,7 +56,7 @@ let font_list () =
       let sf1 = [%sexp_of: Font.t] f1 |> Sexp.to_string in
       let sf2 = [%sexp_of: Font.t] f2 |> Sexp.to_string in
       begin if not ([%compare.equal: Font.t] f1 f2)
-        then Printf.printf "WARNING: the following fonts look the same.\n%s\n%s\n\n" sf1 sf2
+        then Format.fprintf outf "WARNING: the following fonts look the same.\n%s\n%s\n@." sf1 sf2
       end;
       f1
     )
@@ -91,7 +91,7 @@ let font_to_json_and_hash prefix f =
         (name f, `Variant ("Collection", Some value)), (filepath f, f.file)
       )
 
-let fonts_to_library prefix fonts =
+let fonts_to_library ~outf prefix fonts =
   let add_variant = function
     | [] -> failwith "BUG: fonts_to_library"
     | [f] -> `Single f
@@ -111,11 +111,11 @@ let fonts_to_library prefix fonts =
     hashes = LibraryFiles.singleton hash_filename_fonts ([hash_path_fonts], `Assoc hash);
     files = LibraryFiles.of_alist_reduce files ~f:(fun f1 f2 ->
       begin if not (String.equal f1 f2)
-        then Printf.printf "WARNING: %s and %s have conflicting filename.\n" f1 f2
+        then Format.fprintf outf "WARNING: %s and %s have conflicting filename.@." f1 f2
       end;
       f1
     );
   }
 
-let get_library prefix () =
-  font_list () |> fonts_to_library prefix
+let get_library ~outf prefix () =
+  font_list ~outf |> fonts_to_library ~outf prefix
