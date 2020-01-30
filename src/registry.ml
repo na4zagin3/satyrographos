@@ -23,7 +23,7 @@ let remove_multiple reg names =
 let remove reg name =
   remove_multiple reg [name]
 
-let build_library reg name =
+let build_library ~outf reg name =
   match Metadata.mem reg.metadata name with
   | false -> failwith (Printf.sprintf "Library %s is not found" name)
   | true ->
@@ -32,12 +32,12 @@ let build_library reg name =
     let library = Library.read_dir dir in
     Library.to_string library |> print_endline;
     Store.remove reg.registry name;
-    Store.add_library reg.registry name library
+    Store.add_library ~outf reg.registry name library
 
 (* TODO build only obsoleted libraries *)
-let update_all reg =
+let update_all ~outf reg =
   let updated_libraries = list reg in
-  List.iter ~f:(build_library reg) updated_libraries;
+  List.iter ~f:(build_library ~outf reg) updated_libraries;
   Some updated_libraries
 
 (* Advanced operations *)

@@ -6,11 +6,15 @@ module P = Process
 
 module StringMap = Map.Make(String)
 
+let outf = Format.std_formatter
+
+
 let default_script_path () =
   Filename.concat (FileUtil.pwd ()) "Satyristes"
 
 let opam_with_build_module_command ~prefix_optionality f =
   let open Command.Let_syntax in
+  let outf = Format.std_formatter in
   Command.basic
     ~summary:"Install module into OPAM registory (experimental)"
     [%map_open
@@ -26,12 +30,12 @@ let opam_with_build_module_command ~prefix_optionality f =
         | None -> begin
           if StringMap.length builsscript = 1
           then let build_module = StringMap.nth_exn builsscript 0 |> snd in
-            f ~verbose ~prefix ~build_module ~buildscript_path ~opam_reg:Setup.reg_opam
+            f ~outf ~verbose ~prefix ~build_module ~buildscript_path ~opam_reg:Setup.reg_opam
           else failwith "Please specify module name with -name option"
         end
         | Some name ->
           match StringMap.find builsscript name with
-            | Some build_module -> f ~verbose ~prefix ~build_module ~buildscript_path ~opam_reg:Setup.reg_opam
+            | Some build_module -> f ~outf ~verbose ~prefix ~build_module ~buildscript_path ~opam_reg:Setup.reg_opam
             | _ ->
               failwithf "Build file does not contains library %s" name ()
     ]
@@ -55,7 +59,7 @@ let opam_buildfile_command =
       in
       fun () ->
         Compatibility.optin ();
-        CommandOpam.buildfile ~process f ()
+        CommandOpam.buildfile ~outf:Format.std_formatter ~process f ()
     ]
 
 let opam_export_command =

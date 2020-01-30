@@ -2,6 +2,8 @@ open Satyrographos
 open Core
 
 
+let outf = Format.std_formatter
+
 let status () =
   printf "Scheme version: ";
   [%derive.show: int option] Setup.current_scheme_version |> print_endline;
@@ -14,7 +16,7 @@ let status () =
   [%derive.show: string list] (SatysfiDirs.runtime_dirs ()) |> print_endline;
   printf "SATySFi user directory: ";
   [%derive.show: string option] (SatysfiDirs.user_dir ()) |> print_endline;
-  printf "Selected SATySFi runtime distribution: %s\n" (SatysfiDirs.satysfi_dist_dir ())
+  printf "Selected SATySFi runtime distribution: %s\n" (SatysfiDirs.satysfi_dist_dir ~outf)
 
 let status_command =
   let open Command.Let_syntax in

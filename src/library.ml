@@ -111,22 +111,22 @@ let validate p =
   |> LibraryFiles.data
   |> List.concat
 
-let normalize_hash = function
+let normalize_hash ~outf = function
   | (`Assoc a) ->
     let map = StringMap.of_alist_reduce a ~f:(fun v1 v2 ->
-      Printf.printf "WARNING: Conflict values. Choosing first.\n%s\n%s\n\n"
+      Format.fprintf outf "WARNING: Conflict values. Choosing first.\n%s\n%s\n@."
         (Json.to_string v1)
         (Json.to_string v2);
       v1
     ) in
     `Assoc (StringMap.to_alist map)
   | j ->
-    Printf.printf "Invalid value: %s\n\n"
+    Format.fprintf outf "Invalid value: %s\n@."
         (Json.to_string j);
       j
 
-let normalize p = {
-  hashes = LibraryFiles.map p.hashes ~f:(fun (paths, json) -> paths, normalize_hash json);
+let normalize p ~outf = {
+  hashes = LibraryFiles.map p.hashes ~f:(fun (paths, json) -> paths, normalize_hash ~outf json);
   files = p.files;
   compatibility = p.compatibility;
   dependencies = p.dependencies;
@@ -218,8 +218,8 @@ let read_dir d =
   then FileUtil.(find ~follow:Follow Is_file d add empty)
   else failwith (d ^ " is not a library directory")
 
-let write_dir ?(verbose=false) ?(symlink=false) d p =
-  let p = normalize p in
+let write_dir ?(verbose=false) ?(symlink=false) ~outf d p =
+  let p = normalize ~outf p in
   FileUtil.mkdir ~parent:true d;
   LibraryFiles.iteri ~f:(fun ~key:path ~data:fullpath ->
     let file_dst = FilePath.concat d path in
@@ -228,7 +228,7 @@ let write_dir ?(verbose=false) ?(symlink=false) d p =
       else "Copying"
     in
     begin if verbose
-      then Printf.printf "%s %s to %s\n" action fullpath file_dst
+      then Format.fprintf outf "%s %s to %s@." action fullpath file_dst
     end;
     FileUtil.mkdir ~parent:true (FilePath.dirname file_dst);
     if symlink
@@ -244,7 +244,7 @@ let write_dir ?(verbose=false) ?(symlink=false) d p =
   LibraryFiles.iteri ~f:(fun ~key:path ~data:(_, h) ->
     let file_dst = FilePath.concat d path in
     begin if verbose
-      then Printf.printf "Generating %s\n" file_dst
+      then Format.fprintf outf "Generating %s@." file_dst
     end;
     FileUtil.mkdir ~parent:true (FilePath.dirname file_dst);
     Json.to_file file_dst h
