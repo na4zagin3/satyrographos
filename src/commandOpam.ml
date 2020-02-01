@@ -35,7 +35,7 @@ let assert_satysfi_option_C dir =
   assert_satysfi_option ~message:"satysfi.0.0.3+dev2019.02.27 and newer is required in order to build library docs."
     ["-C"; dir]
 
-let run_build_commands ~outf ~verbose ~libraries ~workingDir ~opam_reg buildCommands =
+let run_build_commands ~outf ~verbose ~libraries ~workingDir ~env buildCommands =
   let open P in
   let open P.Infix in
   let commands satysfi_runtime = P.List.iter buildCommands ~f:(function
@@ -51,7 +51,7 @@ let run_build_commands ~outf ~verbose ~libraries ~workingDir ~opam_reg buildComm
       let satysfi_dist = Filename.concat satysfi_runtime "dist" in
       return (Library.mark_managed_dir satysfi_dist;) >>
       return (
-        let library_map = CommandInstall.get_libraries ~outf ~maybe_reg:None ~opam_reg ~libraries in
+        let library_map = CommandInstall.get_libraries ~outf ~maybe_reg:None ~env ~libraries in
         CommandInstall.install_libraries satysfi_dist ~outf ~library_map ~verbose ~copy:false ()) >>
       c satysfi_runtime
     in
@@ -59,7 +59,7 @@ let run_build_commands ~outf ~verbose ~libraries ~workingDir ~opam_reg buildComm
   in
   P.(chdir workingDir (with_env commands))
 
-let build_opam ~outf ~verbose ~prefix:_ ~build_module ~buildscript_path ~opam_reg =
+let build_opam ~outf ~verbose ~prefix:_ ~build_module ~buildscript_path ~env =
   let src_dir, p = read_module ~outf ~verbose ~build_module ~buildscript_path in
 
   match build_module with
@@ -68,7 +68,7 @@ let build_opam ~outf ~verbose ~prefix:_ ~build_module ~buildscript_path ~opam_re
     let workingDir = Filename.concat src_dir build_module.workingDirectory in
     let libraries = Library.Dependency.to_list p.dependencies |> Some in
     let _, trace =
-      run_build_commands ~outf ~verbose ~workingDir ~libraries ~opam_reg build_module.build
+      run_build_commands ~outf ~verbose ~workingDir ~libraries ~env build_module.build
       |> P.Traced.eval_exn ~context in
     if verbose
     then begin Format.fprintf outf "Executed commands:@.";
@@ -78,12 +78,12 @@ let build_opam ~outf ~verbose ~prefix:_ ~build_module ~buildscript_path ~opam_re
   | BuildScript.Library _ ->
     Format.fprintf outf "Building modules is not yet supported"
 
-let install_opam ~outf ~verbose ~prefix ~build_module ~buildscript_path ~opam_reg:_ =
+let install_opam ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env:_ =
   let _, p = read_module ~outf ~verbose ~build_module ~buildscript_path in
   let dir = library_dir prefix build_module in
   Library.write_dir ~outf ~verbose ~symlink:false dir p
 
-let uninstall_opam ~outf:_ ~verbose:_ ~prefix ~build_module ~buildscript_path:_ ~opam_reg:_ =
+let uninstall_opam ~outf:_ ~verbose:_ ~prefix ~build_module ~buildscript_path:_ ~env:_ =
   let dir = library_dir prefix build_module in
   FileUtil.(rm ~force:Force ~recurse:true [dir])
 

@@ -16,7 +16,8 @@ let status () =
   [%derive.show: string list] (SatysfiDirs.runtime_dirs ()) |> print_endline;
   printf "SATySFi user directory: ";
   [%derive.show: string option] (SatysfiDirs.user_dir ()) |> print_endline;
-  printf "Selected SATySFi runtime distribution: %s\n" (SatysfiDirs.satysfi_dist_dir ~outf)
+  [%derive.show: string option] (SatysfiDirs.satysfi_dist_dir ~outf)
+  |> printf "Selected SATySFi runtime distribution: %s\n"
 
 let status_command =
   let open Command.Let_syntax in

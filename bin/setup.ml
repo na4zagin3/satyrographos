@@ -65,5 +65,6 @@ let default_target_dir =
 
 let read_environment () =
   let repo = try_read_repo () in
-  Environment.{ repo; opam_reg = reg_opam }
+  let dist_library_dir = SatysfiDirs.satysfi_dist_dir ~outf:Format.std_formatter in
+  Environment.{ repo; opam_reg = reg_opam; dist_library_dir }
 

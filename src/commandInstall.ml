@@ -19,8 +19,9 @@ let transitive_closure map =
 
 
 (* TODO Install transitive dependencies *)
-let get_libraries ~outf ~maybe_reg ~opam_reg ~libraries =
-  let dist_library_dir = SatysfiDirs.satysfi_dist_dir ~outf in
+let get_libraries ~outf ~maybe_reg ~(env: Environment.t) ~libraries =
+  let dist_library_dir = Option.value_exn ~message:"SATySFi dist directory is not found. Please run opam install satysfi-dist" env.dist_library_dir in
+  let opam_reg = env.opam_reg in
   Format.fprintf outf "Reading runtime dist: %s\n" dist_library_dir;
   let dist_library = Library.read_dir dist_library_dir in
   let user_libraries = Option.map maybe_reg ~f:(fun reg -> Registry.list reg
@@ -137,7 +138,7 @@ let install d ~outf ~system_font_prefix ~libraries ~verbose ~copy ~(env: Environ
       Format.fprintf outf "No libraries built@,"
     end);
   let maybe_reg = Option.map maybe_repo ~f:(fun p -> p.reg) in
-  let library_map = get_libraries ~outf ~maybe_reg ~opam_reg:env.opam_reg ~libraries in
+  let library_map = get_libraries ~outf ~maybe_reg ~env ~libraries in
   let library_map = match system_font_prefix with
     | None -> Format.fprintf outf "Not gathering system fonts\n"; library_map
     | Some(prefix) ->
