@@ -1,0 +1,10 @@
+(tests
+ (names
+   install__emptyDist
+   install__missingDist
+   install__onlyDist
+   install__unmanagedDirAlreadyExists
+ )
+ (preprocess (pps ppx_deriving.std ppx_jane))
+ (libraries core satyrographos shexp.process uri)
+ )

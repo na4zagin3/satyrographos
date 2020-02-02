@@ -1,0 +1,21 @@
+Installing packages
+------------------------------------------------------------
+Reading runtime dist: @@temp_dir@@/empty_dist
+Read user libraries: ()
+Reading opam libraries: ()
+Not gathering system fonts
+Installing libraries: (dist)
+Removing destination @@dest_dir@@/dest
+Loaded libraries
+(((name ()) (version ())))Installing ((name ()) (version ()))
+Installation completed!
+------------------------------------------------------------
+@@dest_dir@@
+@@dest_dir@@/dest
+@@dest_dir@@/dest/metadata
+@@dest_dir@@/dest/.satyrographos
+------------------------------------------------------------
+diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
+0a1,2
+> ((version 1) (libraryName "") (libraryVersion "") (compatibility ())
+>  (dependencies ()))

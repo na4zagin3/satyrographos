@@ -1,0 +1,72 @@
+Installing packages
+------------------------------------------------------------
+Reading runtime dist: @@temp_dir@@/simple_dist
+Read user libraries: ()
+Reading opam libraries: ()
+Not gathering system fonts
+Installing libraries: (dist)
+Removing destination @@dest_dir@@/dest
+Loaded libraries
+(((name ()) (version ())
+  (hashes
+   ((hash/fonts.satysfi-hash
+     ((@@temp_dir@@/simple_dist/hash/fonts.satysfi-hash)
+      (Assoc
+       ((Junicode
+         (Variant
+          (Single ((Assoc ((src (String dist/fonts/Junicode.ttf))))))))))))))
+  (files
+   ((fonts/Junicode.ttf
+     @@temp_dir@@/simple_dist/fonts/Junicode.ttf)
+    (packages/List.satyg
+     @@temp_dir@@/simple_dist/packages/List.satyg)
+    (unidata/UnicodeData.txt
+     @@temp_dir@@/simple_dist/unidata/UnicodeData.txt)))))Installing ((name ()) (version ())
+ (hashes
+  ((hash/fonts.satysfi-hash
+    ((@@temp_dir@@/simple_dist/hash/fonts.satysfi-hash)
+     (Assoc
+      ((Junicode
+        (Variant (Single ((Assoc ((src (String dist/fonts/Junicode.ttf))))))))))))))
+ (files
+  ((fonts/Junicode.ttf
+    @@temp_dir@@/simple_dist/fonts/Junicode.ttf)
+   (packages/List.satyg
+    @@temp_dir@@/simple_dist/packages/List.satyg)
+   (unidata/UnicodeData.txt
+    @@temp_dir@@/simple_dist/unidata/UnicodeData.txt))))
+Installation completed!
+------------------------------------------------------------
+@@dest_dir@@
+@@dest_dir@@/dest
+@@dest_dir@@/dest/metadata
+@@dest_dir@@/dest/hash
+@@dest_dir@@/dest/hash/fonts.satysfi-hash
+@@dest_dir@@/dest/unidata
+@@dest_dir@@/dest/unidata/UnicodeData.txt
+@@dest_dir@@/dest/packages
+@@dest_dir@@/dest/packages/List.satyg
+@@dest_dir@@/dest/fonts
+@@dest_dir@@/dest/fonts/Junicode.ttf
+@@dest_dir@@/dest/.satyrographos
+------------------------------------------------------------
+diff -Nr @@empty_dir@@/dest/fonts/Junicode.ttf @@dest_dir@@/dest/fonts/Junicode.ttf
+0a1
+> @@Junicode.ttf@@
+diff -Nr @@empty_dir@@/dest/hash/fonts.satysfi-hash @@dest_dir@@/dest/hash/fonts.satysfi-hash
+0a1
+> {"Junicode":<"Single":{"src":"dist/fonts/Junicode.ttf"}>}
+\ No newline at end of file
+diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
+0a1,2
+> ((version 1) (libraryName "") (libraryVersion "") (compatibility ())
+>  (dependencies ()))
+diff -Nr @@empty_dir@@/dest/packages/List.satyg @@dest_dir@@/dest/packages/List.satyg
+0a1,2
+> @stage: persistent
+> module List = struct end
+diff -Nr @@empty_dir@@/dest/unidata/UnicodeData.txt @@dest_dir@@/dest/unidata/UnicodeData.txt
+0a1,3
+> 0000;<control>;Cc;0;BN;;;;;N;NULL;;;;
+> 0001;<control>;Cc;0;BN;;;;;N;START OF HEADING;;;;
+> 0002;<control>;Cc;0;BN;;;;;N;START OF TEXT;;;;

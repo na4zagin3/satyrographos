@@ -1,0 +1,7 @@
+Installing packages
+------------------------------------------------------------
+Exception:
+"SATySFi dist directory is not found. Please run opam install satysfi-dist"
+------------------------------------------------------------
+@@dest_dir@@
+------------------------------------------------------------
