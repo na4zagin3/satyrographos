@@ -21,7 +21,7 @@ let echo_line =
 
 let dump_dir dir : unit t =
   with_temp_dir ~prefix:"Satyrographos" ~suffix:"dump_dir" (fun empty_dir ->
-    run "find" [dir]
+    (run "find" [dir] |- run "sort" [])
     >> echo_line
     >> run_exit_code "diff" ["-Nr"; empty_dir; dir] >>| (fun _ -> ())
     |- censor [ empty_dir, "@@empty_dir@@"; ]
