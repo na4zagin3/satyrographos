@@ -40,10 +40,10 @@ let satysfi_dist_dir ~outf =
   let shares = option_to_list (opam_share_dir ~outf) @ ["/usr/local/share"; "/usr/share"] in
   let dist_dirs = List.map shares ~f:(fun d -> Filename.concat d "satysfi" |> (fun d -> Filename.concat d "dist")) in
   let rec f = function
-    | [] -> failwith "Can't find SATySFi lib. Please install it."
+    | [] -> None
     | (d :: ds) ->
       if is_runtime_dir d
-        then d
+        then Some d
         else f ds
   in
   f dist_dirs
