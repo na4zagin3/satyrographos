@@ -51,9 +51,10 @@ end
 
 
 type t = {
-  (* TODO (gh-50) make name and version into non-optional *)
-  name: string option [@sexp.option];
-  version: string option [@sexp.option];
+  (* TODO (gh-50) make name and version into non-optional.
+     These fields need to be split out. *)
+  name: string option;
+  version: string option;
 
   hashes: (string list * Json.t) LibraryFiles.t [@sexp.omit_nil];
   files: string LibraryFiles.t [@sexp.omit_nil];
