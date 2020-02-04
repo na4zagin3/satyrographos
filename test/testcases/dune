@@ -5,6 +5,10 @@
    install__onlyDist
    install__unmanagedDirAlreadyExists
    install__thirdParties
+   install_l__dependent
+   install_l__simple
+   install_l__independentTwo
+   install_l__transitive
  )
  (preprocess (pps ppx_deriving.std ppx_jane))
  (libraries core satyrographos shexp.process uri)
