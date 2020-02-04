@@ -1,0 +1,117 @@
+Installing packages
+------------------------------------------------------------
+Reading runtime dist: @@temp_dir@@/empty_dist
+Read user libraries: ()
+Reading opam libraries: (base class-greek fonts-theano grcnum)
+Not gathering system fonts
+Installing libraries: (dist fonts-theano)
+Removing destination @@dest_dir@@/dest
+Loaded libraries
+(((name ()) (version ()))
+ ((name (fonts-theano)) (version (2.0))
+  (hashes
+   ((hash/fonts.satysfi-hash
+     ((@@temp_dir@@/opam_reg/fonts-theano/hash/fonts.satysfi-hash)
+      (Assoc
+       ((fonts-theano:TheanoDidot
+         (Variant
+          (Single
+           ((Assoc
+             ((src-dist (String fonts-theano/TheanoDidot-Regular.otf))))))))
+        (fonts-theano:TheanoModern
+         (Variant
+          (Single
+           ((Assoc
+             ((src-dist (String fonts-theano/TheanoModern-Regular.otf))))))))
+        (fonts-theano:TheanoOldStyle
+         (Variant
+          (Single
+           ((Assoc
+             ((src-dist (String fonts-theano/TheanoOldStyle-Regular.otf))))))))))))))
+  (files
+   ((fonts/fonts-theano/TheanoDidot-Regular.otf
+     @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoDidot-Regular.otf)
+    (fonts/fonts-theano/TheanoModern-Regular.otf
+     @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoModern-Regular.otf)
+    (fonts/fonts-theano/TheanoOldStyle-Regular.otf
+     @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoOldStyle-Regular.otf)))
+  (compatibility
+   ((rename_fonts
+     (((new_name fonts-theano:TheanoDidot) (old_name TheanoDidot))
+      ((new_name fonts-theano:TheanoModern) (old_name TheanoModern))
+      ((new_name fonts-theano:TheanoOldStyle) (old_name TheanoOldStyle))))))))Installing ((name (fonts-theano)) (version (2.0))
+ (hashes
+  ((hash/fonts.satysfi-hash
+    ((@@temp_dir@@/opam_reg/fonts-theano/hash/fonts.satysfi-hash)
+     (Assoc
+      ((fonts-theano:TheanoDidot
+        (Variant
+         (Single
+          ((Assoc ((src-dist (String fonts-theano/TheanoDidot-Regular.otf))))))))
+       (fonts-theano:TheanoModern
+        (Variant
+         (Single
+          ((Assoc
+            ((src-dist (String fonts-theano/TheanoModern-Regular.otf))))))))
+       (fonts-theano:TheanoOldStyle
+        (Variant
+         (Single
+          ((Assoc
+            ((src-dist (String fonts-theano/TheanoOldStyle-Regular.otf))))))))))))))
+ (files
+  ((fonts/fonts-theano/TheanoDidot-Regular.otf
+    @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoDidot-Regular.otf)
+   (fonts/fonts-theano/TheanoModern-Regular.otf
+    @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoModern-Regular.otf)
+   (fonts/fonts-theano/TheanoOldStyle-Regular.otf
+    @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoOldStyle-Regular.otf)))
+ (compatibility
+  ((rename_fonts
+    (((new_name fonts-theano:TheanoDidot) (old_name TheanoDidot))
+     ((new_name fonts-theano:TheanoModern) (old_name TheanoModern))
+     ((new_name fonts-theano:TheanoOldStyle) (old_name TheanoOldStyle)))))))
+Installation completed!
+
+[1;33mCompatibility notice[0m for library fonts-theano:
+
+  Fonts have been renamed.
+  
+    TheanoDidot -> fonts-theano:TheanoDidot
+    TheanoModern -> fonts-theano:TheanoModern
+    TheanoOldStyle -> fonts-theano:TheanoOldStyle
+
+------------------------------------------------------------
+@@dest_dir@@
+@@dest_dir@@/dest
+@@dest_dir@@/dest/fonts
+@@dest_dir@@/dest/fonts/fonts-theano
+@@dest_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf
+@@dest_dir@@/dest/fonts/fonts-theano/TheanoModern-Regular.otf
+@@dest_dir@@/dest/fonts/fonts-theano/TheanoOldStyle-Regular.otf
+@@dest_dir@@/dest/hash
+@@dest_dir@@/dest/hash/fonts.satysfi-hash
+@@dest_dir@@/dest/metadata
+@@dest_dir@@/dest/.satyrographos
+------------------------------------------------------------
+diff -Nr @@empty_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf @@dest_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf
+0a1
+> @@TheanoDidot-Regular.otf@@
+diff -Nr @@empty_dir@@/dest/fonts/fonts-theano/TheanoModern-Regular.otf @@dest_dir@@/dest/fonts/fonts-theano/TheanoModern-Regular.otf
+0a1
+> @@TheanoModern-Regular.otf@@
+diff -Nr @@empty_dir@@/dest/fonts/fonts-theano/TheanoOldStyle-Regular.otf @@dest_dir@@/dest/fonts/fonts-theano/TheanoOldStyle-Regular.otf
+0a1
+> @@TheanoOldStyle-Regular.otf@@
+diff -Nr @@empty_dir@@/dest/hash/fonts.satysfi-hash @@dest_dir@@/dest/hash/fonts.satysfi-hash
+0a1
+> {"fonts-theano:TheanoDidot":<"Single":{"src-dist":"fonts-theano/TheanoDidot-Regular.otf"}>,"fonts-theano:TheanoModern":<"Single":{"src-dist":"fonts-theano/TheanoModern-Regular.otf"}>,"fonts-theano:TheanoOldStyle":<"Single":{"src-dist":"fonts-theano/TheanoOldStyle-Regular.otf"}>}
+\ No newline at end of file
+diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
+0a1,7
+> ((version 1) (libraryName fonts-theano) (libraryVersion 2.0)
+>  (compatibility
+>   ((rename_fonts
+>     (((new_name fonts-theano:TheanoDidot) (old_name TheanoDidot))
+>      ((new_name fonts-theano:TheanoModern) (old_name TheanoModern))
+>      ((new_name fonts-theano:TheanoOldStyle) (old_name TheanoOldStyle))))))
+>  (dependencies ()))

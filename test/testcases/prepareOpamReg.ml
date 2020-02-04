@@ -33,6 +33,24 @@ let grcnumPackagesGrcnumGrcnum = "grcnum/packages/grcnum/grcnum.satyh", "@@grcnu
 
 let grcnumFiles = [ grcnumMetadata; grcnumPackagesGrcnumGrcnum; ]
 
+let grcnumDocFiles = [
+  "grcnum-doc/metadata",
+{|((version 1) (libraryName grcnum-doc) (libraryVersion 0.2) (compatibility ())
+(dependencies ((fonts-theano ()) (grcnum ()))))|};
+   "grcnum-doc/docs/grcnum-doc/doc-grcnum-ja.pdf", "@@doc-grcnum-ja.pdf@@"; ]
+
+let classGreekFiles = [
+  "class-greek/metadata",
+{|((version 1) (libraryName class-greek) (libraryVersion 0.1) (compatibility ())
+ (dependencies ((grcnum ()))))|};
+  "class-greek/packages/class-greek/greek.satyh", "@@greek.satyh@@"; ]
+
+let baseFiles = [
+  "base/metadata",
+{|((version 1) (libraryName base) (libraryVersion 1.1.1) (compatibility ())
+(dependencies ()))|};
+  "base/packages/base/void.satyh", "@@void.satyh@@"; ]
+
 let prepare dir files =
   List.iter files ~f:(fun (file, content) ->
     let path = FilePath.concat dir file in
