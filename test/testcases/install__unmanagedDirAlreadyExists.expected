@@ -1,0 +1,13 @@
+Installing packages
+------------------------------------------------------------
+Reading runtime dist: @@temp_dir@@/empty_dist
+Read user libraries: ()
+Reading opam libraries: ()
+Not gathering system fonts
+Installing libraries: (dist)
+Directory @@dest_dir@@/dest is not managed by Satyrographos.
+Please remove @@dest_dir@@/dest first.
+------------------------------------------------------------
+@@dest_dir@@
+@@dest_dir@@/dest
+------------------------------------------------------------
