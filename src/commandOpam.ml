@@ -106,3 +106,19 @@ let export f () =
   let s = BuildScript.from_file f in
   s |> BuildScript.export_opam
 
+let with_build_script f ~outf ~prefix ~buildscript_path ~name ~verbose ~env () =
+  let builsscript = BuildScript.from_file buildscript_path in
+  match name with
+  | None -> begin
+    if StringMap.length builsscript = 1
+    then let build_module = StringMap.nth_exn builsscript 0 |> snd in
+      f ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env
+    else failwith "Please specify module name with -name option"
+  end
+  | Some name ->
+    match StringMap.find builsscript name with
+      | Some build_module ->
+        f ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env
+      | _ ->
+        failwithf "Build file does not contains library %s" name ()
+

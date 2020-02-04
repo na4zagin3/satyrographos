@@ -23,24 +23,9 @@ let opam_with_build_module_command ~prefix_optionality f =
       and name = flag "name" (optional string) ~doc:"MODULE_NAME Module name"
       and verbose = flag "verbose" no_arg ~doc:"Make verbose"
       in
-      fun () ->
         let buildscript_path = Option.value ~default:(default_script_path ()) script in
-        let builsscript = BuildScript.from_file buildscript_path in
-        match name with
-        | None -> begin
-          if StringMap.length builsscript = 1
-          then let build_module = StringMap.nth_exn builsscript 0 |> snd in
-            let env = Setup.read_environment () in
-            f ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env
-          else failwith "Please specify module name with -name option"
-        end
-        | Some name ->
-          match StringMap.find builsscript name with
-            | Some build_module ->
-              let env = Setup.read_environment () in
-              f ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env
-            | _ ->
-              failwithf "Build file does not contains library %s" name ()
+        let env = Setup.read_environment () in
+        CommandOpam.with_build_script f ~outf ~prefix ~buildscript_path ~name ~verbose ~env
     ]
 
 let opam_build_command =
