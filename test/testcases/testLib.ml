@@ -27,7 +27,9 @@ let dump_dir dir : unit t =
     |- censor [ empty_dir, "@@empty_dir@@"; ]
   )
 
-let test_install setup f : unit t =
+let stacktrace = false
+
+let test_install  setup f : unit t =
   let test dest_dir temp_dir =
     let opam_prefix = Unix.open_process_in "opam var prefix" |> input_line (* Assume a path does not contain line breaks*) in
     let replacements =
@@ -45,6 +47,10 @@ let test_install setup f : unit t =
       with e ->
         echo "Exception:"
         >> echo (Printexc.to_string e)
+        >> if stacktrace
+           then echo "Stack trace:"
+             >> echo (Printexc.get_backtrace())
+           else return ()
       )
     >> echo_line
     >> dump_dir dest_dir
