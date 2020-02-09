@@ -6,6 +6,21 @@ open Shexp_process.Infix
 let repeat_string n s : string =
   StdList.init n (fun _ -> s) |> StdList.fold_left (^) ""
 
+(** Remove nondeterministic part from automatically generated temp dir names *)
+let replace_tempdirs =
+  let re =
+    let open Re in
+    seq [
+      str {|/tmp/Satyrographos|};
+      repn xdigit 6 (Some 6);
+      rep wordc |> group;
+    ] |> compile in
+  let f g = "@@" ^ Re.Group.get g 1 ^ "@@" in
+  (fun s -> Re.replace re ~all:true ~f s)
+
+let censor_tempdirs =
+  iter_lines (fun s -> replace_tempdirs s |> echo)
+
 let censor replacements =
   iter_lines (fun s -> Stringext.replace_all_assoc s replacements |> echo)
 
@@ -54,7 +69,8 @@ let test_install  setup f : unit t =
       )
     >> echo_line
     >> dump_dir dest_dir
-    |- censor replacements in
+    |- censor replacements
+    |- censor_tempdirs in
   (with_temp_dir ~prefix:"Satyrographos" ~suffix:"test_dest"
     (fun dest_dir ->
       with_temp_dir ~prefix:"Satyrographos" ~suffix:"test_temp" (test dest_dir)))
