@@ -1,0 +1,27 @@
+Installing packages
+------------------------------------------------------------
+Read library:
+((name (grcnum-doc)) (version (0.2))
+ (files
+  ((docs/grcnum-doc/doc-grcnum-ja.pdf
+    @@temp_dir@@/pkg/doc-grcnum-ja.pdf)))
+ (dependencies (fonts-theano grcnum)))
+Copying @@temp_dir@@/pkg/doc-grcnum-ja.pdf to @@dest_dir@@/dest/share/satysfi/grcnum-doc/docs/grcnum-doc/doc-grcnum-ja.pdf
+------------------------------------------------------------
+@@dest_dir@@
+@@dest_dir@@/dest
+@@dest_dir@@/dest/share
+@@dest_dir@@/dest/share/satysfi
+@@dest_dir@@/dest/share/satysfi/grcnum-doc
+@@dest_dir@@/dest/share/satysfi/grcnum-doc/docs
+@@dest_dir@@/dest/share/satysfi/grcnum-doc/docs/grcnum-doc
+@@dest_dir@@/dest/share/satysfi/grcnum-doc/docs/grcnum-doc/doc-grcnum-ja.pdf
+@@dest_dir@@/dest/share/satysfi/grcnum-doc/metadata
+------------------------------------------------------------
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum-doc/docs/grcnum-doc/doc-grcnum-ja.pdf @@dest_dir@@/dest/share/satysfi/grcnum-doc/docs/grcnum-doc/doc-grcnum-ja.pdf
+0a1
+> @@doc-grcnum-ja.pdf@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum-doc/metadata @@dest_dir@@/dest/share/satysfi/grcnum-doc/metadata
+0a1,2
+> ((version 1) (libraryName grcnum-doc) (libraryVersion 0.2) (compatibility ())
+>  (dependencies ((fonts-theano ()) (grcnum ()))))
