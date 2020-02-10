@@ -1,0 +1,56 @@
+Installing packages
+------------------------------------------------------------
+Read library:
+((name (grcnum)) (version (0.2))
+ (hashes
+  ((hash/fonts.satysfi-hash
+    ((@@temp_dir@@/pkg/fonts.satysfi-hash)
+     (Assoc
+      ((grcnum:grcnum-font
+        (Variant
+         (Single ((Assoc ((src-dist (String grcnum/grcnum-font.ttf))))))))))))))
+ (files
+  ((fonts/grcnum/grcnum-font.ttf
+    @@temp_dir@@/pkg/font.ttf)
+   (packages/grcnum/grcnum.satyh
+    @@temp_dir@@/pkg/grcnum.satyh)))
+ (compatibility
+  ((rename_packages
+    (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
+ (dependencies (fonts-theano)))
+Copying @@temp_dir@@/pkg/font.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+Copying @@temp_dir@@/pkg/grcnum.satyh to @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh
+Generating @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
+------------------------------------------------------------
+@@dest_dir@@
+@@dest_dir@@/dest
+@@dest_dir@@/dest/share
+@@dest_dir@@/dest/share/satysfi
+@@dest_dir@@/dest/share/satysfi/grcnum
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+@@dest_dir@@/dest/share/satysfi/grcnum/hash
+@@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
+@@dest_dir@@/dest/share/satysfi/grcnum/metadata
+@@dest_dir@@/dest/share/satysfi/grcnum/packages
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh
+------------------------------------------------------------
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+0a1
+> @@font.ttf@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
+0a1
+> {"grcnum:grcnum-font":<"Single":{"src-dist":"grcnum/grcnum-font.ttf"}>}
+\ No newline at end of file
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/metadata @@dest_dir@@/dest/share/satysfi/grcnum/metadata
+0a1,5
+> ((version 1) (libraryName grcnum) (libraryVersion 0.2)
+>  (compatibility
+>   ((rename_packages
+>     (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
+>  (dependencies ((fonts-theano ()))))
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh
+0a1
+> @@grcnum.satyh@@

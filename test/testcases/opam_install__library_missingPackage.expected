@@ -1,0 +1,19 @@
+Installing packages
+------------------------------------------------------------
+Exception:
+FileUtilCP.CpError("Source file '@@temp_dir@@/pkg/grcnum.satyh' doesn't exist.")
+------------------------------------------------------------
+@@dest_dir@@
+@@dest_dir@@/dest
+@@dest_dir@@/dest/share
+@@dest_dir@@/dest/share/satysfi
+@@dest_dir@@/dest/share/satysfi/grcnum
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+@@dest_dir@@/dest/share/satysfi/grcnum/packages
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum
+------------------------------------------------------------
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+0a1
+> @@font.ttf@@

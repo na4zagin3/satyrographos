@@ -9,7 +9,12 @@
    install_l__simple
    install_l__independentTwo
    install_l__transitive
+   opam_build__doc_satysfi
+   opam_install__doc
+   opam_install__library
+   opam_install__library_missingHash
+   opam_install__library_missingPackage
  )
  (preprocess (pps ppx_deriving.std ppx_jane))
- (libraries core satyrographos shexp.process uri)
+ (libraries core re satyrographos shexp.process uri)
  )
