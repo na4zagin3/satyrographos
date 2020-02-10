@@ -2,15 +2,17 @@ open Core
 
 let outf = Format.std_formatter
 
+(* TODO Use formatter instead of printf *)
+
 (* TODO Receive env instead of repo *)
-let pin_list repo =
+let pin_list ~outf:(_: Format.formatter) repo =
   [%derive.show: string list] (Repository.list repo) |> print_endline
 
 (* TODO Receive env instead of repo *)
-let pin_dir repo p =
+let pin_dir ~outf:(_: Format.formatter) repo p =
   Repository.directory repo p |> print_endline
 
-let pin_add env p url =
+let pin_add ~outf env p url =
   let Environment.{ repo; reg; } = env in
   let (_: string list option) =
   Uri.of_string url
@@ -21,7 +23,7 @@ let pin_add env p url =
   |> Printf.printf "Built libraries: %s\n"
 
 (* TODO Receive env instead of repo *)
-let pin_remove repo p =
+let pin_remove ~outf:(_: Format.formatter) repo p =
   (* TODO remove the library *)
   Repository.remove repo p;
   Printf.printf "Removed %s\n" p
