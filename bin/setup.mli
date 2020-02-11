@@ -9,8 +9,10 @@ val root_dir : string
 
 (** Satyrographos source repository directory path. *)
 val repository_dir : string
+
 (** Satyrographos binary registry directory path. TODO Rename. *)
 val library_dir : string
+
 (** Satyrographos metadata file path. *)
 val metadata_file : string
 
