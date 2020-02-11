@@ -1,6 +1,6 @@
+  SATySFi version 0.0.3
 Installing packages
 ------------------------------------------------------------
-  SATySFi version 0.0.3
 INPUT=doc-grcnum.saty
 OUTPUT=doc-grcnum-ja.pdf
 Target: build-doc

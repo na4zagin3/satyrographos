@@ -39,7 +39,8 @@ Loaded libraries
    ((rename_fonts
      (((new_name fonts-theano:TheanoDidot) (old_name TheanoDidot))
       ((new_name fonts-theano:TheanoModern) (old_name TheanoModern))
-      ((new_name fonts-theano:TheanoOldStyle) (old_name TheanoOldStyle))))))))Installing ((name (fonts-theano)) (version (2.0))
+      ((new_name fonts-theano:TheanoOldStyle) (old_name TheanoOldStyle))))))))
+Installing ((name (fonts-theano)) (version (2.0))
  (hashes
   ((hash/fonts.satysfi-hash
     ((@@temp_dir@@/opam_reg/fonts-theano/hash/fonts.satysfi-hash)
