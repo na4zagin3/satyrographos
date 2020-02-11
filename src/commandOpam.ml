@@ -21,8 +21,10 @@ let read_module ~outf ~verbose ~build_module ~buildscript_path =
 
 let test_satysfi_option options =
   let open P in
-  run_exit_code "satysfi" (options @ ["--version"])
-  |> map ~f:(fun code -> code = 0)
+  let open P.Infix in
+  run_bool ~false_v:[2] "satysfi" (options @ ["--version"])
+  |> capture [Stdout]
+  >>| fst
 
 let assert_satysfi_option ~message options =
   let open P in
