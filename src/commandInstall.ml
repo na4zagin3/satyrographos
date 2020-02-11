@@ -5,20 +5,71 @@ module StringSet = Set.Make(String)
 (* TODO Abstract this *)
 module StringMap = Map.Make(String)
 
+(** Calculate a transitive closure. *)
 let transitive_closure map =
   let rec f visited queue = match StringSet.choose queue with
     | None -> visited
     | Some cur ->
+      let visited = StringSet.add visited cur in
       match Map.find map cur with
-      | None -> failwithf "Library %s is not found\n" cur ();
+      | None -> visited;
       | Some nexts ->
-        let visited = StringSet.add visited cur in
         let queue =  StringSet.union (StringSet.remove queue cur) (StringSet.diff nexts visited) in
         f visited queue in
   f StringSet.empty
 
+(* TODO property-based testing *)
+let%expect_test "transitive_closure: empty" =
+  let map = [ "a", ["b"; "c"; "f"]; "b", ["d"]; "c", []; "d", ["e"; "f"]; "f", [] ]
+    |> List.map ~f:(fun (x, y) -> x, StringSet.of_list y)
+    |> StringMap.of_alist_exn in
+  let init = StringSet.empty in
+  transitive_closure map init
+  |> [%sexp_of: StringSet.t] |> Sexp.to_string_hum |> print_endline;
+  [%expect{| () |}]
+let%expect_test "transitive_closure: transitive" =
+  let map = [ "a", ["b"; "c"; "f"]; "b", ["d"]; "c", []; "d", ["e"; "f"]; "e", []; "f", [] ]
+    |> List.map ~f:(fun (x, y) -> x, StringSet.of_list y)
+    |> StringMap.of_alist_exn in
+  let init = StringSet.of_list [ "a" ] in
+  transitive_closure map init
+  |> [%sexp_of: StringSet.t] |> Sexp.to_string_hum |> print_endline;
+  [%expect{| (a b c d e f) |}]
+let%expect_test "transitive_closure: loop" =
+  let map = [ "a", ["b"]; "b", ["a"] ]
+    |> List.map ~f:(fun (x, y) -> x, StringSet.of_list y)
+    |> StringMap.of_alist_exn in
+  let init = StringSet.of_list [ "a" ] in
+  transitive_closure map init
+  |> [%sexp_of: StringSet.t] |> Sexp.to_string_hum |> print_endline;
+  [%expect{| (a b) |}]
+let%expect_test "transitive_closure: non-closed" =
+  let map = [ "a", ["b"] ]
+    |> List.map ~f:(fun (x, y) -> x, StringSet.of_list y)
+    |> StringMap.of_alist_exn in
+  let init = StringSet.of_list [ "a" ] in
+  transitive_closure map init
+  |> [%sexp_of: StringSet.t] |> Sexp.to_string_hum |> print_endline;
+  [%expect{| (a b) |}]
+let%expect_test "transitive_closure: non-closed" =
+  let map = [ "a", ["b"] ]
+    |> List.map ~f:(fun (x, y) -> x, StringSet.of_list y)
+    |> StringMap.of_alist_exn in
+  let init = StringSet.of_list [ "c" ] in
+  transitive_closure map init
+  |> [%sexp_of: StringSet.t] |> Sexp.to_string_hum |> print_endline;
+  [%expect{| (c) |}]
 
-(* TODO Install transitive dependencies *)
+
+(** Returns transitively-required libraries from the given OPAM registry, Satyrographos registry, and SATySFi dist directory.
+
+Registry has the following priority:
+- Satyrographos local registry
+- OPAM registry
+- SATySFi dist directory
+
+It fails when some of transitively-required libraries are missing.
+ *)
 let get_libraries ~outf ~maybe_reg ~(env: Environment.t) ~libraries =
   let dist_library_dir = Option.value_exn ~message:"SATySFi dist directory is not found. Please run opam install satysfi-dist" env.dist_library_dir in
   let opam_reg = env.opam_reg in
@@ -47,18 +98,24 @@ let get_libraries ~outf ~maybe_reg ~(env: Environment.t) ~libraries =
       | `Both (_, x) ->
         Format.fprintf outf "Library %s is provided by both the user local and opam repositories\n" key;
         Library.read_dir x |> Some) in
-  let required_libraries = match libraries with
-    | None -> all_libraries
-    | Some libraries -> let library_dependency =
-          Map.map all_libraries ~f:(fun p -> p.Library.dependencies) in
-        let libraries_to_install = transitive_closure library_dependency (StringSet.of_list libraries) in
-        Map.filter_keys all_libraries ~f:(StringSet.mem libraries_to_install)
-  in
-  match Map.add required_libraries ~key:"dist" ~data:dist_library with
+  let all_libraries = match Map.add all_libraries ~key:"dist" ~data:dist_library with
     | `Ok result -> result
     | `Duplicate ->
+      (* TODO Test case *)
       Format.fprintf outf "Overriding dist with user installed one\n";
-      required_libraries
+      all_libraries in
+  let required_library_names =
+    "dist" :: Option.value ~default:(Map.keys all_libraries) libraries in
+  let library_dependency_map =
+    Map.map all_libraries ~f:(fun p -> p.Library.dependencies) in
+  let library_name_set_to_install =
+    transitive_closure library_dependency_map (StringSet.of_list required_library_names) in
+  let all_library_name_set =
+    Map.keys all_libraries |> StringSet.of_list in
+  let missing_dependencies = StringSet.diff library_name_set_to_install all_library_name_set in
+  begin if not (Set.is_empty missing_dependencies)
+  then failwithf !"Missing dependencies: %{sexp:StringSet.t}" missing_dependencies () end;
+  Map.filter_keys all_libraries ~f:(StringSet.mem library_name_set_to_install)
 
 let show_compatibility_warnings ~outf ~libraries =
   Map.iteri libraries ~f:(fun ~key:library_name ~data:(library: Library.t) ->
