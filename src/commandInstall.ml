@@ -101,7 +101,6 @@ let get_libraries ~outf ~maybe_reg ~(env: Environment.t) ~libraries =
   let all_libraries = match Map.add all_libraries ~key:"dist" ~data:dist_library with
     | `Ok result -> result
     | `Duplicate ->
-      (* TODO Test case *)
       Format.fprintf outf "Overriding dist with user installed one\n";
       all_libraries in
   let required_library_names =

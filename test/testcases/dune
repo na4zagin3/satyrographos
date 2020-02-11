@@ -3,6 +3,7 @@
    install__emptyDist
    install__missingDist
    install__onlyDist
+   install__twoDists
    install__unmanagedDirAlreadyExists
    install__thirdParties
    install__thirdParties_brokenDependency
