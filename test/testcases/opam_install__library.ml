@@ -14,7 +14,7 @@ let satyristes =
     ((package "grcnum.satyh" "./grcnum.satyh")
      (font "grcnum-font.ttf" "./font.ttf")
      (hash "fonts.satysfi-hash" "./fonts.satysfi-hash")
-     ; (file "doc/grcnum.md" "README.md")
+     (file "doc/grcnum.md" "README.md")
     ))
   (opam "satysfi-grcnum.opam")
   (dependencies ((fonts-theano ())))

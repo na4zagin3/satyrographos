@@ -199,7 +199,13 @@ let compatibility_treatment (p: library) (l: Library.t) =
 
 (* Read *)
 let read_library (p: library) ~src_dir =
-  let map_file dst_dir = List.map ~f:(fun (dst, src) -> (Filename.concat dst_dir dst, Filename.concat src_dir src)) in
+  let map_file dst_dir =
+    let append_prefix =
+      if String.is_empty dst_dir
+      then ident
+      else Filename.concat dst_dir in
+    List.map ~f:(fun (dst, src) -> (append_prefix dst, Filename.concat src_dir src))
+  in
   let other_files = map_file "" p.sources.files in
   let hashes =
     map_file "hash" p.sources.hashes

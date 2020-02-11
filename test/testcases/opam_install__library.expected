@@ -10,7 +10,8 @@ Read library:
         (Variant
          (Single ((Assoc ((src-dist (String grcnum/grcnum-font.ttf))))))))))))))
  (files
-  ((fonts/grcnum/grcnum-font.ttf
+  ((doc/grcnum.md @@temp_dir@@/pkg/README.md)
+   (fonts/grcnum/grcnum-font.ttf
     @@temp_dir@@/pkg/font.ttf)
    (packages/grcnum/grcnum.satyh
     @@temp_dir@@/pkg/grcnum.satyh)))
@@ -18,6 +19,7 @@ Read library:
   ((rename_packages
     (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
  (dependencies (fonts-theano)))
+Copying @@temp_dir@@/pkg/README.md to @@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
 Copying @@temp_dir@@/pkg/font.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
 Copying @@temp_dir@@/pkg/grcnum.satyh to @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh
 Generating @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
@@ -27,6 +29,8 @@ Generating @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
 @@dest_dir@@/dest/share
 @@dest_dir@@/dest/share/satysfi
 @@dest_dir@@/dest/share/satysfi/grcnum
+@@dest_dir@@/dest/share/satysfi/grcnum/doc
+@@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
 @@dest_dir@@/dest/share/satysfi/grcnum/fonts
 @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum
 @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
@@ -37,6 +41,9 @@ Generating @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
 @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum
 @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh
 ------------------------------------------------------------
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md @@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
+0a1
+> @@README.md@@
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
 0a1
 > @@font.ttf@@
