@@ -158,7 +158,7 @@ let install_libraries d ~outf ~library_map  ~verbose ~copy () =
     then begin
       [%sexp_of: Library.t list] libraries
       |> Sexp.to_string_hum
-      |> Format.fprintf outf "Loaded libraries@,%s";
+      |> Format.fprintf outf "Loaded libraries@,%s@,";
       [%sexp_of: Library.t] merged
       |> Sexp.to_string_hum
       |> Format.fprintf outf "Installing %s@,";

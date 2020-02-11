@@ -21,7 +21,8 @@ Loaded libraries
     (packages/List.satyg
      @@temp_dir@@/simple_dist/packages/List.satyg)
     (unidata/UnicodeData.txt
-     @@temp_dir@@/simple_dist/unidata/UnicodeData.txt)))))Installing ((name ()) (version ())
+     @@temp_dir@@/simple_dist/unidata/UnicodeData.txt)))))
+Installing ((name ()) (version ())
  (hashes
   ((hash/fonts.satysfi-hash
     ((@@temp_dir@@/simple_dist/hash/fonts.satysfi-hash)

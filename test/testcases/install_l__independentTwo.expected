@@ -51,7 +51,8 @@ Loaded libraries
   (compatibility
    ((rename_packages
      (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
-  (dependencies (fonts-theano))))Installing ((name (base)) (version (1.1.1))
+  (dependencies (fonts-theano))))
+Installing ((name (base)) (version (1.1.1))
  (hashes
   ((hash/fonts.satysfi-hash
     ((@@temp_dir@@/opam_reg/fonts-theano/hash/fonts.satysfi-hash)
