@@ -21,7 +21,7 @@ let repository_exists () =
   match current_scheme_version with
   | None -> false
   | Some 0 -> Printf.sprintf "Semantics of `pin add` has been changed.\nPlease remove %s to continue." root_dir |> failwith
-  | Some 1 -> false
+  | Some 1 -> false (* TODO This needs to be true *)
   | Some v -> Printf.sprintf "Unknown scheme version %d" v |> failwith
 
 let initialize () =

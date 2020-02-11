@@ -3,25 +3,15 @@ open Core
 
 let outf = Format.std_formatter
 
-let pin_list () =
-  Compatibility.optin ();
-  let Environment.{ repo; reg=_; } = Setup.read_repo () in
-  [%derive.show: string list] (Repository.list repo) |> print_endline
 let pin_list_command =
   let open Command.Let_syntax in
   Command.basic
     ~summary:"List installed libraries (experimental)"
-    [%map_open
-      let _ = args (* ToDo: Remove this *)
-      in
-      fun () ->
-        pin_list ()
-    ]
+    (return (fun () ->
+      Compatibility.optin ();
+      let repo = (Setup.read_repo ()).repo in
+      CommandPin.pin_list ~outf repo))
 
-let pin_dir p () =
-  Compatibility.optin ();
-  let Environment.{ repo; reg=_; } = Setup.read_repo () in
-  Repository.directory repo p |> print_endline
 let pin_dir_command =
   let open Command.Let_syntax in
   Command.basic
@@ -30,21 +20,11 @@ let pin_dir_command =
       let p = anon ("LIBRARY" %: string)
       in
       fun () ->
-        pin_dir p ()
+        Compatibility.optin ();
+        let repo = (Setup.read_repo ()).repo in
+        CommandPin.pin_dir ~outf repo p
     ]
 
-let pin_add p url () =
-  Compatibility.optin ();
-  Printf.printf "Compatibility warning: Although currently Satyrographos simply copies the given directory,\n";
-  Printf.printf "it will have a build script to control library installation, which is a breaking change.";
-  let Environment.{ repo; reg; } = Setup.read_repo () in
-  let (_: string list option) =
-  Uri.of_string url
-  |> Repository.add ~outf repo p in
-  Printf.printf "Added %s (%s)\n" p url;
-  Registry.update_all ~outf reg
-  |> [%derive.show: string list option]
-  |> Printf.printf "Built libraries: %s\n"
 let pin_add_command =
   let open Command.Let_syntax in
   Command.basic
@@ -54,15 +34,13 @@ let pin_add_command =
       and url = anon ("URL" %: string) (* TODO define Url.t Arg_type.t *)
       in
       fun () ->
-        pin_add p url ()
+        Compatibility.optin ();
+        Printf.printf "Compatibility warning: Although currently Satyrographos simply copies the given directory,\n";
+        Printf.printf "it will have a build script to control library installation, which is a breaking change.";
+        let env = Setup.read_repo () in
+        CommandPin.pin_add ~outf env p url
     ]
 
-let pin_remove p () =
-  Compatibility.optin ();
-  let Environment.{ repo; reg=_; } = Setup.read_repo () in
-  (* TODO remove the library *)
-  Repository.remove repo p;
-  Printf.printf "Removed %s\n" p
 let pin_remove_command =
   let open Command.Let_syntax in
   Command.basic
@@ -71,7 +49,9 @@ let pin_remove_command =
       let p = anon ("LIBRARY" %: string) (* ToDo: Remove this *)
       in
       fun () ->
-        pin_remove p ()
+        Compatibility.optin ();
+        let repo = (Setup.read_repo ()).repo in
+        CommandPin.pin_remove ~outf repo p
     ]
 
 let pin_command =
