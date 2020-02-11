@@ -41,10 +41,14 @@ let run_build_commands ~outf ~verbose ~libraries ~workingDir ~env buildCommands 
   let open P in
   let open P.Infix in
   let commands satysfi_runtime = P.List.iter buildCommands ~f:(function
-    | "make" :: args -> P.run "make" (["SATYSFI_RUNTIME=" ^ satysfi_runtime] @ args)
+    | "make" :: args ->
+      let command = P.run "make" (["SATYSFI_RUNTIME=" ^ satysfi_runtime] @ args) in
+      ProcessUtil.redirect_to_stdout ~prefix:"make" command
     | "satysfi" :: args ->
-      assert_satysfi_option_C satysfi_runtime
-      >> P.run "satysfi" (["-C"; satysfi_runtime] @ args)
+      let command =
+        assert_satysfi_option_C satysfi_runtime
+        >> P.run "satysfi" (["-C"; satysfi_runtime] @ args) in
+      ProcessUtil.redirect_to_stdout ~prefix:"satysfi" command
     | cmd -> failwithf "command %s is not yet supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
   ) in
   let with_env c =
