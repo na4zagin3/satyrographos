@@ -192,9 +192,9 @@ Create Satyristes file with the following content.
   (version "1.0")
   ;; Files
   (sources
-    ((font "interesting-font.ttf" "fonts/interesting-font.ttf")
+    ((fontDir "fonts")
      (hash "fonts.satysfi-hash" "hash/fonts.satysfi-hash")
-     (package "great-package.satyh" "packages/great-package.satyh")))
+     (packageDir "packages")))
   ;; OPAM package file
   (opam "satysfi-great-package.opam")
   ;; Dependency
@@ -335,9 +335,11 @@ Satyristes file is a sequence of S-Expressions. A Satyristes can contain the fol
 - `(name "<library-name>")` :: Library name.
 - `(version "<package-version>")` :: Library version.
 - `(sources (<source-declaration> ...))` :: Sources.
-  - `(font "<dst>" <src>")` :: Copies `<src>` into `dist/fonts/<library-name>/<dst>`.
-  - `(hash "<dst>" <src>")` :: Copies `<src>` into `dist/hash/<dst>`.
-  - `(package "<dst>" <src>")` :: Copies `<src>` into `dist/packages/<library-name>/<dst>`.
+  - `(font "<dst>" "<src>")` :: Copies `<src>` into `dist/fonts/<library-name>/<dst>`.
+  - `(fontDir "<src>")` :: Recursively copies files under `<src>` into `dist/fonts/<library-name>/`.
+  - `(hash "<dst>" "<src>")` :: Copies `<src>` into `dist/hash/<dst>`.
+  - `(package "<dst>" "<src>")` :: Copies `<src>` into `dist/packages/<library-name>/<dst>`.
+  - `(packageDir "<src>")` :: Recursively copies files under `<src>` into `dist/packages/<library-name>`.
   - `(file "<dst>" "<src>")` :: Copies `<src>` into `dist/<dst>`.
 - `(opam "<opam-package-file>")` :: OPAM package file.
 - `(dependencies (<dependency> ...))` :: Dependencies.
