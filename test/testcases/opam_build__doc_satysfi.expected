@@ -1,36 +1,43 @@
 Installing packages
 ------------------------------------------------------------
-INPUT=doc-grcnum.saty
-OUTPUT=doc-grcnum-ja.pdf
-Target: build-doc
-Files under $SATYSFI_RUNTIME
-==============================
-.:
-dist
-
-./dist:
-fonts
-hash
-metadata
-packages
-
-./dist/fonts:
-fonts-theano
-
-./dist/fonts/fonts-theano:
-TheanoDidot-Regular.otf
-TheanoModern-Regular.otf
-TheanoOldStyle-Regular.otf
-
-./dist/hash:
-fonts.satysfi-hash
-
-./dist/packages:
-grcnum
-
-./dist/packages/grcnum:
-grcnum.satyh
-==============================
+satysfi err> Command invoked:
+satysfi err> satysfi -C @@build_temp_dir@@ --version
+satysfi err>
+satysfi err> Command invoked:
+satysfi err> satysfi -C @@build_temp_dir@@ doc-grcnum.saty -o doc-grcnum-ja.pdf
+satysfi out> INPUT=doc-grcnum.saty
+satysfi out> OUTPUT=doc-grcnum-ja.pdf
+satysfi err> doc-grcnum.saty -> doc-grcnum-ja.pdf
+satysfi err>
+make out> Target: build-doc
+make out> Files under $SATYSFI_RUNTIME
+make out> ==============================
+make out> .:
+make out> dist
+make out>
+make out> ./dist:
+make out> fonts
+make out> hash
+make out> metadata
+make out> packages
+make out>
+make out> ./dist/fonts:
+make out> fonts-theano
+make out>
+make out> ./dist/fonts/fonts-theano:
+make out> TheanoDidot-Regular.otf
+make out> TheanoModern-Regular.otf
+make out> TheanoOldStyle-Regular.otf
+make out>
+make out> ./dist/hash:
+make out> fonts.satysfi-hash
+make out>
+make out> ./dist/packages:
+make out> grcnum
+make out>
+make out> ./dist/packages/grcnum:
+make out> grcnum.satyh
+make out> ==============================
 Reading runtime dist: @@temp_dir@@/empty_dist
 Read user libraries: ()
 Reading opam libraries: (base class-greek fonts-theano grcnum)
