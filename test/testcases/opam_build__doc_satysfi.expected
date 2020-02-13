@@ -1,14 +1,10 @@
 Installing packages
 ------------------------------------------------------------
-satysfi err> Command invoked:
-satysfi err> satysfi -C @@build_temp_dir@@ --version
-satysfi err>
-satysfi err> Command invoked:
-satysfi err> satysfi -C @@build_temp_dir@@ doc-grcnum.saty -o doc-grcnum-ja.pdf
 satysfi out> INPUT=doc-grcnum.saty
 satysfi out> OUTPUT=doc-grcnum-ja.pdf
-satysfi err> doc-grcnum.saty -> doc-grcnum-ja.pdf
-satysfi err>
+satysfi out> Command invoked:
+satysfi out> satysfi -C @@build_temp_dir@@ doc-grcnum.saty -o doc-grcnum-ja.pdf
+satysfi out> doc-grcnum.saty -> doc-grcnum-ja.pdf
 make out> Target: build-doc
 make out> Files under $SATYSFI_RUNTIME
 make out> ==============================

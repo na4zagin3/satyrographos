@@ -1,14 +1,12 @@
 
 let satysfi =
-  let payload =
+  let parse_options =
     {|
-payload () {
-INPUT=
-OUTPUT=
+parse_options () {
 while [ "$#" -ne "0" ] ; do
   case "$1" in
     --version)
-      echo '  SATySFi version 0.0.3'
+      MODE=version
       return 0
       ;;
     -C)
@@ -20,6 +18,7 @@ while [ "$#" -ne "0" ] ; do
       echo OUTPUT=$1
       ;;
     *)
+      MODE=process
       INPUT=$1
       echo INPUT=$1
       ;;
@@ -31,13 +30,31 @@ cat $INPUT > $OUTPUT
 }
     |}
   in
+  let payload =
+    {|
+payload () {
+case "$MODE" in
+  version)
+    echo '  SATySFi version 0.0.3'
+    ;;
+  process)
+    echo 'Command invoked:'
+    echo satysfi "$@" | sed -e 's!/tmp/\w*!@@build_temp_dir@@!'
+    echo "$INPUT -> $OUTPUT"
+    cat $INPUT > $OUTPUT
+esac
+}
+    |}
+  in
   String.concat "\n"
     [ "#!/bin/bash";
+      "MODE=help";
+      "INPUT=";
+      "OUTPUT=";
+      parse_options;
       payload;
-      "echo 'Command invoked:' >&2";
-      "echo satysfi \"$@\" | sed -e 's!/tmp/\\w*!@@build_temp_dir@@!' >&2";
+      "parse_options \"$@\"";
       "payload \"$@\"";
-      "echo >&2";
     ]
 
 let prepare_bin bin =

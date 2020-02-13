@@ -7,9 +7,9 @@ let redirect_to_stdout ?(prefix="") ?(prefix_out="out>") ?(prefix_err="err>") co
   let put_prefix x = if String.is_empty prefix then x else prefix ^ " " ^ x in
   let prefix_out = put_prefix prefix_out in
   let prefix_err = put_prefix prefix_err in
-  let iter_lines_prefix prefix =
-    iter_lines (fun l -> if String.is_empty l then echo prefix else echo (prefix ^ " " ^ l)) in
-  epipe (pipe com (iter_lines_prefix prefix_out)) (iter_lines_prefix prefix_err)
+  let iter_lines_prefix ?where prefix =
+    iter_lines (fun l -> if String.is_empty l then echo ?where prefix else echo ?where (prefix ^ " " ^ l)) in
+  epipe (pipe com (iter_lines_prefix prefix_out)) (iter_lines_prefix ~where:Std_io.Stderr prefix_err)
 
 let%expect_test "redirect_to_stdout: stdout" =
   let open P in
