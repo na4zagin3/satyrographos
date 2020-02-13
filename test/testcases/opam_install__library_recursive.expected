@@ -1,0 +1,157 @@
+Installing packages
+------------------------------------------------------------
+Read library:
+((name (grcnum)) (version (0.2))
+ (hashes
+  ((hash/fonts.satysfi-hash
+    ((@@temp_dir@@/pkg/fonts.satysfi-hash)
+     (Assoc
+      ((grcnum:grcnum-font
+        (Variant
+         (Single ((Assoc ((src-dist (String grcnum/grcnum-font.ttf))))))))))))))
+ (files
+  ((doc/grcnum.md @@temp_dir@@/pkg/README.md)
+   (fonts/grcnum/a/b-1/c-1/file1.ttf
+    @@temp_dir@@/pkg/font/a/b-1/c-1/file1.ttf)
+   (fonts/grcnum/a/b-1/c-1/file2.ttf
+    @@temp_dir@@/pkg/font/a/b-1/c-1/file2.ttf)
+   (fonts/grcnum/a/b-1/c-2/file1.ttf
+    @@temp_dir@@/pkg/font/a/b-1/c-2/file1.ttf)
+   (fonts/grcnum/a/b-1/file.ttf
+    @@temp_dir@@/pkg/font/a/b-1/file.ttf)
+   (fonts/grcnum/a/file.ttf
+    @@temp_dir@@/pkg/font/a/file.ttf)
+   (fonts/grcnum/grcnum-font.ttf
+    @@temp_dir@@/pkg/font.ttf)
+   (packages/grcnum/a/b-1/c-1/file1.satyh
+    @@temp_dir@@/pkg/src/a/b-1/c-1/file1.satyh)
+   (packages/grcnum/a/b-1/c-1/file2.satyh
+    @@temp_dir@@/pkg/src/a/b-1/c-1/file2.satyh)
+   (packages/grcnum/a/b-1/c-2/file1.satyh
+    @@temp_dir@@/pkg/src/a/b-1/c-2/file1.satyh)
+   (packages/grcnum/a/b-1/file.satyh
+    @@temp_dir@@/pkg/src/a/b-1/file.satyh)
+   (packages/grcnum/a/file.satyh
+    @@temp_dir@@/pkg/src/a/file.satyh)
+   (packages/grcnum/grcnum.satyh
+    @@temp_dir@@/pkg/grcnum.satyh)))
+ (compatibility
+  ((rename_packages
+    (((new_name grcnum/a/b-1/c-1/file1.satyh)
+      (old_name a/b-1/c-1/file1.satyh))
+     ((new_name grcnum/a/b-1/c-1/file2.satyh)
+      (old_name a/b-1/c-1/file2.satyh))
+     ((new_name grcnum/a/b-1/c-2/file1.satyh)
+      (old_name a/b-1/c-2/file1.satyh))
+     ((new_name grcnum/a/b-1/file.satyh) (old_name a/b-1/file.satyh))
+     ((new_name grcnum/a/file.satyh) (old_name a/file.satyh))
+     ((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
+ (dependencies (fonts-theano)))
+Copying @@temp_dir@@/pkg/README.md to @@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
+Copying @@temp_dir@@/pkg/font/a/b-1/c-1/file1.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-1/file1.ttf
+Copying @@temp_dir@@/pkg/font/a/b-1/c-1/file2.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-1/file2.ttf
+Copying @@temp_dir@@/pkg/font/a/b-1/c-2/file1.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-2/file1.ttf
+Copying @@temp_dir@@/pkg/font/a/b-1/file.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/file.ttf
+Copying @@temp_dir@@/pkg/font/a/file.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/file.ttf
+Copying @@temp_dir@@/pkg/font.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+Copying @@temp_dir@@/pkg/src/a/b-1/c-1/file1.satyh to @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-1/file1.satyh
+Copying @@temp_dir@@/pkg/src/a/b-1/c-1/file2.satyh to @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-1/file2.satyh
+Copying @@temp_dir@@/pkg/src/a/b-1/c-2/file1.satyh to @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-2/file1.satyh
+Copying @@temp_dir@@/pkg/src/a/b-1/file.satyh to @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/file.satyh
+Copying @@temp_dir@@/pkg/src/a/file.satyh to @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/file.satyh
+Copying @@temp_dir@@/pkg/grcnum.satyh to @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh
+Generating @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
+------------------------------------------------------------
+@@dest_dir@@
+@@dest_dir@@/dest
+@@dest_dir@@/dest/share
+@@dest_dir@@/dest/share/satysfi
+@@dest_dir@@/dest/share/satysfi/grcnum
+@@dest_dir@@/dest/share/satysfi/grcnum/doc
+@@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-1
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-1/file1.ttf
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-1/file2.ttf
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-2
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-2/file1.ttf
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/file.ttf
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/file.ttf
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+@@dest_dir@@/dest/share/satysfi/grcnum/hash
+@@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
+@@dest_dir@@/dest/share/satysfi/grcnum/metadata
+@@dest_dir@@/dest/share/satysfi/grcnum/packages
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-1
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-1/file1.satyh
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-1/file2.satyh
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-2
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-2/file1.satyh
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/file.satyh
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/file.satyh
+@@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh
+------------------------------------------------------------
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md @@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
+0a1
+> @@README.md@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-1/file1.ttf @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-1/file1.ttf
+0a1
+> @@a/b-1/c-1/file1.ttf@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-1/file2.ttf @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-1/file2.ttf
+0a1
+> @@a/b-1/c-1/file2.ttf@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-2/file1.ttf @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-2/file1.ttf
+0a1
+> @@a/b-1/c-2/file1.ttf@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/file.ttf @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/file.ttf
+0a1
+> @@a/b-1/file.ttf@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/file.ttf @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/file.ttf
+0a1
+> @@a/file.ttf@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+0a1
+> @@font.ttf@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
+0a1
+> {"grcnum:grcnum-font":<"Single":{"src-dist":"grcnum/grcnum-font.ttf"}>}
+\ No newline at end of file
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/metadata @@dest_dir@@/dest/share/satysfi/grcnum/metadata
+0a1,13
+> ((version 1) (libraryName grcnum) (libraryVersion 0.2)
+>  (compatibility
+>   ((rename_packages
+>     (((new_name grcnum/a/b-1/c-1/file1.satyh)
+>       (old_name a/b-1/c-1/file1.satyh))
+>      ((new_name grcnum/a/b-1/c-1/file2.satyh)
+>       (old_name a/b-1/c-1/file2.satyh))
+>      ((new_name grcnum/a/b-1/c-2/file1.satyh)
+>       (old_name a/b-1/c-2/file1.satyh))
+>      ((new_name grcnum/a/b-1/file.satyh) (old_name a/b-1/file.satyh))
+>      ((new_name grcnum/a/file.satyh) (old_name a/file.satyh))
+>      ((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
+>  (dependencies ((fonts-theano ()))))
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-1/file1.satyh @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-1/file1.satyh
+0a1
+> @@a/b-1/c-1/file1.satyh@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-1/file2.satyh @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-1/file2.satyh
+0a1
+> @@a/b-1/c-1/file2.satyh@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-2/file1.satyh @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-2/file1.satyh
+0a1
+> @@a/b-1/c-2/file1.satyh@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/file.satyh @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/file.satyh
+0a1
+> @@a/b-1/file.satyh@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/file.satyh @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/file.satyh
+0a1
+> @@a/file.satyh@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh
+0a1
+> @@grcnum.satyh@@

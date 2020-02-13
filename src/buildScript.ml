@@ -19,6 +19,14 @@ let empty_sources = {
   packages=[];
 }
 
+let recursively f base_dir src acc =
+  let base_src = FilePath.concat base_dir src in
+  FileUtil.(find Is_file base_src (fun acc path ->
+    let dst = FilePath.make_relative base_src path in
+    let src_path = FilePath.make_relative base_dir path in
+    f dst src_path acc
+  )) acc
+
 let add_files dst src acc = {acc with files=(dst, src) :: acc.files}
 let add_fonts dst src acc = {acc with fonts=(dst, src) :: acc.fonts}
 let add_hashes dst src acc = {acc with hashes=(dst, src) :: acc.hashes}
@@ -27,8 +35,10 @@ let add_packages dst src acc = {acc with packages=(dst, src) :: acc.packages}
 type source =
   | File of string * string
   | Font of string * string
+  | FontDir of string
   | Hash of string * string
   | Package of string * string
+  | PackageDir of string
 [@@deriving sexp]
 
 module CompatibilityIdents = Set.Make(String)
@@ -104,6 +114,7 @@ module StringSet = Set.Make(String)
 type t = m StringMap.t [@@deriving sexp]
 
 let from_file f =
+  let base_dir = FilePath.dirname f in
   let sections = Sexp.load_sexps_conv_exn f [%of_sexp: Section.t] in
   let modules = sections |> List.concat_map ~f:(function
     | Version "0.0.2" -> []
@@ -115,6 +126,8 @@ let from_file f =
         | Font (dst, src) -> add_fonts dst src acc
         | Hash (dst, src) -> add_hashes dst src acc
         | Package (dst, src) -> add_packages dst src acc
+        | FontDir (src) -> recursively add_fonts base_dir src acc
+        | PackageDir (src) -> recursively add_packages base_dir src acc
       end sources in
       let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
       [name, Library {name; version; opam; sources; dependencies; compatibility}]

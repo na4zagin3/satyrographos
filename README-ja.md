@@ -173,9 +173,9 @@ Satyristesに以下の内容を記述して下さい。
   (version "1.0")
   ;; ファイル
   (sources
-    ((font "interesting-font.ttf" "fonts/interesting-font.ttf")
+    ((fontDir "fonts")
      (hash "fonts.satysfi-hash" "hash/fonts.satysfi-hash")
-     (package "great-package.satyh" "packages/great-package.satyh")))
+     (packageDir "packages")))
   ;; OPAMパッケージファイル
   (opam "satysfi-great-package.opam")
   ;; 依存関係
@@ -311,8 +311,10 @@ Satyristes ファイルはS式の列で記述されます。以下の宣言を�
 - `(version "<package-version>")` :: ライブラリバージョン
 - `(sources (<source-declaration> ...))` :: ソース
   - `(font "<dst>" <src>")` :: `<src>` を `dist/fonts/<library-name>/<dst>` に配置
-  - `(hash "<dst>" <src>")` :: `<src>` を `dist/hash/<dst>` に配置
-  - `(package "<dst>" <src>")` :: `<src>` を `dist/packages/<library-name>/<dst>` に配置
+  - `(fontDir "<src>")` :: `<src>` 以下のファイルを再帰的に `dist/fonts/<library-name>/` 以下に配置
+  - `(hash "<dst>" "<src>")` :: `<src>` を `dist/hash/<dst>` に配置
+  - `(package "<dst>" "<src>")` :: `<src>` を `dist/packages/<library-name>/<dst>` に配置
+  - `(packageDir "<src>")` :: `<src>` 以下のファイルを再帰的に `dist/packages/<library-name>/` 以下に配置
   - `(file "<dst>" "<src>")` :: `<src>` を `dist/<dst>` に配置
 - `(opam "<opam-package-file>")` :: OPAM package file.
 - `(dependencies (<dependency> ...))` :: 依存関係

@@ -17,6 +17,7 @@
    opam_install__library
    opam_install__library_missingHash
    opam_install__library_missingPackage
+   opam_install__library_recursive
  )
  (preprocess (pps ppx_deriving.std ppx_jane))
  (libraries core re satyrographos shexp.process uri)
