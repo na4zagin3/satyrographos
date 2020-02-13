@@ -74,3 +74,12 @@ let test_install  setup f : unit t =
   (with_temp_dir ~prefix:"Satyrographos" ~suffix:"test_dest"
     (fun dest_dir ->
       with_temp_dir ~prefix:"Satyrographos" ~suffix:"test_temp" (test dest_dir)))
+
+let read_env ?repo:_ ?opam_reg ?dist_library_dir () =
+  Satyrographos.Environment.{
+    repo = None;
+    opam_reg = begin match opam_reg with
+      | Some opam_reg -> Satyrographos.OpamSatysfiRegistry.read opam_reg
+      | None -> None end;
+    dist_library_dir;
+  }

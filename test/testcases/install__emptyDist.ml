@@ -8,11 +8,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
   let open Shexp_process.Infix in
   let empty_dist = FilePath.concat temp_dir "empty_dist" in
   PrepareDist.empty empty_dist
-  >> return Satyrographos.Environment.{
-    repo = None;
-    opam_reg = None;
-    dist_library_dir = Some empty_dist;
-  }
+  >>| read_env ~dist_library_dir:empty_dist
 
 let () =
   let system_font_prefix = None in

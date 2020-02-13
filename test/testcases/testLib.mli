@@ -21,3 +21,5 @@ val dump_dir : string -> unit t
 val test_install : (dest_dir:string -> temp_dir:string -> 'a t) ->
   ('a -> dest_dir:string -> temp_dir:string -> outf:Format.formatter -> unit) ->
   unit t
+
+val read_env : ?repo:unit -> ?opam_reg:string -> ?dist_library_dir:string -> unit -> Satyrographos.Environment.t

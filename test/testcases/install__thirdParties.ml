@@ -11,11 +11,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
   PrepareDist.empty empty_dist
   >> PrepareOpamReg.(prepare opam_reg theanoFiles)
   >> PrepareOpamReg.(prepare opam_reg grcnumFiles)
-  >> return Satyrographos.Environment.{
-    repo = None;
-    opam_reg = Some (Satyrographos.OpamSatysfiRegistry.read opam_reg);
-    dist_library_dir = Some empty_dist;
-  }
+  >>| read_env ~opam_reg ~dist_library_dir:empty_dist
 
 let () =
   let system_font_prefix = None in
