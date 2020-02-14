@@ -5,11 +5,7 @@ open TestLib
 open Shexp_process
 
 let env ~dest_dir:_ ~temp_dir:_ : Satyrographos.Environment.t t =
-  return Satyrographos.Environment.{
-    repo = None;
-    opam_reg = None;
-    dist_library_dir = None;
-  }
+  return (read_env ())
 
 let () =
   let system_font_prefix = None in

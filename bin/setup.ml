@@ -36,7 +36,7 @@ let initialize () =
 
 let reg_opam =
   SatysfiDirs.opam_share_dir ~outf:Format.std_formatter
-  |> Option.map ~f:(fun opam_share_dir ->
+  |> Option.bind ~f:(fun opam_share_dir ->
       OpamSatysfiRegistry.read (Filename.concat opam_share_dir "satysfi"))
 
 let try_read_repo () =

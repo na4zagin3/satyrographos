@@ -12,11 +12,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
   >> mkdir opam_reg
   (* empty dist in opam reg must override the simple dist in system *)
   >> PrepareDist.empty (FilePath.concat opam_reg "dist")
-  >> return Satyrographos.Environment.{
-    repo = None;
-    opam_reg = Some (Satyrographos.OpamSatysfiRegistry.read opam_reg);
-    dist_library_dir = Some empty_dist;
-  }
+  >>| read_env ~opam_reg ~dist_library_dir:empty_dist
 
 let () =
   let system_font_prefix = None in

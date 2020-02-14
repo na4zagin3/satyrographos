@@ -75,11 +75,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
   >> prepare_dist
   >> prepare_opam_reg
   >> PrepareBin.prepare_bin bin
-  >> return Satyrographos.Environment.{
-    repo = None;
-    opam_reg = Some (Satyrographos.OpamSatysfiRegistry.read opam_reg);
-    dist_library_dir = Some empty_dist;
-  }
+  >>| read_env ~opam_reg ~dist_library_dir:empty_dist
 
 let () =
   let verbose = false in
