@@ -295,7 +295,7 @@ git tag -a <tag>
 # タグをプッシュ
 git push origin <tag>
 
-opam publish submit --repo=na4zagin3/satyrographos-repo
+opam publish --repo=na4zagin3/satyrographos-repo
 ```
 
 ## Satyristes ファイル文法

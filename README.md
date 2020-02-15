@@ -319,7 +319,7 @@ git tag -a <tag>
 # Push the tag
 git push origin <tag>
 
-opam publish submit --repo=na4zagin3/satyrographos-repo
+opam publish --repo=na4zagin3/satyrographos-repo
 ```
 
 ## Satyristes file syntax
