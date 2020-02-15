@@ -241,7 +241,7 @@ homepage: "<product home page>"
 bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
 depends: [
-  "satysfi" {>= "0.0.3" & < "0.0.4"}
+  "satysfi" {>= "0.0.4" & < "0.0.5"}
   "satyrographos" {>= "0.0.2" & < "0.0.3"}
 
   # If your library depends on other libraries, please write down here
@@ -272,7 +272,7 @@ homepage: "<product home page>"
 bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
 depends: [
-  "satysfi" {>= "0.0.3" & < "0.0.4"}
+  "satysfi" {>= "0.0.4" & < "0.0.5"}
   "satyrographos" {>= "0.0.2" & < "0.0.3"}
   "satysfi-dist"
 
@@ -368,5 +368,5 @@ Satyristes file is a sequence of S-Expressions. A Satyristes can contain the fol
 
 |Satyrographos|SATySFi|
 |-------|-------------|
-|v0.0.2 series|v0.0.3 series and older (Library build requires  satysfi.0.0.3+dev2019.02.27 or newer)|
+|v0.0.2 series|v0.0.4 series and older (Library build requires  satysfi.0.0.3+dev2019.02.27 or newer)|
 |v0.0.1 series|v0.0.3 series and older|

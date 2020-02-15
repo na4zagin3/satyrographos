@@ -220,7 +220,7 @@ homepage: "<product home page>"
 bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
 depends: [
-  "satysfi" {>= "0.0.3" & < "0.0.4"}
+  "satysfi" {>= "0.0.4" & < "0.0.5"}
   "satyrographos" {>= "0.0.2" & < "0.0.3"}
   "satysfi-dist"
 
@@ -252,7 +252,7 @@ homepage: "<product home page>"
 bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
 depends: [
-  "satysfi" {>= "0.0.3" & < "0.0.4"}
+  "satysfi" {>= "0.0.4" & < "0.0.5"}
   "satyrographos" {>= "0.0.2" & < "0.0.3"}
 
   # 対応するライブラリをここに書きましょう
@@ -343,5 +343,5 @@ Satyristes ファイルはS式の列で記述されます。以下の宣言を�
 
 |Satyrographos|SATySFi|
 |-------|-------------|
-|v0.0.2系列|v0.0.3系列以前（但し、ライブラリドキュメント作成にはsatysfi.0.0.3+dev2019.02.27以後を要す）|
+|v0.0.2系列|v0.0.4系列以前（但し、ライブラリドキュメント作成にはsatysfi.0.0.3+dev2019.02.27以後を要す）|
 |v0.0.1系列|v0.0.3系列以前|
