@@ -1,5 +1,7 @@
 open Shexp_process
 
+val exec_log_file_path : string -> string
+
 val repeat_string : int -> string -> string
 (** [repeat_string n s] returns a string, repeating string [s] [n]-times. *)
 
