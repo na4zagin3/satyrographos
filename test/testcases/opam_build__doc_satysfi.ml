@@ -64,6 +64,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
   let empty_dist = FilePath.concat temp_dir "empty_dist" in
   let prepare_dist = PrepareDist.empty empty_dist in
   let opam_reg = FilePath.concat temp_dir "opam_reg" in
+  let log_file = exec_log_file_path temp_dir in
   let prepare_opam_reg =
     PrepareOpamReg.(prepare opam_reg theanoFiles)
     >> PrepareOpamReg.(prepare opam_reg grcnumFiles)
@@ -74,7 +75,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
   prepare_pkg
   >> prepare_dist
   >> prepare_opam_reg
-  >> PrepareBin.prepare_bin bin
+  >> PrepareBin.prepare_bin bin log_file
   >>| read_env ~opam_reg ~dist_library_dir:empty_dist
 
 let () =

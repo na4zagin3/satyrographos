@@ -3,6 +3,8 @@ module StdList = List
 open Shexp_process
 open Shexp_process.Infix
 
+let exec_log_file_path temp_dir = FilePath.concat temp_dir "commands.log"
+
 let repeat_string n s : string =
   StdList.init n (fun _ -> s) |> StdList.fold_left (^) ""
 
@@ -69,6 +71,11 @@ let test_install  setup f : unit t =
       )
     >> echo_line
     >> dump_dir dest_dir
+    >>= (fun () ->
+      let log_file = exec_log_file_path temp_dir in
+      if FileUtil.(test Is_file log_file)
+      then echo_line >> stdin_from log_file (iter_lines echo)
+      else return ())
     |- censor replacements
     |- censor_tempdirs in
   (with_temp_dir ~prefix:"Satyrographos" ~suffix:"test_dest"

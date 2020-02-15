@@ -1,10 +1,5 @@
 Installing packages
 ------------------------------------------------------------
-satysfi out> INPUT=doc-grcnum.saty
-satysfi out> OUTPUT=doc-grcnum-ja.pdf
-satysfi out> Command invoked:
-satysfi out> satysfi -C @@build_temp_dir@@ doc-grcnum.saty -o doc-grcnum-ja.pdf
-satysfi out> doc-grcnum.saty -> doc-grcnum-ja.pdf
 make out> Target: build-doc
 make out> Files under $SATYSFI_RUNTIME
 make out> ==============================
@@ -59,3 +54,9 @@ Setting up SATySFi env at @@build_opam@@
 ------------------------------------------------------------
 @@dest_dir@@
 ------------------------------------------------------------
+------------------------------------------------------------
+Command invoked:
+satysfi -C @@build_opam@@ --version
+Command invoked:
+satysfi -C @@build_opam@@ doc-grcnum.saty -o doc-grcnum-ja.pdf
+doc-grcnum.saty -> doc-grcnum-ja.pdf
