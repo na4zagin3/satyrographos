@@ -6,6 +6,22 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.2.3] - 2020-02-15
+### Added
+- Add file sections to recursively add fonts `(fontDir <dir>)` and packages `(packageDir <dir>)` ([#102])
+
+### Changed
+- For OCaml 4.09 and later, Package metadata format in OPAM and Satyrographos registries is changed.
+  This may require people using the affected OCaml versions to remove `~/.satyrographos`. ([#89])
+- Outputs from external commands have prefix for each line ([#101], [#103])
+
+### Fixed
+- Using `(file <dst> <src>)` had `opam install` fail  ([#96])
+- `install` didn’t fail when dependencies are not met ([#97])
+- Fix missing line breaks in verbose messages ([#100])
+- Fix a bug where `install` fails when `/usr/share/satysfi/dist` or `/usr/local/share/satysfi/dist` exists but
+  no satysfi packages are installed in OPAM. ([#106])
+
 ## [v0.0.2.2] - 2019-12-28
 ### Added
 - Add alias `-l` of `-library` option of `install` subcommand ([#74])
@@ -102,9 +118,18 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#73]: https://github.com/na4zagin3/satyrographos/pull/73
 [#74]: https://github.com/na4zagin3/satyrographos/pull/74
 [#75]: https://github.com/na4zagin3/satyrographos/pull/75
+[#89]: https://github.com/na4zagin3/satyrographos/pull/89
+[#96]: https://github.com/na4zagin3/satyrographos/pull/96
+[#97]: https://github.com/na4zagin3/satyrographos/pull/97
+[#100]: https://github.com/na4zagin3/satyrographos/pull/100
+[#101]: https://github.com/na4zagin3/satyrographos/pull/101
+[#102]: https://github.com/na4zagin3/satyrographos/pull/102
+[#103]: https://github.com/na4zagin3/satyrographos/pull/103
+[#106]: https://github.com/na4zagin3/satyrographos/pull/106
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.2...HEAD
-[v0.0.2.1]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.1...v0.0.2.2
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.3...HEAD
+[v0.0.2.3]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.2...v0.0.2.3
+[v0.0.2.2]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.1...v0.0.2.2
 [v0.0.2.1]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.0...v0.0.2.1
 [v0.0.2.0]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.7...v0.0.2.0
 [v0.0.1.7]: https://github.com/na4zagin3/satyrographos/compare/v0.0.1.6...v0.0.1.7
