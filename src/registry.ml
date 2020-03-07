@@ -29,7 +29,7 @@ let build_library ~outf reg name =
   | true ->
     (* TODO properly build the library *)
     let dir = Repository.directory reg.repository name in
-    let library = Library.read_dir dir in
+    let library = Library.read_dir ~outf dir in
     Library.to_string library |> print_endline;
     Store.remove reg.registry name;
     Store.add_library ~outf reg.registry name library

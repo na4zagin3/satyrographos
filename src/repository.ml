@@ -36,7 +36,7 @@ let update ~outf reg name =
   | Some metadata -> begin match Uri.scheme metadata.url with
     | Some "file" ->
       let dir = Uri.path metadata.url in
-      let library = Library.read_dir dir in
+      let library = Library.read_dir ~outf dir in
       Library.to_string library |> print_endline;
       Store.remove reg.cache name;
       Store.add_library ~outf reg.cache name library
