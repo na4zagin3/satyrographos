@@ -2,6 +2,7 @@ open Satyrographos
 open Core
 
 
+let outf = Format.std_formatter
 
 let library_show_command_g p_show =
   let open Command.Let_syntax in
@@ -37,7 +38,7 @@ let library_show p () =
   Compatibility.optin ();
   let Environment.{ repo=_; reg; } = Setup.read_repo () in
   Registry.directory reg p
-    |> Library.read_dir
+    |> Library.read_dir ~outf
     |> [%sexp_of: Library.t]
     |> Sexp.to_string_hum
     |> print_endline
@@ -63,7 +64,7 @@ let library_opam_show p () =
   Compatibility.optin ();
   Option.iter Setup.reg_opam ~f:(fun reg_opam ->
     OpamSatysfiRegistry.directory reg_opam p
-      |> Library.read_dir
+      |> Library.read_dir ~outf
       |> [%sexp_of: Library.t]
       |> Sexp.to_string_hum
       |> print_endline

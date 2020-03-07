@@ -206,14 +206,22 @@ let save_metadata f (p: t) =
 
 let metadata_filename = "metadata"
 
-let read_dir d =
+let read_dir ~outf d =
   let add acc f =
     let rel_f = FilePath.make_relative d f in
-    if String.equal rel_f ".satyrographos" then acc
-    else if String.equal rel_f metadata_filename then add_metadata f acc
-    else if FilePath.is_subdir rel_f "hash"
-    then add_hash rel_f f acc
-    else add_file rel_f f acc
+    match rel_f with
+    | ".satyrographos" -> acc
+    | _ when String.equal rel_f metadata_filename ->
+      add_metadata f acc
+    | _ when FilePath.is_subdir rel_f "hash" ->
+      if FilePath.check_extension rel_f "satysfi-hash"
+      then add_hash rel_f f acc
+      else begin
+        Format.fprintf outf "Hash file “%s” is ignored due to the wrong extension.\n" rel_f;
+        acc
+      end
+    | _ ->
+      add_file rel_f f acc
   in
   if FileUtil.test FileUtil.Is_dir d
   then FileUtil.(find ~follow:Follow Is_file d add empty)

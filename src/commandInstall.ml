@@ -74,7 +74,7 @@ let get_libraries ~outf ~maybe_reg ~(env: Environment.t) ~libraries =
   let dist_library_dir = Option.value_exn ~message:"SATySFi dist directory is not found. Please run opam install satysfi-dist" env.dist_library_dir in
   let opam_reg = env.opam_reg in
   Format.fprintf outf "Reading runtime dist: %s\n" dist_library_dir;
-  let dist_library = Library.read_dir dist_library_dir in
+  let dist_library = Library.read_dir ~outf dist_library_dir in
   let user_libraries = Option.map maybe_reg ~f:(fun reg -> Registry.list reg
     |> StringSet.of_list
     |> StringSet.to_map ~f:(Registry.directory reg))
@@ -93,11 +93,11 @@ let get_libraries ~outf ~maybe_reg ~(env: Environment.t) ~libraries =
   let all_libraries =
     Option.value ~default:(Map.empty (module StringSet.Elt)) user_libraries
     |> Map.merge opam_libraries ~f:(fun ~key -> function
-      | `Left x -> Library.read_dir x |> Some
-      | `Right x -> Library.read_dir x |> Some
+      | `Left x -> Library.read_dir ~outf x |> Some
+      | `Right x -> Library.read_dir ~outf x |> Some
       | `Both (_, x) ->
         Format.fprintf outf "Library %s is provided by both the user local and opam repositories\n" key;
-        Library.read_dir x |> Some) in
+        Library.read_dir ~outf x |> Some) in
   let all_libraries = match Map.add all_libraries ~key:"dist" ~data:dist_library with
     | `Ok result -> result
     | `Duplicate ->
