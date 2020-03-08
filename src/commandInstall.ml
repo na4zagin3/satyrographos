@@ -1,22 +1,29 @@
 open Core
 
+let empty_of (type k cmp) another_set: (k, cmp) Base.Set.t =
+  Base.Set.empty (module struct
+    type t = k
+    type comparator_witness = cmp
+    let comparator = (Set.comparator another_set)
+  end)
+
 module StringSet = Set.Make(String)
 
 (* TODO Abstract this *)
 module StringMap = Map.Make(String)
 
 (** Calculate a transitive closure. *)
-let transitive_closure map =
-  let rec f visited queue = match StringSet.choose queue with
+let transitive_closure map init =
+  let rec f visited queue = match Set.choose queue with
     | None -> visited
     | Some cur ->
-      let visited = StringSet.add visited cur in
+      let visited = Set.add visited cur in
       match Map.find map cur with
       | None -> visited;
       | Some nexts ->
-        let queue =  StringSet.union (StringSet.remove queue cur) (StringSet.diff nexts visited) in
+        let queue =  Set.union (Set.remove queue cur) (Set.diff nexts visited) in
         f visited queue in
-  f StringSet.empty
+  f (empty_of init) init
 
 (* TODO property-based testing *)
 let%expect_test "transitive_closure: empty" =
@@ -108,13 +115,13 @@ let get_libraries ~outf ~maybe_reg ~(env: Environment.t) ~libraries =
   let library_dependency_map =
     Map.map all_libraries ~f:(fun p -> p.Library.dependencies) in
   let library_name_set_to_install =
-    transitive_closure library_dependency_map (StringSet.of_list required_library_names) in
+    transitive_closure library_dependency_map (Library.Dependency.of_list required_library_names) in
   let all_library_name_set =
-    Map.keys all_libraries |> StringSet.of_list in
-  let missing_dependencies = StringSet.diff library_name_set_to_install all_library_name_set in
+    Map.keys all_libraries |> Library.Dependency.of_list in
+  let missing_dependencies = Set.diff library_name_set_to_install all_library_name_set in
   begin if not (Set.is_empty missing_dependencies)
-  then failwithf !"Missing dependencies: %{sexp:StringSet.t}" missing_dependencies () end;
-  Map.filter_keys all_libraries ~f:(StringSet.mem library_name_set_to_install)
+    then failwithf !"Missing dependencies: %{sexp:Library.Dependency.t}" missing_dependencies () end;
+  Map.filter_keys all_libraries ~f:(Set.mem library_name_set_to_install)
 
 let show_compatibility_warnings ~outf ~libraries =
   Map.iteri libraries ~f:(fun ~key:library_name ~data:(library: Library.t) ->
