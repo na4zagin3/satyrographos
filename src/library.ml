@@ -12,7 +12,8 @@ end
 module Json = struct
   (*
   include Yojson.Safe
-  let ( sexp_of_t, t_of_sexp, compare, hash ) = Json_erivers.Yojson.( sexp_of_t, t_of_sexp, compare, hash )
+  type t = Json_derivers.Yojson.t
+  let ( sexp_of_t, t_of_sexp, compare, hash ) = Json_derivers.Yojson.( sexp_of_t, t_of_sexp, compare, hash )
   *)
   let ( to_string, from_file, to_file ) = Yojson.Safe.( to_string, from_file, to_file )
   include Json_derivers.Yojson
@@ -141,8 +142,12 @@ let add_file f absolute_path p =
   else { p with files = LibraryFiles.add_exn ~key:f ~data:absolute_path p.files }
 
 let add_hash f abs_f p =
-  let json = Json.from_file abs_f in
-  { p with hashes = LibraryFiles.add_exn ~key:f ~data:([abs_f], json) p.hashes }
+  try
+    let json = Json.from_file abs_f in
+    { p with hashes = LibraryFiles.add_exn ~key:f ~data:([abs_f], json) p.hashes }
+  with
+  | Yojson.Json_error msg ->
+    failwithf "JSON Error in file %s: %s" abs_f msg ()
 
 let union p1 p2 =
   let handle_file_conflict f f1 f2 = match FileUtil.cmp f1 f2 with
