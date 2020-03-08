@@ -126,7 +126,7 @@ let normalize_hash ~outf = function
         (Json.to_string j);
       j
 
-let normalize p ~outf = {
+let normalize ~outf p = {
   hashes = LibraryFiles.map p.hashes ~f:(fun (paths, json) -> paths, normalize_hash ~outf json);
   files = p.files;
   compatibility = p.compatibility;
