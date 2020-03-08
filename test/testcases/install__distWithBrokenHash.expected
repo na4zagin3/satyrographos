@@ -2,7 +2,7 @@ Installing packages
 ------------------------------------------------------------
 Exception:
 (Failure
-   "JSON Error in file @@temp_dir@@/simple_dist/hash/broken.satysfi-hash: Line 1, bytes 1-4:\
+   "JSON Error in file @@temp_dir@@/simple_dist/hash/broken.satysfi-hash: Line 1, bytes <zero-or-one>-4:\
   \nInvalid token 'abc\
   \n'")
 ------------------------------------------------------------

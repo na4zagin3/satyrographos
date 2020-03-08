@@ -16,7 +16,13 @@ let () =
   let libraries = None in
   let verbose = true in
   let copy = false in
+  let replacements =
+    [ (* YoJson 1.7.0 *)
+      "bytes 0-4", "bytes <zero-or-one>-4";
+      (* YoJson 1.4.1+satysfi *)
+      "bytes 1-4", "bytes <zero-or-one>-4";
+    ] in
   let main env ~dest_dir ~temp_dir:_ =
     let dest_dir = FilePath.concat dest_dir "dest" in
     Satyrographos.CommandInstall.install dest_dir ~system_font_prefix ~libraries ~verbose ~copy ~env () in
-  eval (test_install env main)
+  eval (test_install ~replacements env main)
