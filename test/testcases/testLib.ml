@@ -46,7 +46,7 @@ let dump_dir dir : unit t =
 
 let stacktrace = false
 
-let test_install  setup f : unit t =
+let test_install ?(replacements=[]) setup f : unit t =
   let test dest_dir temp_dir =
     let opam_prefix = Unix.open_process_in "opam var prefix" |> input_line (* Assume a path does not contain line breaks*) in
     let replacements =
@@ -54,7 +54,7 @@ let test_install  setup f : unit t =
         dest_dir, "@@dest_dir@@";
         temp_dir, "@@temp_dir@@";
         Unix.getenv "HOME", "@@home_dir@@";
-      ] in
+      ] @ replacements in
     echo "Installing packages"
     >> echo_line
     >> setup ~dest_dir ~temp_dir

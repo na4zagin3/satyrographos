@@ -20,7 +20,9 @@ val echo_line : unit t
 val dump_dir : string -> unit t
 (** [dump_dir dir] returns a Shexp process which dumps directory [dir]’s content to Stdout. *)
 
-val test_install : (dest_dir:string -> temp_dir:string -> 'a t) ->
+val test_install :
+  ?replacements:(string * string) list ->
+  (dest_dir:string -> temp_dir:string -> 'a t) ->
   ('a -> dest_dir:string -> temp_dir:string -> outf:Format.formatter -> unit) ->
   unit t
 
