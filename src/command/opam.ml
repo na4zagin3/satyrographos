@@ -1,4 +1,5 @@
 open Core
+open Satyrographos
 
 module Process = Shexp_process
 module P = Process
@@ -57,8 +58,8 @@ let run_build_commands ~outf ~verbose ~libraries ~workingDir ~env buildCommands 
       let satysfi_dist = Filename.concat satysfi_runtime "dist" in
       return (Library.mark_managed_dir satysfi_dist;) >>
       return (
-        let library_map = CommandInstall.get_libraries ~outf ~maybe_reg:None ~env ~libraries in
-        CommandInstall.install_libraries satysfi_dist ~outf ~library_map ~verbose ~copy:false ()) >>
+        let library_map = Install.get_libraries ~outf ~maybe_reg:None ~env ~libraries in
+        Install.install_libraries satysfi_dist ~outf ~library_map ~verbose ~copy:false ()) >>
       c satysfi_runtime
     in
     with_temp_dir ~prefix:"Satyrographos" ~suffix:"build_opam" c

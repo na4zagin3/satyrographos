@@ -24,5 +24,5 @@ let () =
     ] in
   let main env ~dest_dir ~temp_dir:_ =
     let dest_dir = FilePath.concat dest_dir "dest" in
-    Satyrographos.CommandInstall.install dest_dir ~system_font_prefix ~libraries ~verbose ~copy ~env () in
+    Satyrographos_command.Install.install dest_dir ~system_font_prefix ~libraries ~verbose ~copy ~env () in
   eval (test_install ~replacements env main)
