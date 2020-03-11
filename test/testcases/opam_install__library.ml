@@ -66,5 +66,5 @@ let () =
   let main env ~dest_dir ~temp_dir =
     let name = Some "grcnum" in
     let dest_dir = FilePath.concat dest_dir "dest" in
-    Satyrographos.CommandOpam.(with_build_script install_opam ~verbose ~prefix:dest_dir ~buildscript_path:(FilePath.concat temp_dir "pkg/Satyristes") ~env ~name) () in
+    Satyrographos_command.Opam.(with_build_script install_opam ~verbose ~prefix:dest_dir ~buildscript_path:(FilePath.concat temp_dir "pkg/Satyristes") ~env ~name) () in
   eval (test_install env main)

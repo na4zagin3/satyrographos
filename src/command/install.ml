@@ -1,4 +1,5 @@
 open Core
+open Satyrographos
 
 let empty_of (type k cmp) another_set: (k, cmp) Base.Set.t =
   Base.Set.empty (module struct

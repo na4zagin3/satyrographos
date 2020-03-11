@@ -1,4 +1,3 @@
-open Satyrographos
 open Core
 
 module Process = Shexp_process
@@ -25,17 +24,17 @@ let opam_with_build_module_command ~prefix_optionality f =
       in
         let buildscript_path = Option.value ~default:(default_script_path ()) script in
         let env = Setup.read_environment () in
-        CommandOpam.with_build_script f ~outf ~prefix ~buildscript_path ~name ~verbose ~env
+        Satyrographos_command.Opam.with_build_script f ~outf ~prefix ~buildscript_path ~name ~verbose ~env
     ]
 
 let opam_build_command =
-  opam_with_build_module_command ~prefix_optionality:Command.Param.optional CommandOpam.build_opam
+  opam_with_build_module_command ~prefix_optionality:Command.Param.optional Satyrographos_command.Opam.build_opam
 
 let opam_install_command =
-  opam_with_build_module_command ~prefix_optionality:Command.Param.required CommandOpam.install_opam
+  opam_with_build_module_command ~prefix_optionality:Command.Param.required Satyrographos_command.Opam.install_opam
 
 let opam_uninstall_command =
-  opam_with_build_module_command ~prefix_optionality:Command.Param.required CommandOpam.uninstall_opam
+  opam_with_build_module_command ~prefix_optionality:Command.Param.required Satyrographos_command.Opam.uninstall_opam
 
 let opam_buildfile_command =
   let open Command.Let_syntax in
@@ -47,7 +46,7 @@ let opam_buildfile_command =
       in
       fun () ->
         Compatibility.optin ();
-        CommandOpam.buildfile ~outf:Format.std_formatter ~process f ()
+        Satyrographos_command.Opam.buildfile ~outf:Format.std_formatter ~process f ()
     ]
 
 let opam_export_command =
@@ -59,7 +58,7 @@ let opam_export_command =
       in
       fun () ->
         Compatibility.optin ();
-        CommandOpam.export f ()
+        Satyrographos_command.Opam.export f ()
     ]
 
 let opam_command =

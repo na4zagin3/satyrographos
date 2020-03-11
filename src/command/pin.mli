@@ -1,3 +1,5 @@
+open Satyrographos
+
 (** List current packages stored in the given Satyrographos repository. *)
 (* TODO Receive env instead of repo *)
 val pin_list : outf:Format.formatter -> Repository.t -> unit

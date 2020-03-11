@@ -22,5 +22,5 @@
    opam_install__library_recursive
  )
  (preprocess (pps ppx_deriving.std ppx_jane))
- (libraries core re satyrographos shexp.process uri)
+ (libraries core re satyrographos satyrographos_command shexp.process uri)
  )

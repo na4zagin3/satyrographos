@@ -1,4 +1,3 @@
-open Satyrographos
 open Core
 
 
@@ -23,5 +22,5 @@ let install_command =
           | [] -> None
           | xs -> Some xs in
         let env = Setup.read_environment () in
-        CommandInstall.install target_dir ~outf:Format.std_formatter ~system_font_prefix ~libraries ~verbose ~copy ~env ()
+        Satyrographos_command.Install.install target_dir ~outf:Format.std_formatter ~system_font_prefix ~libraries ~verbose ~copy ~env ()
     ]

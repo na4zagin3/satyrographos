@@ -1,4 +1,3 @@
-open Satyrographos
 open Core
 
 let outf = Format.std_formatter
@@ -10,7 +9,7 @@ let pin_list_command =
     (return (fun () ->
       Compatibility.optin ();
       let repo = (Setup.read_repo ()).repo in
-      CommandPin.pin_list ~outf repo))
+      Satyrographos_command.Pin.pin_list ~outf repo))
 
 let pin_dir_command =
   let open Command.Let_syntax in
@@ -22,7 +21,7 @@ let pin_dir_command =
       fun () ->
         Compatibility.optin ();
         let repo = (Setup.read_repo ()).repo in
-        CommandPin.pin_dir ~outf repo p
+        Satyrographos_command.Pin.pin_dir ~outf repo p
     ]
 
 let pin_add_command =
@@ -38,7 +37,7 @@ let pin_add_command =
         Printf.printf "Compatibility warning: Although currently Satyrographos simply copies the given directory,\n";
         Printf.printf "it will have a build script to control library installation, which is a breaking change.";
         let env = Setup.read_repo () in
-        CommandPin.pin_add ~outf env p url
+        Satyrographos_command.Pin.pin_add ~outf env p url
     ]
 
 let pin_remove_command =
@@ -51,7 +50,7 @@ let pin_remove_command =
       fun () ->
         Compatibility.optin ();
         let repo = (Setup.read_repo ()).repo in
-        CommandPin.pin_remove ~outf repo p
+        Satyrographos_command.Pin.pin_remove ~outf repo p
     ]
 
 let pin_command =
