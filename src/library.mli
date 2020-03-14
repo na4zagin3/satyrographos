@@ -50,6 +50,9 @@ module Compatibility : sig
   val union_list : t list -> t
 end
 
+type file =
+  [ `Filename of string ]
+[@@deriving sexp, compare]
 
 type t = {
   (* TODO (gh-50) make name and version into non-optional.
@@ -58,7 +61,7 @@ type t = {
   version: string option;
 
   hashes: (string list * Json.t) LibraryFiles.t [@sexp.omit_nil];
-  files: string LibraryFiles.t [@sexp.omit_nil];
+  files: file LibraryFiles.t [@sexp.omit_nil];
   compatibility: Compatibility.t [@sexp.omit_nil];
   dependencies: Dependency.t [@sexp.omit_nil];
 }

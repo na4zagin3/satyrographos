@@ -10,31 +10,34 @@ Read library:
         (Variant
          (Single ((Assoc ((src-dist (String grcnum/grcnum-font.ttf))))))))))))))
  (files
-  ((doc/grcnum.md @@temp_dir@@/pkg/README.md)
+  ((doc/grcnum.md (Filename @@temp_dir@@/pkg/README.md))
    (fonts/grcnum/a/b-1/c-1/file1.ttf
-    @@temp_dir@@/pkg/font/a/b-1/c-1/file1.ttf)
+    (Filename @@temp_dir@@/pkg/font/a/b-1/c-1/file1.ttf))
    (fonts/grcnum/a/b-1/c-1/file2.ttf
-    @@temp_dir@@/pkg/font/a/b-1/c-1/file2.ttf)
+    (Filename @@temp_dir@@/pkg/font/a/b-1/c-1/file2.ttf))
    (fonts/grcnum/a/b-1/c-2/file1.ttf
-    @@temp_dir@@/pkg/font/a/b-1/c-2/file1.ttf)
+    (Filename @@temp_dir@@/pkg/font/a/b-1/c-2/file1.ttf))
    (fonts/grcnum/a/b-1/file.ttf
-    @@temp_dir@@/pkg/font/a/b-1/file.ttf)
+    (Filename @@temp_dir@@/pkg/font/a/b-1/file.ttf))
    (fonts/grcnum/a/file.ttf
-    @@temp_dir@@/pkg/font/a/file.ttf)
+    (Filename @@temp_dir@@/pkg/font/a/file.ttf))
    (fonts/grcnum/grcnum-font.ttf
-    @@temp_dir@@/pkg/font.ttf)
+    (Filename @@temp_dir@@/pkg/font.ttf))
    (packages/grcnum/a/b-1/c-1/file1.satyh
-    @@temp_dir@@/pkg/src/a/b-1/c-1/file1.satyh)
+    (Filename
+     @@temp_dir@@/pkg/src/a/b-1/c-1/file1.satyh))
    (packages/grcnum/a/b-1/c-1/file2.satyh
-    @@temp_dir@@/pkg/src/a/b-1/c-1/file2.satyh)
+    (Filename
+     @@temp_dir@@/pkg/src/a/b-1/c-1/file2.satyh))
    (packages/grcnum/a/b-1/c-2/file1.satyh
-    @@temp_dir@@/pkg/src/a/b-1/c-2/file1.satyh)
+    (Filename
+     @@temp_dir@@/pkg/src/a/b-1/c-2/file1.satyh))
    (packages/grcnum/a/b-1/file.satyh
-    @@temp_dir@@/pkg/src/a/b-1/file.satyh)
+    (Filename @@temp_dir@@/pkg/src/a/b-1/file.satyh))
    (packages/grcnum/a/file.satyh
-    @@temp_dir@@/pkg/src/a/file.satyh)
+    (Filename @@temp_dir@@/pkg/src/a/file.satyh))
    (packages/grcnum/grcnum.satyh
-    @@temp_dir@@/pkg/grcnum.satyh)))
+    (Filename @@temp_dir@@/pkg/grcnum.satyh))))
  (compatibility
   ((rename_packages
     (((new_name grcnum/a/b-1/c-1/file1.satyh)

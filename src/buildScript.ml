@@ -227,10 +227,13 @@ let read_library (p: library) ~src_dir =
   let fonts = map_file (Filename.concat "fonts" p.name) p.sources.fonts in
   let packages = map_file (Filename.concat "packages" p.name) p.sources.packages in
   Library.{ empty with
-   name = Some p.name;
-   version = Some p.version;
-   files=List.concat [other_files; fonts; packages] |> Library.LibraryFiles.of_alist_exn;
-   dependencies=p.dependencies;
+    name = Some p.name;
+    version = Some p.version;
+    files =
+      List.concat [other_files; fonts; packages]
+      |> List.map ~f:(fun (dst, fn) -> dst, `Filename fn)
+      |> Library.LibraryFiles.of_alist_exn;
+    dependencies=p.dependencies;
   }
   |> Library.union hashes
   |> compatibility_treatment p
@@ -241,6 +244,7 @@ let read_libraryDoc (p: libraryDoc) ~src_dir =
   p.sources
   |> List.map ~f:(function Doc (dst, src) -> (dst, src))
   |> map_file (Filename.concat "docs" p.name)
+  |> List.map ~f:(function (dst, src) -> (dst, `Filename src))
   in
   Library.{ empty with
    name = Some p.name;

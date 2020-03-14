@@ -4,7 +4,7 @@ Read library:
 ((name (grcnum-doc)) (version (0.2))
  (files
   ((docs/grcnum-doc/doc-grcnum-ja.pdf
-    @@temp_dir@@/pkg/doc-grcnum-ja.pdf)))
+    (Filename @@temp_dir@@/pkg/doc-grcnum-ja.pdf))))
  (dependencies (fonts-theano grcnum)))
 Copying @@temp_dir@@/pkg/doc-grcnum-ja.pdf to @@dest_dir@@/dest/share/satysfi/grcnum-doc/docs/grcnum-doc/doc-grcnum-ja.pdf
 ------------------------------------------------------------
