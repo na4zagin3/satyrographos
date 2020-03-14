@@ -17,11 +17,14 @@ Loaded libraries
           (Single ((Assoc ((src (String dist/fonts/Junicode.ttf))))))))))))))
   (files
    ((fonts/Junicode.ttf
-     @@temp_dir@@/simple_dist/fonts/Junicode.ttf)
+     (Filename
+      @@temp_dir@@/simple_dist/fonts/Junicode.ttf))
     (packages/List.satyg
-     @@temp_dir@@/simple_dist/packages/List.satyg)
+     (Filename
+      @@temp_dir@@/simple_dist/packages/List.satyg))
     (unidata/UnicodeData.txt
-     @@temp_dir@@/simple_dist/unidata/UnicodeData.txt)))))
+     (Filename
+      @@temp_dir@@/simple_dist/unidata/UnicodeData.txt))))))
 Installing ((name ()) (version ())
  (hashes
   ((hash/fonts.satysfi-hash
@@ -31,11 +34,14 @@ Installing ((name ()) (version ())
         (Variant (Single ((Assoc ((src (String dist/fonts/Junicode.ttf))))))))))))))
  (files
   ((fonts/Junicode.ttf
-    @@temp_dir@@/simple_dist/fonts/Junicode.ttf)
+    (Filename
+     @@temp_dir@@/simple_dist/fonts/Junicode.ttf))
    (packages/List.satyg
-    @@temp_dir@@/simple_dist/packages/List.satyg)
+    (Filename
+     @@temp_dir@@/simple_dist/packages/List.satyg))
    (unidata/UnicodeData.txt
-    @@temp_dir@@/simple_dist/unidata/UnicodeData.txt))))
+    (Filename
+     @@temp_dir@@/simple_dist/unidata/UnicodeData.txt)))))
 Installation completed!
 ------------------------------------------------------------
 @@dest_dir@@

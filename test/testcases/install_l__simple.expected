@@ -10,12 +10,14 @@ Loaded libraries
 (((name (base)) (version (1.1.1))
   (files
    ((packages/base/void.satyh
-     @@temp_dir@@/opam_reg/base/packages/base/void.satyh))))
+     (Filename
+      @@temp_dir@@/opam_reg/base/packages/base/void.satyh)))))
  ((name ()) (version ())))
 Installing ((name (base)) (version (1.1.1))
  (files
   ((packages/base/void.satyh
-    @@temp_dir@@/opam_reg/base/packages/base/void.satyh))))
+    (Filename
+     @@temp_dir@@/opam_reg/base/packages/base/void.satyh)))))
 Installation completed!
 ------------------------------------------------------------
 @@dest_dir@@

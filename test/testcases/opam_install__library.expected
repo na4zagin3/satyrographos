@@ -10,11 +10,11 @@ Read library:
         (Variant
          (Single ((Assoc ((src-dist (String grcnum/grcnum-font.ttf))))))))))))))
  (files
-  ((doc/grcnum.md @@temp_dir@@/pkg/README.md)
+  ((doc/grcnum.md (Filename @@temp_dir@@/pkg/README.md))
    (fonts/grcnum/grcnum-font.ttf
-    @@temp_dir@@/pkg/font.ttf)
+    (Filename @@temp_dir@@/pkg/font.ttf))
    (packages/grcnum/grcnum.satyh
-    @@temp_dir@@/pkg/grcnum.satyh)))
+    (Filename @@temp_dir@@/pkg/grcnum.satyh))))
  (compatibility
   ((rename_packages
     (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))

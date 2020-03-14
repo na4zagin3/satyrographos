@@ -30,11 +30,14 @@ Loaded libraries
              ((src-dist (String fonts-theano/TheanoOldStyle-Regular.otf))))))))))))))
   (files
    ((fonts/fonts-theano/TheanoDidot-Regular.otf
-     @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoDidot-Regular.otf)
+     (Filename
+      @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoDidot-Regular.otf))
     (fonts/fonts-theano/TheanoModern-Regular.otf
-     @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoModern-Regular.otf)
+     (Filename
+      @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoModern-Regular.otf))
     (fonts/fonts-theano/TheanoOldStyle-Regular.otf
-     @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoOldStyle-Regular.otf)))
+     (Filename
+      @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoOldStyle-Regular.otf))))
   (compatibility
    ((rename_fonts
      (((new_name fonts-theano:TheanoDidot) (old_name TheanoDidot))
@@ -43,7 +46,8 @@ Loaded libraries
  ((name (grcnum)) (version (0.2))
   (files
    ((packages/grcnum/grcnum.satyh
-     @@temp_dir@@/opam_reg/grcnum/packages/grcnum/grcnum.satyh)))
+     (Filename
+      @@temp_dir@@/opam_reg/grcnum/packages/grcnum/grcnum.satyh))))
   (compatibility
    ((rename_packages
      (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
@@ -69,13 +73,17 @@ Installing ((name (fonts-theano)) (version (2.0))
             ((src-dist (String fonts-theano/TheanoOldStyle-Regular.otf))))))))))))))
  (files
   ((fonts/fonts-theano/TheanoDidot-Regular.otf
-    @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoDidot-Regular.otf)
+    (Filename
+     @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoDidot-Regular.otf))
    (fonts/fonts-theano/TheanoModern-Regular.otf
-    @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoModern-Regular.otf)
+    (Filename
+     @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoModern-Regular.otf))
    (fonts/fonts-theano/TheanoOldStyle-Regular.otf
-    @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoOldStyle-Regular.otf)
+    (Filename
+     @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoOldStyle-Regular.otf))
    (packages/grcnum/grcnum.satyh
-    @@temp_dir@@/opam_reg/grcnum/packages/grcnum/grcnum.satyh)))
+    (Filename
+     @@temp_dir@@/opam_reg/grcnum/packages/grcnum/grcnum.satyh))))
  (compatibility
   ((rename_packages
     (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))

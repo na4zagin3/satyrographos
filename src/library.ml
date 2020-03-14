@@ -50,6 +50,9 @@ module Compatibility = struct
   let union_list = List.fold ~init:empty ~f:union
 end
 
+type file =
+  [ `Filename of string ]
+[@@deriving sexp, compare]
 
 type t = {
   (* TODO (gh-50) make name and version into non-optional.
@@ -58,7 +61,7 @@ type t = {
   version: string option;
 
   hashes: (string list * Json.t) LibraryFiles.t [@sexp.omit_nil];
-  files: string LibraryFiles.t [@sexp.omit_nil];
+  files: file LibraryFiles.t [@sexp.omit_nil];
   compatibility: Compatibility.t [@sexp.omit_nil];
   dependencies: Dependency.t [@sexp.omit_nil];
 }
@@ -139,7 +142,7 @@ let normalize ~outf p = {
 let add_file f absolute_path p =
   if FilePath.is_relative absolute_path
   then failwith ("BUG: FilePath must be absolute but got " ^ absolute_path)
-  else { p with files = LibraryFiles.add_exn ~key:f ~data:absolute_path p.files }
+  else { p with files = LibraryFiles.add_exn ~key:f ~data:(`Filename absolute_path) p.files }
 
 let add_hash f abs_f p =
   try
@@ -150,10 +153,12 @@ let add_hash f abs_f p =
     failwithf "JSON Error in file %s: %s" abs_f msg ()
 
 let union p1 p2 =
-  let handle_file_conflict f f1 f2 = match FileUtil.cmp f1 f2 with
-    | None -> Some(f1)
-    | Some(-1) -> failwith ("Cannot read either of files " ^ f ^ "\n  " ^ f1 ^ "\n  " ^ f2)
-    | _ -> failwith ("Conflicting file " ^ f ^ "\n  " ^ f1 ^ "\n  " ^ f2)
+  let handle_file_conflict f f1 f2= match f1, f2 with
+    | `Filename f1, `Filename f2 ->
+      match FileUtil.cmp f1 f2 with
+      | None -> Some(`Filename f1)
+      | Some(-1) -> failwith ("Cannot read either of files " ^ f ^ "\n  " ^ f1 ^ "\n  " ^ f2)
+      | _ -> failwith ("Conflicting file " ^ f ^ "\n  " ^ f1 ^ "\n  " ^ f2)
   in
   let handle_hash_conflict f (f1, h1) (f2, h2) = match h1, h2 with
     | `Assoc a1, `Assoc a2 -> Some(List.append f1 f2, `Assoc (List.append a1 a2)) (* TODO: Handle conflicting cases*)
@@ -235,25 +240,27 @@ let read_dir ~outf d =
 let write_dir ?(verbose=false) ?(symlink=false) ~outf d p =
   let p = normalize ~outf p in
   FileUtil.mkdir ~parent:true d;
-  LibraryFiles.iteri ~f:(fun ~key:path ~data:fullpath ->
+  LibraryFiles.iteri ~f:(fun ~key:path ~data ->
     let file_dst = FilePath.concat d path in
-    let action = if symlink
-      then "Linking"
-      else "Copying"
-    in
-    begin if verbose
-      then Format.fprintf outf "%s %s to %s@." action fullpath file_dst
-    end;
-    FileUtil.mkdir ~parent:true (FilePath.dirname file_dst);
-    if symlink
-    then (* Breaking change in Core v0.11 and v0.12. Use Core v0.12 notation when the OCaml 4.06 support is dropped.
-      Core v0.11:
-        Unix.symlink ~src:fullpath ~dst:file_dst
-      Core v0.12:
-        Unix.symlink ~target:fullpath ~link_name:file_dst
-      *)
-      UnixLabels.symlink ~to_dir:false ~src:fullpath ~dst:file_dst
-    else FileUtil.cp [fullpath] file_dst
+    match data with
+    | `Filename fullpath ->
+      let action = if symlink
+        then "Linking"
+        else "Copying"
+      in
+      begin if verbose
+        then Format.fprintf outf "%s %s to %s@." action fullpath file_dst
+      end;
+      FileUtil.mkdir ~parent:true (FilePath.dirname file_dst);
+      if symlink
+      then (* Breaking change in Core v0.11 and v0.12. Use Core v0.12 notation when the OCaml 4.06 support is dropped.
+        Core v0.11:
+          Unix.symlink ~src:fullpath ~dst:file_dst
+        Core v0.12:
+          Unix.symlink ~target:fullpath ~link_name:file_dst
+        *)
+        UnixLabels.symlink ~to_dir:false ~src:fullpath ~dst:file_dst
+      else FileUtil.cp [fullpath] file_dst
   ) p.files;
   LibraryFiles.iteri ~f:(fun ~key:path ~data:(_, h) ->
     let file_dst = FilePath.concat d path in

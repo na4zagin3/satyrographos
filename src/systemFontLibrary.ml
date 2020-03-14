@@ -106,15 +106,17 @@ let fonts_to_library ~outf prefix fonts =
     |> List.unzip
   in
   let hash_filename_fonts = "hash/fonts.satysfi-hash" in
+  let map = Library.LibraryFiles.of_alist_reduce files ~f:(fun f1 f2 -> match f1, f2 with
+        | f1, f2 ->
+          begin if not (String.equal f1 f2)
+            then Format.fprintf outf "WARNING: %s and %s have conflicting filename.@." f1 f2
+          end;
+          f1
+    ) in
   let hash_path_fonts = "#Automatically generated from the system fonts#" in
   Library.{ empty with
     hashes = LibraryFiles.singleton hash_filename_fonts ([hash_path_fonts], `Assoc hash);
-    files = LibraryFiles.of_alist_reduce files ~f:(fun f1 f2 ->
-      begin if not (String.equal f1 f2)
-        then Format.fprintf outf "WARNING: %s and %s have conflicting filename.@." f1 f2
-      end;
-      f1
-    );
+    files = LibraryFiles.map map ~f:(fun fn -> `Filename fn)
   }
 
 let get_library ~outf prefix () =
