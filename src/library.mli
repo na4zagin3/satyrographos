@@ -51,7 +51,9 @@ module Compatibility : sig
 end
 
 type file =
-  [ `Filename of string ]
+  [ `Filename of string
+  | `Content of string
+  ]
 [@@deriving sexp, compare]
 
 type t = {
