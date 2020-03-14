@@ -1,25 +1,25 @@
 (tests
  (names
-   install__distWithBrokenHash
-   install__distWithNonHashUnderHashDir
-   install__emptyDist
-   install__missingDist
-   install__onlyDist
-   install__twoDists
-   install__unmanagedDirAlreadyExists
-   install__thirdParties
-   install__thirdParties_brokenDependency
-   install_l__dependent
-   install_l__simple
-   install_l__independentTwo
-   install_l__thirdParties_brokenDependency
-   install_l__transitive
-   opam_build__doc_satysfi
-   opam_install__doc
-   opam_install__library
-   opam_install__library_missingHash
-   opam_install__library_missingPackage
-   opam_install__library_recursive
+   command_install__distWithBrokenHash
+   command_install__distWithNonHashUnderHashDir
+   command_install__emptyDist
+   command_install__missingDist
+   command_install__onlyDist
+   command_install__twoDists
+   command_install__unmanagedDirAlreadyExists
+   command_install__thirdParties
+   command_install__thirdParties_brokenDependency
+   command_install_l__dependent
+   command_install_l__simple
+   command_install_l__independentTwo
+   command_install_l__thirdParties_brokenDependency
+   command_install_l__transitive
+   command_opam_build__doc_satysfi
+   command_opam_install__doc
+   command_opam_install__library
+   command_opam_install__library_missingHash
+   command_opam_install__library_missingPackage
+   command_opam_install__library_recursive
  )
  (preprocess (pps ppx_deriving.std ppx_jane))
  (libraries core re satyrographos satyrographos_command shexp.process uri)
