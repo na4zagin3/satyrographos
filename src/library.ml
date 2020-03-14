@@ -51,7 +51,9 @@ module Compatibility = struct
 end
 
 type file =
-  [ `Filename of string ]
+  [ `Filename of string
+  | `Content of string
+  ]
 [@@deriving sexp, compare]
 
 type t = {
@@ -154,6 +156,18 @@ let add_hash f abs_f p =
 
 let union p1 p2 =
   let handle_file_conflict f f1 f2= match f1, f2 with
+    | `Content fc1, `Content fc2 -> begin
+      if String.equal fc1 fc2
+      then Some(`Content fc1)
+      else failwith ("Conflicting file " ^ f)
+    end
+    | `Filename fn2, `Content fc1
+    | `Content fc1, `Filename fn2 -> begin
+      let fc2 = In_channel.read_all fn2 in
+      if String.equal fc1 fc2
+      then Some(`Content fc1)
+      else failwith ("Conflicting file " ^ f)
+    end
     | `Filename f1, `Filename f2 ->
       match FileUtil.cmp f1 f2 with
       | None -> Some(`Filename f1)
@@ -243,6 +257,13 @@ let write_dir ?(verbose=false) ?(symlink=false) ~outf d p =
   LibraryFiles.iteri ~f:(fun ~key:path ~data ->
     let file_dst = FilePath.concat d path in
     match data with
+    | `Content data ->
+      let file_dst = FilePath.concat d path in
+      begin if verbose
+        then Format.fprintf outf "Writing to %s@." file_dst
+      end;
+      FileUtil.mkdir ~parent:true (FilePath.dirname file_dst);
+      Out_channel.write_all file_dst ~data
     | `Filename fullpath ->
       let action = if symlink
         then "Linking"

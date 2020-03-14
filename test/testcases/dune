@@ -20,6 +20,7 @@
    command_opam_install__library_missingHash
    command_opam_install__library_missingPackage
    command_opam_install__library_recursive
+   library_write_dir__content
  )
  (preprocess (pps ppx_deriving.std ppx_jane))
  (libraries core re satyrographos satyrographos_command shexp.process uri)
