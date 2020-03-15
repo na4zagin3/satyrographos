@@ -1,5 +1,6 @@
 open Core
 open Satyrographos
+module Autogen = Satyrographos_autogen
 
 module StringSet = Set.Make(String)
 
@@ -115,7 +116,23 @@ let install_libraries d ~outf ~library_map  ~verbose ~copy () =
   end
 
 
-let install d ~outf ~system_font_prefix ~libraries ~verbose ~copy ~(env: Environment.t) () =
+let add_autogen_libraries ~outf ~libraries ~env:(_ : Environment.t) library_map =
+  Format.fprintf outf "Generating autogen libraries@.";
+  let add_library name f m =
+    if Set.mem libraries name
+    then begin
+      Format.fprintf outf "Generating autogen library %s@." name;
+      let l : Library.t = f ~outf m in
+      match Map.add m ~key:(Option.value ~default:"" l.name) ~data:l with
+      | `Ok m -> m
+      | `Duplicate -> failwithf "Autogen Library %s is duplicated:@." (Option.value ~default:"(no name)" l.name) ()
+    end else m
+  in
+  library_map
+  |> add_library Autogen.Fonts.name Autogen.Fonts.generate
+  |> add_library Autogen.Libraries.name Autogen.Libraries.generate
+
+let install d ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~verbose ~copy ~(env: Environment.t) () =
   (* TODO build all *)
   Format.open_vbox 0;
   let maybe_repo = env.repo in
@@ -146,6 +163,15 @@ let install d ~outf ~system_font_prefix ~libraries ~verbose ~copy ~(env: Environ
       Format.fprintf outf "Gathering system fonts with prefix %s\n" prefix;
       let systemFontLibrary = SystemFontLibrary.get_library prefix ~outf () in
       Map.add_exn ~key:"%fonts-system" ~data:systemFontLibrary library_map
+  in
+  let autogen_libraries =
+    autogen_libraries
+    |> Set.of_list (module String)
+  in
+  let library_map =
+     if Set.is_empty autogen_libraries
+     then library_map
+     else add_autogen_libraries ~outf ~libraries:autogen_libraries ~env library_map
   in
   install_libraries d ~verbose ~outf ~library_map ~copy ();
   Format.close_box ()

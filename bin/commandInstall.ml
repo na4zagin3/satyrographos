@@ -12,15 +12,27 @@ let install_command =
     ~readme
     [%map_open
       let system_font_prefix = flag "system-font-prefix" (optional string) ~doc:"FONT_NAME_PREFIX Installing system fonts with names with the given prefix"
+      and autogen_library_list = flag "autogen" (listed string) ~aliases:["a"] ~doc:"AUTOGEN Enable non-default autogen libraries (e.g., %libraries) (EXPERIMENTAL)"
       and library_list = flag "library" (listed string) ~aliases:["l"] ~doc:"LIBRARY Library"
       and target_dir = anon (maybe_with_default default_target_dir ("DIR" %: string))
       and verbose = flag "verbose" no_arg ~doc:"Make verbose"
       and copy = flag "copy" no_arg ~doc:"Copy files instead of making symlinks"
       in
       fun () ->
+        if not (List.is_empty autogen_library_list)
+        then Compatibility.optin ();
         let libraries = match library_list with
           | [] -> None
           | xs -> Some xs in
         let env = Setup.read_environment () in
-        Satyrographos_command.Install.install target_dir ~outf:Format.std_formatter ~system_font_prefix ~libraries ~verbose ~copy ~env ()
+        Satyrographos_command.Install.install
+          target_dir
+          ~outf:Format.std_formatter
+          ~system_font_prefix
+          ~autogen_libraries:autogen_library_list
+          ~libraries
+          ~verbose
+          ~copy
+          ~env
+          ()
     ]
