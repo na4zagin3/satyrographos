@@ -9,6 +9,7 @@
    command_install__unmanagedDirAlreadyExists
    command_install__thirdParties
    command_install__thirdParties_brokenDependency
+   command_install_l__autogen
    command_install_l__dependent
    command_install_l__simple
    command_install_l__independentTwo
