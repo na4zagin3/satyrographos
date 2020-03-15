@@ -7,7 +7,7 @@ Not gathering system fonts
 Installing libraries: (dist fonts-theano)
 Removing destination @@dest_dir@@/dest
 Loaded libraries
-(((name ()) (version ()))
+(((name (dist)) (version ()))
  ((name (fonts-theano)) (version (2.0))
   (hashes
    ((hash/fonts.satysfi-hash
@@ -43,7 +43,7 @@ Loaded libraries
      (((new_name fonts-theano:TheanoDidot) (old_name TheanoDidot))
       ((new_name fonts-theano:TheanoModern) (old_name TheanoModern))
       ((new_name fonts-theano:TheanoOldStyle) (old_name TheanoOldStyle))))))))
-Installing ((name (fonts-theano)) (version (2.0))
+Installing ((name (dist)) (version (2.0))
  (hashes
   ((hash/fonts.satysfi-hash
     ((@@temp_dir@@/opam_reg/fonts-theano/hash/fonts.satysfi-hash)
@@ -115,7 +115,7 @@ diff -Nr @@empty_dir@@/dest/hash/fonts.satysfi-hash @@dest_dir@@/dest/hash/fonts
 \ No newline at end of file
 diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 0a1,7
-> ((version 1) (libraryName fonts-theano) (libraryVersion 2.0)
+> ((version 1) (libraryName dist) (libraryVersion 2.0)
 >  (compatibility
 >   ((rename_fonts
 >     (((new_name fonts-theano:TheanoDidot) (old_name TheanoDidot))

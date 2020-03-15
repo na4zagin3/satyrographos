@@ -2,6 +2,8 @@ open Core
 
 module StringSet = Set.Make(String)
 
+let name = "%fonts-system"
+
 let blacklist = StringSet.of_list [
   (* Each SanFranciso font has several weights with the same postscriptname *)
   "/System/Library/Fonts/SFNSDisplay.ttf";
@@ -115,6 +117,8 @@ let fonts_to_library ~outf prefix fonts =
     ) in
   let hash_path_fonts = "#Automatically generated from the system fonts#" in
   Library.{ empty with
+    name = Some name;
+    version = Some "0.1";
     hashes = LibraryFiles.singleton hash_filename_fonts ([hash_path_fonts], `Assoc hash);
     files = LibraryFiles.map map ~f:(fun fn -> `Filename fn)
   }

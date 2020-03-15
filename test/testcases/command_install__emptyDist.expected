@@ -7,7 +7,7 @@ Not gathering system fonts
 Installing libraries: (dist)
 Removing destination @@dest_dir@@/dest
 Loaded libraries
-(((name ()) (version ())))Installing ((name ()) (version ()))
+(((name (dist)) (version ())))Installing ((name (dist)) (version ()))
 Installation completed!
 ------------------------------------------------------------
 @@dest_dir@@
@@ -17,5 +17,5 @@ Installation completed!
 ------------------------------------------------------------
 diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 0a1,2
-> ((version 1) (libraryName "") (libraryVersion "") (compatibility ())
+> ((version 1) (libraryName dist) (libraryVersion "") (compatibility ())
 >  (dependencies ()))

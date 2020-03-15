@@ -16,5 +16,5 @@ Installation completed!
 ------------------------------------------------------------
 diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 0a1,2
-> ((version 1) (libraryName "") (libraryVersion "") (compatibility ())
+> ((version 1) (libraryName dist) (libraryVersion "") (compatibility ())
 >  (dependencies ()))

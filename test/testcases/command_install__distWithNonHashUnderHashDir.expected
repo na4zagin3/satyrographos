@@ -8,7 +8,7 @@ Not gathering system fonts
 Installing libraries: (dist)
 Removing destination @@dest_dir@@/dest
 Loaded libraries
-(((name ()) (version ())
+(((name (dist)) (version ())
   (hashes
    ((hash/fonts.satysfi-hash
      ((@@temp_dir@@/simple_dist/hash/fonts.satysfi-hash)
@@ -26,7 +26,7 @@ Loaded libraries
     (unidata/UnicodeData.txt
      (Filename
       @@temp_dir@@/simple_dist/unidata/UnicodeData.txt))))))
-Installing ((name ()) (version ())
+Installing ((name (dist)) (version ())
  (hashes
   ((hash/fonts.satysfi-hash
     ((@@temp_dir@@/simple_dist/hash/fonts.satysfi-hash)
@@ -67,7 +67,7 @@ diff -Nr @@empty_dir@@/dest/hash/fonts.satysfi-hash @@dest_dir@@/dest/hash/fonts
 \ No newline at end of file
 diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 0a1,2
-> ((version 1) (libraryName "") (libraryVersion "") (compatibility ())
+> ((version 1) (libraryName dist) (libraryVersion "") (compatibility ())
 >  (dependencies ()))
 diff -Nr @@empty_dir@@/dest/packages/List.satyg @@dest_dir@@/dest/packages/List.satyg
 0a1,2
