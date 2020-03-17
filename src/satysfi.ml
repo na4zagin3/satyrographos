@@ -53,6 +53,7 @@ let%expect_test {|literal_string: backticks|} =
 
 
 let literal_simple ppf = function
+  | `Float i -> Format.fprintf ppf "%f" i
   | `Integer i -> Format.fprintf ppf "%d" i
   | `LiteralString ls ->
     literal_string ls
@@ -228,7 +229,7 @@ let%expect_test "format_type_decl_body: sum" =
     | B |}]
 
 let rec format_expr ppf = function
-  | (`Integer _ | `LiteralString _) as ls -> literal_simple ppf ls
+  | (`Float _ | `Integer _ | `LiteralString _) as ls -> literal_simple ppf ls
   | `Var x ->
     Format.fprintf ppf "%s" x
   | `Apply (f, x) ->
@@ -448,3 +449,37 @@ let%expect_test "expr_show_message" =
   [%expect{|
     let _ =
     (display-message) (`p`) |}]
+
+let value_of_option f = function
+  | None ->
+    `Constructor ("None", [])
+  | Some x ->
+    `Constructor ("Some", [f x])
+
+let%expect_test "value_of_option: None" =
+  None
+  |> value_of_option (fun x -> `LiteralString x)
+  |> format_expr Format.std_formatter;
+  Format.pp_print_newline Format.std_formatter ();
+  [%expect{|
+    None |}]
+
+let%expect_test "value_of_option: Some (\"a\")" =
+  Some ("a")
+  |> value_of_option (fun x -> `LiteralString x)
+  |> format_expr Format.std_formatter;
+  Format.pp_print_newline Format.std_formatter ();
+  [%expect{|
+    Some(`a`) |}]
+
+let value_of_string (x: string) = `LiteralString x
+
+let value_of_int (x: int) = `Integer x
+
+let value_of_float (x: float) = `Float x
+
+let value_of_list (type a) f (xs: a list) =
+  `Array (List.map ~f xs)
+
+let value_of_tuple2 f1 f2 (v1, v2) =
+  `Tuple [f1 v1; f2 v2]
