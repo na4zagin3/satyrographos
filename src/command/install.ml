@@ -49,6 +49,9 @@ let get_libraries ~outf ~maybe_reg ~(env: Environment.t) ~libraries =
     | `Duplicate ->
       Format.fprintf outf "Overriding dist with user installed one\n";
       all_libraries in
+  (* A dirty hack to set library metadata of dist library *)
+  (* TODO (gh-123) Add library version too *)
+  let all_libraries = Map.change all_libraries "dist" ~f:(Option.map ~f:(fun l -> {l with Library.name = Some "dist"})) in
   let required_library_names =
     "dist" :: Option.value ~default:(Map.keys all_libraries) libraries in
   let library_dependency_map =

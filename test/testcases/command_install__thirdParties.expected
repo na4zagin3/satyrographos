@@ -7,7 +7,7 @@ Not gathering system fonts
 Installing libraries: (dist fonts-theano grcnum)
 Removing destination @@dest_dir@@/dest
 Loaded libraries
-(((name ()) (version ()))
+(((name (dist)) (version ()))
  ((name (fonts-theano)) (version (2.0))
   (hashes
    ((hash/fonts.satysfi-hash
@@ -52,7 +52,7 @@ Loaded libraries
    ((rename_packages
      (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
   (dependencies (fonts-theano))))
-Installing ((name (fonts-theano)) (version (2.0))
+Installing ((name (dist)) (version (2.0))
  (hashes
   ((hash/fonts.satysfi-hash
     ((@@temp_dir@@/opam_reg/fonts-theano/hash/fonts.satysfi-hash)
@@ -139,7 +139,7 @@ diff -Nr @@empty_dir@@/dest/hash/fonts.satysfi-hash @@dest_dir@@/dest/hash/fonts
 \ No newline at end of file
 diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 0a1,9
-> ((version 1) (libraryName fonts-theano) (libraryVersion 2.0)
+> ((version 1) (libraryName dist) (libraryVersion 2.0)
 >  (compatibility
 >   ((rename_packages
 >     (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))
