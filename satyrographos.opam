@@ -11,6 +11,7 @@ bug-reports: "https://github.com/na4zagin3/satyrographos/issues"
 license: "LGPL-3.0-or-later"
 build: [
   ["dune" "subst"] {pinned}
+  ["sed" "-i.bak" "-e" "s/%%%%VERSION_NUM%%%%/%{version}%/" "bin/main.ml"]
   ["dune" "build" "-p" name "-j" jobs]
 ]
 run-test: [
