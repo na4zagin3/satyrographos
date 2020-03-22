@@ -6,6 +6,15 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.2.4] - 2020-03-22
+### Added
+- Add autogen package `satyrographos/experimental/fonts` (`%fonts`) as an experimental feature. ([#122], [#125])
+- Add autogen package `satyrographos/experimental/libraries` (`%libraries`) as an experimental feature. ([#122])
+
+### Fixed
+- Show a warning message instead of failing with non-hash files in hash dir ([#110] reported by @gfngfn, [#111])
+- Show a filename when a hash file contains a grammatical error ([#115])
+
 ## [v0.0.2.3] - 2020-02-15
 ### Added
 - Add file sections to recursively add fonts `(fontDir <dir>)` and packages `(packageDir <dir>)` ([#102])
@@ -126,8 +135,15 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#102]: https://github.com/na4zagin3/satyrographos/pull/102
 [#103]: https://github.com/na4zagin3/satyrographos/pull/103
 [#106]: https://github.com/na4zagin3/satyrographos/pull/106
+[#110]: https://github.com/na4zagin3/satyrographos/pull/110
+[#111]: https://github.com/na4zagin3/satyrographos/pull/111
+[#115]: https://github.com/na4zagin3/satyrographos/pull/115
+[#121]: https://github.com/na4zagin3/satyrographos/pull/121
+[#122]: https://github.com/na4zagin3/satyrographos/pull/122
+[#125]: https://github.com/na4zagin3/satyrographos/pull/125
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.3...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.4...HEAD
+[v0.0.2.4]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.3...v0.0.2.4
 [v0.0.2.3]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.2...v0.0.2.3
 [v0.0.2.2]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.1...v0.0.2.2
 [v0.0.2.1]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.0...v0.0.2.1
