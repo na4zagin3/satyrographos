@@ -25,8 +25,8 @@ opam repository add satysfi-external https://github.com/gfngfn/satysfi-external-
 opam repository add satyrographos https://github.com/na4zagin3/satyrographos-repo.git
 opam update
 
-opam depext satysfi satysfi-lib-dist satyrographos
-opam install satysfi satysfi-lib-dist satyrographos
+opam depext satysfi satysfi-dist satyrographos
+opam install satysfi satysfi-dist satyrographos
 
 satyrographos install
 ```
