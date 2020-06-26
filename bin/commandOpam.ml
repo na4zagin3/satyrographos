@@ -34,7 +34,19 @@ let opam_install_command =
   opam_with_build_module_command ~prefix_optionality:Command.Param.required Satyrographos_command.Opam.install_opam
 
 let opam_uninstall_command =
-  opam_with_build_module_command ~prefix_optionality:Command.Param.required Satyrographos_command.Opam.uninstall_opam
+  let open Command.Let_syntax in
+  let outf = Format.std_formatter in
+  Command.basic
+    ~summary:"DEPRECATED"
+    [%map_open
+      let _ = flag "prefix" (required string) ~doc:"PREFIX Install destination"
+      and _ = flag "script" (optional string) ~doc:"SCRIPT Install script"
+      and _ = flag "name" (optional string) ~doc:"MODULE_NAME Module name"
+      and _ = flag "verbose" no_arg ~doc:"Make verbose"
+      in
+        fun () ->
+          Format.fprintf outf "Warning: opam uninstall subcommand has been deprecated.  It does nothing now.\n"
+    ]
 
 let opam_buildfile_command =
   let open Command.Let_syntax in
