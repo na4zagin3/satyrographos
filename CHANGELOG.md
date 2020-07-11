@@ -6,6 +6,13 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.2.5] - 2020-07-11
+### Changed
+- Now `satyrographos opam uninstall` does nothing. ([#128])
+
+### Removed
+- Drop support of OCaml 4.09 and older, and SATySFi 0.0.4 and older.
+
 ## [v0.0.2.4] - 2020-03-22
 ### Added
 - Add autogen package `satyrographos/experimental/fonts` (`%fonts`) as an experimental feature. ([#122], [#125])
@@ -141,8 +148,10 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#121]: https://github.com/na4zagin3/satyrographos/pull/121
 [#122]: https://github.com/na4zagin3/satyrographos/pull/122
 [#125]: https://github.com/na4zagin3/satyrographos/pull/125
+[#128]: https://github.com/na4zagin3/satyrographos/pull/128
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.4...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.5...HEAD
+[v0.0.2.5]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.4...v0.0.2.5
 [v0.0.2.4]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.3...v0.0.2.4
 [v0.0.2.3]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.2...v0.0.2.3
 [v0.0.2.2]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.1...v0.0.2.2
