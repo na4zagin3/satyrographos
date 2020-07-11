@@ -11,7 +11,7 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 - Now `satyrographos opam uninstall` does nothing. ([#128])
 
 ### Removed
-- Drop support of OCaml 4.09 and older, and SATySFi 0.0.4 and older.
+- Drop support of OCaml 4.08 and older, and SATySFi 0.0.4 and older.
 
 ## [v0.0.2.4] - 2020-03-22
 ### Added
