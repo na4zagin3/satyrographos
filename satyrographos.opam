@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "satyrographos"
-version: "0.0.2.4"
+version: "0.0.2.5"
 maintainer: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
 authors: [
   "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
@@ -18,12 +18,8 @@ run-test: [
 ]
 
 depends: [
-  "ocaml" {>= "4.06.0"}
-  (
-    "dune" {>= "1.11"} & "ocaml" {>= "4.07.0"}
-  | (* ppx_inline_test v0.11 requires dune 1 *)
-    "dune" {>= "1.11" & < "2" } & "ocaml" {< "4.07.0"}
-  )
+  "ocaml" {>= "4.09.0"}
+  "dune" {>= "2"}
   "fileutils"
   "json-derivers"
   "ppx_deriving"
@@ -35,7 +31,7 @@ depends: [
   "yojson"
 
   # Janestreet Libs
-  "core" {< "v0.14"}
+  "core" {>= "v0.13" & < "v0.15"}
   "ppx_jane"
   "shexp"
 ]
