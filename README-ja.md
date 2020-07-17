@@ -220,7 +220,7 @@ homepage: "<product home page>"
 bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
 depends: [
-  "satysfi" {>= "0.0.4" & < "0.0.5"}
+  "satysfi" {>= "0.0.5" & < "0.0.6"}
   "satyrographos" {>= "0.0.2" & < "0.0.3"}
   "satysfi-dist"
 
@@ -252,7 +252,7 @@ homepage: "<product home page>"
 bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
 depends: [
-  "satysfi" {>= "0.0.4" & < "0.0.5"}
+  "satysfi" {>= "0.0.5" & < "0.0.6"}
   "satyrographos" {>= "0.0.2" & < "0.0.3"}
 
   # 対応するライブラリをここに書きましょう
