@@ -6,7 +6,7 @@ env:
   - OCAML_VERSION=4.10
 os:
   - linux
-dist: xenial
+dist: bionic
 cache:
   directories:
     - $HOME/ocaml
