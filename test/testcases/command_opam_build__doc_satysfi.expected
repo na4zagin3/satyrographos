@@ -32,8 +32,9 @@ make out> ==============================
 Reading runtime dist: @@temp_dir@@/empty_dist
 Read user libraries: ()
 Reading opam libraries: (base class-greek fonts-theano grcnum)
+Not gathering system fonts
 Installing libraries: (dist fonts-theano grcnum)
-Removing destination @@build_opam@@/dist
+Removing destination @@with_env@@/dist
 Installation completed!
 
 [1;33mCompatibility notice[0m for library fonts-theano:
@@ -50,13 +51,13 @@ Installation completed!
                                                       
                                                         grcnum.satyh -> grcnum/grcnum.satyh
 
-Setting up SATySFi env at @@build_opam@@ 
+Setting up SATySFi env at @@with_env@@ 
 ------------------------------------------------------------
 @@dest_dir@@
 ------------------------------------------------------------
 ------------------------------------------------------------
 Command invoked:
-satysfi -C @@build_opam@@ --version
+satysfi -C @@with_env@@ --version
 Command invoked:
-satysfi -C @@build_opam@@ doc-grcnum.saty -o doc-grcnum-ja.pdf
+satysfi -C @@with_env@@ doc-grcnum.saty -o doc-grcnum-ja.pdf
 doc-grcnum.saty -> doc-grcnum-ja.pdf
