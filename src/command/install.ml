@@ -135,29 +135,31 @@ let add_autogen_libraries ~outf ~libraries ~env:(_ : Environment.t) library_map 
   |> add_library Autogen.Fonts.name Autogen.Fonts.generate
   |> add_library Autogen.Libraries.name Autogen.Libraries.generate
 
-let install d ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~verbose ~copy ~(env: Environment.t) () =
+let install d ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~verbose ?(safe=false) ~copy ~(env: Environment.t) () =
   (* TODO build all *)
   Format.open_vbox 0;
   let maybe_repo = env.repo in
-  Option.iter maybe_repo ~f:(fun {repo; reg} ->
-    Format.fprintf outf "Updating libraries@,";
-    begin match Repository.update_all ~outf repo with
-    | Some updated_libraries -> begin
-      [%derive.show: string list] updated_libraries
-      |> Format.fprintf outf "Updated libraries: %s@,";
-    end
-    | None ->
-      Format.fprintf outf "No libraries updated@,"
-    end;
-    Format.fprintf outf "Building updated libraries@,";
-    begin match Registry.update_all ~outf reg with
-    | Some updated_libraries -> begin
-      [%derive.show: string list] updated_libraries
-      |> Format.fprintf outf "Built libraries: %s@,";
-    end
-    | None ->
-      Format.fprintf outf "No libraries built@,"
-    end);
+  begin if safe
+    then Option.iter maybe_repo ~f:(fun {repo; reg} ->
+      Format.fprintf outf "Updating libraries@,";
+      begin match Repository.update_all ~outf repo with
+      | Some updated_libraries -> begin
+        [%derive.show: string list] updated_libraries
+        |> Format.fprintf outf "Updated libraries: %s@,";
+      end
+      | None ->
+        Format.fprintf outf "No libraries updated@,"
+      end;
+      Format.fprintf outf "Building updated libraries@,";
+      begin match Registry.update_all ~outf reg with
+      | Some updated_libraries -> begin
+        [%derive.show: string list] updated_libraries
+        |> Format.fprintf outf "Built libraries: %s@,";
+      end
+      | None ->
+        Format.fprintf outf "No libraries built@,"
+      end)
+  end;
   let maybe_reg = Option.map maybe_repo ~f:(fun p -> p.reg) in
   let library_map = get_libraries ~outf ~maybe_reg ~env ~libraries in
   let library_map = match system_font_prefix with

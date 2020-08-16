@@ -20,51 +20,19 @@ let read_module ~outf ~verbose ~build_module ~buildscript_path =
   end;
   (src_dir, p)
 
-let test_satysfi_option options =
-  let open P in
-  let open P.Infix in
-  run_bool ~false_v:[2] "satysfi" (options @ ["--version"])
-  |> capture [Stdout]
-  >>| fst
-
-let assert_satysfi_option ~message options =
-  let open P in
-  test_satysfi_option options
-  |> map ~f:(function
-    | true -> ()
-    | false -> failwith message)
-
-let assert_satysfi_option_C dir =
-  assert_satysfi_option ~message:"satysfi.0.0.3+dev2019.02.27 and newer is required in order to build library docs."
-    ["-C"; dir]
-
 let run_build_commands ~outf ~verbose ~libraries ~workingDir ~env buildCommands =
-  let open P in
-  let open P.Infix in
+  let setup ~satysfi_dist =
+    Install.install satysfi_dist ~outf ~system_font_prefix:None ~autogen_libraries:[] ~libraries ~verbose ~safe:true ~copy:false ~env ()
+  in
   let commands satysfi_runtime = P.List.iter buildCommands ~f:(function
     | "make" :: args ->
       let command = P.run "make" (["SATYSFI_RUNTIME=" ^ satysfi_runtime] @ args) in
       ProcessUtil.redirect_to_stdout ~prefix:"make" command
     | "satysfi" :: args ->
-      let command =
-        assert_satysfi_option_C satysfi_runtime
-        >> P.run "satysfi" (["-C"; satysfi_runtime] @ args) in
-      ProcessUtil.redirect_to_stdout ~prefix:"satysfi" command
+      RunSatysfi.run_satysfi ~satysfi_runtime args
     | cmd -> failwithf "command %s is not yet supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
   ) in
-  let with_env c =
-    let c satysfi_runtime =
-      return (Format.fprintf outf "Setting up SATySFi env at %s @." satysfi_runtime;) >>
-      let satysfi_dist = Filename.concat satysfi_runtime "dist" in
-      return (Library.mark_managed_dir satysfi_dist;) >>
-      return (
-        let library_map = Install.get_libraries ~outf ~maybe_reg:None ~env ~libraries in
-        Install.install_libraries satysfi_dist ~outf ~library_map ~verbose ~copy:false ()) >>
-      c satysfi_runtime
-    in
-    with_temp_dir ~prefix:"Satyrographos" ~suffix:"build_opam" c
-  in
-  P.(chdir workingDir (with_env commands))
+  P.(chdir workingDir (RunSatysfi.with_env ~outf ~setup commands))
 
 let build_opam ~outf ~verbose ~prefix:_ ~build_module ~buildscript_path ~env =
   let src_dir, p = read_module ~outf ~verbose ~build_module ~buildscript_path in
