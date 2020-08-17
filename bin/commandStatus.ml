@@ -25,6 +25,7 @@ let status_command =
     ~summary:"Show status (experimental)"
     [%map_open
       let _ = args (* ToDo: Remove this *)
+      and _ = RenameOption.standard_help
       in
       fun () ->
         status ()

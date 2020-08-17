@@ -7,31 +7,38 @@ module StringMap = Map.Make(String)
 
 let outf = Format.std_formatter
 
-
 let default_script_path () =
   Filename.concat (FileUtil.pwd ()) "Satyristes"
 
-let opam_with_build_module_command ~prefix_optionality f =
+let opam_with_build_module_command f =
   let open Command.Let_syntax in
+  let open RenameOption in
   let outf = Format.std_formatter in
   Command.basic
     ~summary:"Install module into OPAM registory (experimental)"
     [%map_open
-      let prefix = flag "prefix" (prefix_optionality string) ~doc:"PREFIX Install destination"
-      and script = flag "script" (optional string) ~doc:"SCRIPT Install script"
-      and name = flag "name" (optional string) ~doc:"MODULE_NAME Module name"
-      and verbose = flag "verbose" no_arg ~doc:"Make verbose"
+      let prefix = long_flag_optional "prefix" string ~doc_arg:"PREFIX" ~doc:"Install destination"
+      and script = long_flag_optional "script" string ~doc_arg:"SCRIPT" ~doc:"Install script"
+      and name = long_flag_optional "name" string ~doc_arg:"MODULE_NAME" ~doc:"MODULE_NAME Module name"
+      and verbose = long_flag_bool  "verbose" no_arg ~doc:"Make verbose"
+      and _ = standard_help
       in
         let buildscript_path = Option.value ~default:(default_script_path ()) script in
         let env = Setup.read_environment () in
-        Satyrographos_command.Opam.with_build_script f ~outf ~prefix ~buildscript_path ~name ~verbose ~env
+        (fun () ->
+          Satyrographos_command.Opam.with_build_script f ~outf ~prefix ~buildscript_path ~name ~verbose ~env ();
+          reprint_err_warn ())
     ]
 
 let opam_build_command =
-  opam_with_build_module_command ~prefix_optionality:Command.Param.optional Satyrographos_command.Opam.build_opam
+  opam_with_build_module_command Satyrographos_command.Opam.build_opam
 
 let opam_install_command =
-  opam_with_build_module_command ~prefix_optionality:Command.Param.required Satyrographos_command.Opam.install_opam
+  opam_with_build_module_command (fun ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env ->
+    match prefix with
+    | Some prefix -> Satyrographos_command.Opam.install_opam ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env
+    | None -> Format.fprintf Format.err_formatter
+        "Please specify “--prefix <dir>̣” option")
 
 let opam_uninstall_command =
   let open Command.Let_syntax in
@@ -40,9 +47,14 @@ let opam_uninstall_command =
     ~summary:"DEPRECATED"
     [%map_open
       let _ = flag "prefix" (required string) ~doc:"PREFIX Install destination"
+      and _ = flag "--prefix" (required string) ~doc:"PREFIX Install destination"
       and _ = flag "script" (optional string) ~doc:"SCRIPT Install script"
+      and _ = flag "--script" (optional string) ~doc:"SCRIPT Install script"
       and _ = flag "name" (optional string) ~doc:"MODULE_NAME Module name"
+      and _ = flag "--name" (optional string) ~doc:"MODULE_NAME Module name"
       and _ = flag "verbose" no_arg ~doc:"Make verbose"
+      and _ = flag "--verbose" no_arg ~doc:"Make verbose"
+      and _ = RenameOption.standard_help
       in
         fun () ->
           Format.fprintf outf "Warning: opam uninstall subcommand has been deprecated.  It does nothing now.\n"
@@ -54,7 +66,8 @@ let opam_buildfile_command =
     ~summary:"Inspect build file (experimental)"
     [%map_open
       let f = anon ("BUILD_FILE" %: string) (* ToDo: Remove this *)
-      and process = flag "process" no_arg ~doc:"Process the script"
+      and process = flag "--process" no_arg ~doc:"Process the script"
+      and _ = RenameOption.standard_help
       in
       fun () ->
         Compatibility.optin ();
@@ -67,6 +80,7 @@ let opam_export_command =
     ~summary:"Export build file (experimental)"
     [%map_open
       let f = anon ("BUILD_FILE" %: string) (* ToDo: Remove this *)
+      and _ = RenameOption.standard_help
       in
       fun () ->
         Compatibility.optin ();
