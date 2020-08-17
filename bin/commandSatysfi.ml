@@ -16,7 +16,6 @@ let satysfi_command =
       and library_list = flag "--library" (listed string) ~aliases:["l"] ~doc:"LIBRARY Library"
       and verbose = flag "--verbose" no_arg ~doc:"Make verbose"
       and satysfi_args = flag "--" escape ~doc:"ARGS... Satysfi arguments"
-      and _ = RenameOption.standard_help
       in
       fun () ->
         Compatibility.optin ();
