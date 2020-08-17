@@ -10,6 +10,7 @@ let library_show_command_g p_show =
     ~summary:"Show library information (experimental)"
     [%map_open
       let p = anon ("LIBRARY" %: string)
+      and _ = RenameOption.standard_help
       in
       fun () ->
         p_show p ()
@@ -20,6 +21,7 @@ let library_list_command_g p_list =
     ~summary:"Show list of libraries installed (experimental)"
     [%map_open
       let _ = args (* ToDo: Remove this *)
+      and _ = RenameOption.standard_help
       in
       fun () ->
         p_list ()

@@ -3,6 +3,7 @@ open Core
 module StringSet = Set.Make(String)
 
 let name = "%fonts-system"
+let system_font_prefix = "system:"
 
 let blacklist = StringSet.of_list [
   (* Each SanFranciso font has several weights with the same postscriptname *)

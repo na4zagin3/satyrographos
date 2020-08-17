@@ -50,10 +50,13 @@ let with_env ~outf ~setup c =
   in
   with_temp_dir ~prefix:"Satyrographos" ~suffix:"with_env" c
 
-let run_satysfi ~satysfi_runtime args =
+let run_satysfi_command ~satysfi_runtime args =
   let open P.Infix in
+  assert_satysfi_option_C satysfi_runtime
+  >> P.run "satysfi" (["-C"; satysfi_runtime] @ args)
+
+let run_satysfi ~satysfi_runtime args =
   let command =
-    assert_satysfi_option_C satysfi_runtime
-    >> P.run "satysfi" (["-C"; satysfi_runtime] @ args) in
+    run_satysfi_command ~satysfi_runtime args in
   ProcessUtil.redirect_to_stdout ~prefix:"satysfi" command
 
