@@ -10,9 +10,12 @@ let print_err_warn ?(record=true) msg =
       msg
 
 let reprint_err_warn () =
-  print_err_warn ~record:false "";
-  List.iter ~f:(print_err_warn ~record:false) !printed_err_warns;
-  print_err_warn ~record:false ""
+  if not (List.is_empty !printed_err_warns)
+  then begin
+    print_err_warn ~record:false "";
+    List.iter ~f:(print_err_warn ~record:false) !printed_err_warns;
+    print_err_warn ~record:false ""
+  end
 
 let rename_option old_name old_value new_name new_value =
   let deprecated_warn () =
