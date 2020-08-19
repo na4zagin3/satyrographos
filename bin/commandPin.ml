@@ -7,7 +7,7 @@ let pin_list_command =
   Command.basic
     ~summary:"List installed libraries (experimental)"
     [%map_open
-      let _ = RenameOption.standard_help
+      let _ = help
       in
       fun () ->
       Compatibility.optin ();
@@ -21,7 +21,6 @@ let pin_dir_command =
     ~summary:"Get directory where library LIBRARY is stored (experimental)"
     [%map_open
       let p = anon ("LIBRARY" %: string)
-      and _ = RenameOption.standard_help
       in
       fun () ->
         Compatibility.optin ();
@@ -36,7 +35,6 @@ let pin_add_command =
     [%map_open
       let p = anon ("LIBRARY" %: string)
       and url = anon ("URL" %: string) (* TODO define Url.t Arg_type.t *)
-      and _ = RenameOption.standard_help
       in
       fun () ->
         Compatibility.optin ();
@@ -52,7 +50,6 @@ let pin_remove_command =
     ~summary:"Remove library (experimental)"
     [%map_open
       let p = anon ("LIBRARY" %: string) (* ToDo: Remove this *)
-      and _ = RenameOption.standard_help
       in
       fun () ->
         Compatibility.optin ();

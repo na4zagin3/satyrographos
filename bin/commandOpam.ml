@@ -21,7 +21,6 @@ let opam_with_build_module_command f =
       and script = long_flag_optional "script" string ~doc_arg:"SCRIPT" ~doc:"Install script"
       and name = long_flag_optional "name" string ~doc_arg:"MODULE_NAME" ~doc:"MODULE_NAME Module name"
       and verbose = long_flag_bool  "verbose" no_arg ~doc:"Make verbose"
-      and _ = standard_help
       in
         let buildscript_path = Option.value ~default:(default_script_path ()) script in
         let env = Setup.read_environment () in
@@ -54,7 +53,6 @@ let opam_uninstall_command =
       and _ = flag "--name" (optional string) ~doc:"MODULE_NAME Module name"
       and _ = flag "verbose" no_arg ~doc:"Make verbose"
       and _ = flag "--verbose" no_arg ~doc:"Make verbose"
-      and _ = RenameOption.standard_help
       in
         fun () ->
           Format.fprintf outf "Warning: opam uninstall subcommand has been deprecated.  It does nothing now.\n"
@@ -67,7 +65,6 @@ let opam_buildfile_command =
     [%map_open
       let f = anon ("BUILD_FILE" %: string) (* ToDo: Remove this *)
       and process = flag "--process" no_arg ~doc:"Process the script"
-      and _ = RenameOption.standard_help
       in
       fun () ->
         Compatibility.optin ();
@@ -80,7 +77,6 @@ let opam_export_command =
     ~summary:"Export build file (experimental)"
     [%map_open
       let f = anon ("BUILD_FILE" %: string) (* ToDo: Remove this *)
-      and _ = RenameOption.standard_help
       in
       fun () ->
         Compatibility.optin ();
