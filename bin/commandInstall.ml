@@ -20,7 +20,6 @@ let install_command =
       and target_dir = long_flag_optional "output" string ~doc_arg:"SATYSFI_ROOT" ~doc:("Install files to (default: " ^ default_target_dir ^ ")")
       and verbose = long_flag_bool "verbose" no_arg ~doc:"Make verbose"
       and copy = long_flag_bool "copy" no_arg ~doc:"Copy files instead of making symlinks"
-      and _ = standard_help
       in
       fun () ->
         let system_font_prefix =

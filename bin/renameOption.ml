@@ -53,19 +53,6 @@ let rename_list old_name old_value new_name new_value =
   rename_option old_name (to_option old_value) new_name (to_option new_value)
   |> from_option
 
-let standard_help =
-  let open Command.Let_syntax in
-  [%map_open
-    let show_help = flag "--help" no_arg ~doc:"print this help text and exit"
-    and help_text = help
-    in
-      if show_help
-      then begin
-        Format.printf "%s@." (Lazy.force help_text);
-        ignore (exit 0 : _)
-      end
-  ]
-
 let long_flag_f rename_f arg_f ?doc_arg flag_name ?(aliases) arg ~doc =
   let open Command.Let_syntax in
   let doc_prefix = Option.map ~f:(fun x -> x ^ " ") doc_arg |> Option.value ~default:"" in
