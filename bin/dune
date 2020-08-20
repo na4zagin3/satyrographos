@@ -3,5 +3,5 @@
  (public_name satyrographos)
  (preprocess (pps ppx_deriving.std ppx_jane))
  (libraries core satyrographos_command shexp.process uri)
- (modules setup renameOption compatibility commandInstall commandLibrary commandOpam commandPin commandStatus main)
+ (modules setup renameOption compatibility commandInstall commandLibrary commandOpam commandPin commandSatysfi commandStatus main)
  )
