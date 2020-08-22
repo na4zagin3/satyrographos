@@ -45,8 +45,8 @@ let opam_uninstall_command =
   Command.basic
     ~summary:"DEPRECATED"
     [%map_open
-      let _ = flag "prefix" (required string) ~doc:"PREFIX Install destination"
-      and _ = flag "--prefix" (required string) ~doc:"PREFIX Install destination"
+      let _ = flag "prefix" (optional string) ~doc:"PREFIX Install destination"
+      and _ = flag "--prefix" (optional string) ~doc:"PREFIX Install destination"
       and _ = flag "script" (optional string) ~doc:"SCRIPT Install script"
       and _ = flag "--script" (optional string) ~doc:"SCRIPT Install script"
       and _ = flag "name" (optional string) ~doc:"MODULE_NAME Module name"
