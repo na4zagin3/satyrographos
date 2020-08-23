@@ -12,8 +12,7 @@ let install_command =
     ~summary:"Install SATySFi runtime"
     ~readme
     [%map_open
-      let use_system_font = flag "--use-system-fonts" no_arg ~doc:"Installing system fonts with names with prefix “system:”"
-      and system_font_prefix = flag "system-font-prefix" (optional string) ~doc:"FONT_NAME_PREFIX Deprecated: Installing system fonts with names with the given prefix.  Use --use-system-fonts instead"
+      let system_font_prefix = long_flag_optional "system-font-prefix" string ~doc_arg:"FONT_NAME_PREFIX" ~doc:"Installing system fonts with names with the given prefix."
       and autogen_library_list = long_flag_listed "autogen" string ~aliases:["a"] ~doc_arg:"AUTOGEN" ~doc:"Enable non-default autogen libraries (e.g., %libraries) (EXPERIMENTAL)"
       and library_list = long_flag_listed "library" string ~aliases:["l"] ~doc_arg:"LIBRARY" ~doc:"Library"
       and target_dir_old = anon (maybe ("DIR" %: string))
@@ -22,32 +21,6 @@ let install_command =
       and copy = long_flag_bool "copy" no_arg ~doc:"Copy files instead of making symlinks"
       in
       fun () ->
-        let system_font_prefix =
-          let default_system_font_prefix = Satyrographos.SystemFontLibrary.system_font_prefix in
-          let deprecation_warning () =
-            print_err_warn
-              "Option “-system-font-prefix” has been deprecated. Use “--use-system-fonts” instead."
-          in
-          match system_font_prefix, use_system_font with
-            | Some value, _ when String.equal value default_system_font_prefix ->
-              deprecation_warning ();
-              Some value
-            | Some value, false ->
-              deprecation_warning ();
-              Printf.sprintf
-                "System font prefix will be fixed to “%s” in the near future."
-                default_system_font_prefix
-              |> print_err_warn;
-              Some value
-            | Some _, true ->
-              deprecation_warning ();
-              Printf.sprintf
-                "System font prefix gets “%s”."
-                default_system_font_prefix
-              |> print_err_warn;
-              Some default_system_font_prefix
-            | None, value -> Option.some_if value default_system_font_prefix
-        in
         let target_dir =
           let deprecation_warning () =
             print_err_warn
