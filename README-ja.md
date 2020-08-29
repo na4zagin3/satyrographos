@@ -19,7 +19,7 @@ OPAMにより管理されているSatyrographosライブラリは、
 `satysfi-`で始まる名前でインストール可能になっています。これは、
 OCaml用のライブラリ等と区別する為です。
 
-例として、［SATySFi-Fonts-Theano](https://github.com/na4zagin3/SATySFi-fonts-theano)を利用したい場合は、
+例として、[SATySFi-Fonts-Theano](https://github.com/na4zagin3/SATySFi-fonts-theano)が利用したい場合は、
 
 ```sh
 opam install satysfi-fonts-theano
@@ -29,13 +29,13 @@ satyrographos install
 とすると、SATySFi-Fonts-Theano提供のフォント`fonts-theano:TheanoDidot`等が利用可能になります。
 
 `satyrographos install`は既定で全てのライブラリを準備しますが、一部のみにすることも可能です。
-以下のように、`-package <package>`オプションが指定されると、
+以下のように、`--package <package>`（または `-l <package>`）オプションが指定されると、
 指定されたライブラリのみが準備されます。
-`-package`オプションはライブラリ名を取るのですが、ここには`satysfi-`がついていないことに注意してください。
+`--package`オプションはライブラリ名を取るのですが、ここには`satysfi-`がついていないことに注意してください。
 
 ```sh
 opam install satysfi-fonts-theano
-satyrographos install -package fonts-theano
+satyrographos install --package fonts-theano
 ```
 
 ### システムフォントのインストール
@@ -44,12 +44,12 @@ satyrographos install -package fonts-theano
 もし、OS に [Fontconfig](https://www.freedesktop.org/wiki/Software/fontconfig/) が存在する場合、例えば、Mac や Linux を使っている場合には、
 SATySFi でシステムフォントを使えるように設定することができます。
 
-`satyrographos install` に `-system-font-prefix <フォント名接頭辞>` オプションが追加されると、Satyrographos はシステムフォントの情報を収集し、SATySFi 側からは元々のフォント名に `<フォント名接頭辞>` が付いた名前で使えるように設定します。
+`satyrographos install` に `--system-font-prefix <フォント名接頭辞>` オプションが追加されると、Satyrographos はシステムフォントの情報を収集し、SATySFi 側からは元々のフォント名に `<フォント名接頭辞>` が付いた名前で使えるように設定します。
 
 例えば、次のコマンドにより、システムフォントが `system:` を冠した名前で使えるようになります。
 
 ```
-$ satyrographos install -system-font-prefix 'system:'
+$ satyrographos install --system-font-prefix 'system:'
 ```
 
 例えば、Arial は `system:Arial` という名前になります。（技術的には、フォントの PostScript 名に、所与の接頭辞が付いた名前で使用可能になります。この仕様は将来変更される可能性があります。）
@@ -102,7 +102,7 @@ $ cp -r "$(opam var share)"/share/satysfi/*/* ~/.satysfi/dist
 $ cp -r ~/.satyrographos/packages/*/* ~/.satysfi/dist
 ```
 
-加えて、 `-system-font-prefix <system-font-name-prefix>` が用いられると、 Satyrograph はシステムフォントの情報を `fc-list` コマンドを用いて得、インストールします。
+加えて、 `--system-font-prefix <system-font-name-prefix>` が用いられると、 Satyrograph はシステムフォントの情報を `fc-list` コマンドを用いて得、インストールします。
 
 ### 名前
 ライブラリ名は以下の形式に従って下さい。
@@ -221,7 +221,7 @@ bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
 depends: [
   "satysfi" {>= "0.0.5" & < "0.0.6"}
-  "satyrographos" {>= "0.0.2" & < "0.0.3"}
+  "satyrographos" {>= "0.0.2.6" & < "0.0.3"}
   "satysfi-dist"
 
   # もし他のライブラリに依存している場合にはここに記述して下さい
@@ -230,9 +230,9 @@ depends: [
 build: [ ]
 install: [
   ["satyrographos" "opam" "install"
-   "-name" "great-package"
-   "-prefix" "%{prefix}%"
-   "-script" "%{build}%/Satyristes"]
+   "--name" "great-package"
+   "--prefix" "%{prefix}%"
+   "--script" "%{build}%/Satyristes"]
 ]
 ```
 
@@ -253,22 +253,22 @@ bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
 depends: [
   "satysfi" {>= "0.0.5" & < "0.0.6"}
-  "satyrographos" {>= "0.0.2" & < "0.0.3"}
+  "satyrographos" {>= "0.0.2.6" & < "0.0.3"}
 
   # 対応するライブラリをここに書きましょう
   "satysfi-great-library" {= "%{version}%"}
 ]
 build: [
   ["satyrographos" "opam" "build"
-   "-name" "great-package-doc"
-   "-prefix" "%{prefix}%"
-   "-script" "%{build}%/Satyristes"]
+   "--name" "great-package-doc"
+   "--prefix" "%{prefix}%"
+   "--script" "%{build}%/Satyristes"]
 ]
 install: [
   ["satyrographos" "opam" "install"
-   "-name" "great-package-doc"
-   "-prefix" "%{prefix}%"
-   "-script" "%{build}%/Satyristes"]
+   "--name" "great-package-doc"
+   "--prefix" "%{prefix}%"
+   "--script" "%{build}%/Satyristes"]
 ]
 ```
 
