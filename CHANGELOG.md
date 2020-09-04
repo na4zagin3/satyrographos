@@ -6,6 +6,13 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.2.6] - 2020-08-30
+### Added
+- Add `satysfi` subcommand to run SATySFi as an experimental feature. ([#137])
+
+### Changed
+- Add GNU style long options and deprecate old ones ([#134], [#142], [#143]).
+
 ## [v0.0.2.5] - 2020-07-11
 ### Changed
 - Now `satyrographos opam uninstall` does nothing. ([#128])
@@ -149,8 +156,14 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#122]: https://github.com/na4zagin3/satyrographos/pull/122
 [#125]: https://github.com/na4zagin3/satyrographos/pull/125
 [#128]: https://github.com/na4zagin3/satyrographos/pull/128
+[#134]: https://github.com/na4zagin3/satyrographos/pull/134
+[#137]: https://github.com/na4zagin3/satyrographos/pull/137
+[#142]: https://github.com/na4zagin3/satyrographos/pull/142
+[#143]: https://github.com/na4zagin3/satyrographos/pull/143
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.5...HEAD
+
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.6...HEAD
+[v0.0.2.6]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.5...v0.0.2.6
 [v0.0.2.5]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.4...v0.0.2.5
 [v0.0.2.4]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.3...v0.0.2.4
 [v0.0.2.3]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.2...v0.0.2.3
