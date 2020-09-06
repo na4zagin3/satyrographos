@@ -43,7 +43,7 @@ Once they are installed in OPAM registry, `satyrographos install` will set up so
 A SATySFi library may be available with the name prefixed with `satysfi-` in OPAM repository to distinguish from other OCaml packages.
 
 For example, if you want to use fonts distributed as
-［SATySFi-Fonts-Theano](https://github.com/na4zagin3/SATySFi-fonts-theano), run the following commands.
+[SATySFi-Fonts-Theano](https://github.com/na4zagin3/SATySFi-fonts-theano), run the following commands.
 
 ```sh
 opam install satysfi-fonts-theano
@@ -52,12 +52,12 @@ satyrographos install
 
 Now you can use the fonts in the library.
 
-You can also set up with specified libraries with `-package <package>` option rather than all the available ones.
-Be noticed that `-package` option is followed by a package names _without_ `satysfi-` prefix.
+You can also set up with specified libraries with `--package <package>` (or `-l <package>`) option rather than all the available ones.
+Be noticed that `--package` option is followed by a package names _without_ `satysfi-` prefix.
 
 ```sh
 opam install satysfi-fonts-theano
-satyrographos install -package fonts-theano
+satyrographos install --package fonts-theano
 ```
 
 ### Install System Fonts
@@ -65,12 +65,12 @@ _This feature is still experimental and its interface and/or behaviour may be ch
 
 If your machine is using [Fontconfig](https://www.freedesktop.org/wiki/Software/fontconfig/), i.e., using Mac or Linux Desktop Environment, Satyrographos can set up SATySFi to utilise your existing system fonts.
 
-Satyrographos offers the `-system-font-prefix <system-font-name-prefix>` option of gathering system fonts to enable them for use with names prefixed with `<system-font-name-prefix>` with SATySFi.
+Satyrographos offers the `--system-font-prefix <system-font-name-prefix>` option of gathering system fonts to enable them for use with names prefixed with `<system-font-name-prefix>` with SATySFi.
 
 For example, the following command installs system fonts with the prefix `system:`.
 
 ```
-$ satyrographos install -system-font-prefix 'system:'
+$ satyrographos install --system-font-prefix 'system:'
 ```
 
 Then you can use the system fonts, for example, Arial as `system:Arial`. (Technically, a font will have a SATySFi name which consists of the given prefix and the font's PostScript name. This behavior may be changed in the near future.)
@@ -121,7 +121,7 @@ $ cp -r "$(opam var share)"/share/satysfi/*/* ~/.satysfi/dist
 $ cp -r ~/.satyrographos/packages/*/* ~/.satysfi/dist
 ```
 
-With `-system-font-prefix <system-font-name-prefix>`, Satyrograph query system fonts with `fc-list` and installs those fonts too.
+With `--system-font-prefix <system-font-name-prefix>`, Satyrograph query system fonts with `fc-list` and installs those fonts too.
 
 ### Library Names
 Please follow the following formats.
@@ -242,7 +242,7 @@ bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
 depends: [
   "satysfi" {>= "0.0.5" & < "0.0.6"}
-  "satyrographos" {>= "0.0.2" & < "0.0.3"}
+  "satyrographos" {>= "0.0.2.6" & < "0.0.3"}
 
   # If your library depends on other libraries, please write down here
   "satysfi-fonts-theano" {>= "2.0+satysfi0.0.3+satyrograhos0.0.2"}
@@ -250,9 +250,9 @@ depends: [
 build: [ ]
 install: [
   ["satyrographos" "opam" "install"
-   "-name" "great-package"
-   "-prefix" "%{prefix}%"
-   "-script" "%{build}%/Satyristes"]
+   "--name" "great-package"
+   "--prefix" "%{prefix}%"
+   "--script" "%{build}%/Satyristes"]
 ]
 ```
 
@@ -273,7 +273,7 @@ bug-reports: "<product issue tracker>"
 dev-repo: "<repo url>"
 depends: [
   "satysfi" {>= "0.0.5" & < "0.0.6"}
-  "satyrographos" {>= "0.0.2" & < "0.0.3"}
+  "satyrographos" {>= "0.0.2.6" & < "0.0.3"}
   "satysfi-dist"
 
   # You may want to include the corresponding library
@@ -281,15 +281,15 @@ depends: [
 ]
 build: [
   ["satyrographos" "opam" "build"
-   "-name" "great-package-doc"
-   "-prefix" "%{prefix}%"
-   "-script" "%{build}%/Satyristes"]
+   "--name" "great-package-doc"
+   "--prefix" "%{prefix}%"
+   "--script" "%{build}%/Satyristes"]
 ]
 install: [
   ["satyrographos" "opam" "install"
-   "-name" "great-package-doc"
-   "-prefix" "%{prefix}%"
-   "-script" "%{build}%/Satyristes"]
+   "--name" "great-package-doc"
+   "--prefix" "%{prefix}%"
+   "--script" "%{build}%/Satyristes"]
 ]
 ```
 
