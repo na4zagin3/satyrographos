@@ -5,6 +5,7 @@
 [日本語版 README はこちら](https://github.com/na4zagin3/satyrographos/blob/master/README-ja.md)
 
 A package manager for [SATySFi](https://github.com/gfngfn/SATySFi).
+Here is the package list: [satyrographos-packages](https://satyrographos-packages.netlify.app/) (thanks to @matsud224).
 
 _WARNING: Some command line interfaces are EXPERIMENTAL and subject to change and removal at any time without prior notice._
 

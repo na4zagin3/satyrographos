@@ -4,6 +4,8 @@
 
 [SATySFi](https://github.com/gfngfn/SATySFi)用パッケージマネージャー
 
+パッケージ一覧はこちら→[satyrographos-packages](https://satyrographos-packages.netlify.app/) (@matsud224作)
+
 **警告 一部のコマンドラインインターフェースは実験的なものであり、今後、予告無く変更・削除することがあります。悪しからず**
 
 Satyrographos は、`~/.opam/<ocaml-version>/share/satysfi/<package>` 以下のファイルを、`~/.satysfi/dist` にコピーするものです。
