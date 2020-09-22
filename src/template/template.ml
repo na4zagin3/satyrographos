@@ -24,7 +24,7 @@ let replace_template vars =
       v ^ ":camel", camelize t;
     ]
   in
-  let vars = List.concat_map expand_var vars in
+  let vars = List.map expand_var vars |> List.concat in
   let f g = List.assoc (Re.Group.get g 1) vars in
   (fun s -> Re.replace template_re ~all:true ~f s)
 
