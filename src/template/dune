@@ -1,0 +1,5 @@
+(library
+ (name satyrographos_template)
+ (inline_tests)
+ (preprocess (staged_pps ppx_deriving.std ppx_jane))
+ (libraries core fileutils satyrographos shexp.process))
