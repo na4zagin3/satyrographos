@@ -5,6 +5,7 @@ let lib_satyh_template =
 {|% .satyh files are loaded by the PDF backend.
 % .satyh-markdown and .saty-html files are loaded by the text backend for markdoown and html outputs, respectively.
 % A .satyg file is loaded when the corresponding .satyh or .satyh-* files are not loaded.
+% See https://qiita.com/puripuri2100/items/ca0b054d38480f1bda61 for more details about the load order.
 
 % load standard list package
 @require: list
@@ -85,7 +86,7 @@ let satyristes_template =
   ;; Library name
   (name "@@library@@")
   ;; Library version
-  (version "1.0")
+  (version "1.0.0")
   ;; Files
   (sources
     ((packageDir "src")))
@@ -102,7 +103,7 @@ let satyristes_template =
   ;; Library doc name
   (name "@@library@@-doc")
   ;; Library version
-  (version "1.0")
+  (version "1.0.0")
   ;; Working directory to build docs
   (workingDirectory "doc")
   ;; Build commands
@@ -126,7 +127,7 @@ let library_opam_template =
 "satysfi-@@library@@.opam",
 {|opam-version: "2.0"
 name: "satysfi-@@library@@"
-version: "1.0"
+version: "1.0.0"
 synopsis: "A Great SATySFi Package"
 description: """
 Brilliant description comes here.
@@ -156,7 +157,7 @@ let library_doc_opam_template =
 "satysfi-@@library@@-doc.opam",
 {|opam-version: "2.0"
 name: "satysfi-@@library@@-doc"
-version: "1.0"
+version: "1.0.0"
 synopsis: "Document of A Great SATySFi Package"
 description: """
 Brilliant description comes here.
@@ -189,10 +190,24 @@ install: [
 ]
 |}
 
+let gitignore_template =
+".gitignore",
+{|*.satysfi-aux
+|}
+
+let readme_template =
+"README.md",
+{|# satysfi-@@library@@
+
+A great library_opam_template
+|}
+
 let files = [
     lib_satyh_template;
     manual_template;
     satyristes_template;
     library_opam_template;
     library_doc_opam_template;
+    gitignore_template;
+    readme_template;
   ]
