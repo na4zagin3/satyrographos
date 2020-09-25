@@ -8,6 +8,14 @@ Create a new library with --license option
 Dump generated files
   $ mkdir empty-dir
   $ diff -Nr empty-dir test-lib
+  diff -Nr empty-dir/.gitignore test-lib/.gitignore
+  0a1
+  > *.satysfi-aux
+  diff -Nr empty-dir/README.md test-lib/README.md
+  0a1,3
+  > # satysfi-test-lib
+  > 
+  > A great library_opam_template
   diff -Nr empty-dir/Satyristes test-lib/Satyristes
   0a1,43
   > ;; For Satyrographos 0.0.2 series
@@ -18,7 +26,7 @@ Dump generated files
   >   ;; Library name
   >   (name "test-lib")
   >   ;; Library version
-  >   (version "1.0")
+  >   (version "1.0.0")
   >   ;; Files
   >   (sources
   >     ((packageDir "src")))
@@ -35,7 +43,7 @@ Dump generated files
   >   ;; Library doc name
   >   (name "test-lib-doc")
   >   ;; Library version
-  >   (version "1.0")
+  >   (version "1.0.0")
   >   ;; Working directory to build docs
   >   (workingDirectory "doc")
   >   ;; Build commands
@@ -92,7 +100,7 @@ Dump generated files
   0a1,33
   > opam-version: "2.0"
   > name: "satysfi-test-lib-doc"
-  > version: "1.0"
+  > version: "1.0.0"
   > synopsis: "Document of A Great SATySFi Package"
   > description: """
   > Brilliant description comes here.
@@ -127,7 +135,7 @@ Dump generated files
   0a1,26
   > opam-version: "2.0"
   > name: "satysfi-test-lib"
-  > version: "1.0"
+  > version: "1.0.0"
   > synopsis: "A Great SATySFi Package"
   > description: """
   > Brilliant description comes here.
@@ -152,10 +160,11 @@ Dump generated files
   >    "--script" "%{build}%/Satyristes"]
   > ]
   diff -Nr empty-dir/src/test-lib.satyh test-lib/src/test-lib.satyh
-  0a1,34
+  0a1,35
   > % .satyh files are loaded by the PDF backend.
   > % .satyh-markdown and .saty-html files are loaded by the text backend for markdoown and html outputs, respectively.
   > % A .satyg file is loaded when the corresponding .satyh or .satyh-* files are not loaded.
+  > % See https://qiita.com/puripuri2100/items/ca0b054d38480f1bda61 for more details about the load order.
   > 
   > % load standard list package
   > @require: list
