@@ -40,7 +40,49 @@ let rec choose_license () =
     printf "Not a valid answer.\n";
     choose_license ()
 
+let validate_name =
+  let re =
+    let open Re in
+    seq [
+      start;
+      rep (Re.alt [wordc; char '-']);
+      stop;
+    ] |> compile
+  in
+  let f name =
+    Re.matches re name
+    |> List.is_empty
+    |> not
+  in
+  f
+
+let%test "validate_name: accepts “abc”" =
+  validate_name "abc"
+
+let%test "validate_name: accepts “abc-def”" =
+  validate_name "abc-def"
+
+let%test "validate_name: rejects “abc.def”" =
+  validate_name "abc.def" |> not
+
+let%test "validate_name: rejects “abc*def”" =
+  validate_name "abc*def" |> not
+
+let%test "validate_name: rejects “abc+def”" =
+  validate_name "abc+def" |> not
+
+let%test "validate_name: rejects “../def”" =
+  validate_name "../def" |> not
+
+let%test "validate_name: rejects “abc def”" =
+  validate_name "abc def" |> not
+
 let create_project name license files =
+  if validate_name name |> not
+  then begin
+    Printf.printf "Project name should consist of ASCII alphabets, numbers, underscores, or hyphens.\n";
+    exit 1
+  end;
   if FileUtil.(test Exists name)
   then begin
     Printf.printf "%s already exists.\n" name;
