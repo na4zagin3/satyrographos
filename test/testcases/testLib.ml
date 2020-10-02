@@ -12,8 +12,10 @@ let repeat_string n s : string =
 let replace_tempdirs =
   let re =
     let open Re in
+    let temp_dir_name = Filename.get_temp_dir_name () in
     seq [
-      str {|/tmp/Satyrographos|};
+      FilePath.concat temp_dir_name "Satyrographos"
+      |> str ;
       repn xdigit 6 (Some 6);
       rep wordc |> group;
     ] |> compile in
