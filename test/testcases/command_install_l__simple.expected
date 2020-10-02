@@ -22,11 +22,11 @@ Installation completed!
 ------------------------------------------------------------
 @@dest_dir@@
 @@dest_dir@@/dest
+@@dest_dir@@/dest/.satyrographos
 @@dest_dir@@/dest/metadata
 @@dest_dir@@/dest/packages
 @@dest_dir@@/dest/packages/base
 @@dest_dir@@/dest/packages/base/void.satyh
-@@dest_dir@@/dest/.satyrographos
 ------------------------------------------------------------
 diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 0a1,2

@@ -111,6 +111,7 @@ Installation completed!
 ------------------------------------------------------------
 @@dest_dir@@
 @@dest_dir@@/dest
+@@dest_dir@@/dest/.satyrographos
 @@dest_dir@@/dest/fonts
 @@dest_dir@@/dest/fonts/fonts-theano
 @@dest_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf
@@ -122,7 +123,6 @@ Installation completed!
 @@dest_dir@@/dest/packages
 @@dest_dir@@/dest/packages/grcnum
 @@dest_dir@@/dest/packages/grcnum/grcnum.satyh
-@@dest_dir@@/dest/.satyrographos
 ------------------------------------------------------------
 diff -Nr @@empty_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf @@dest_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf
 0a1

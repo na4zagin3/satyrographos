@@ -45,6 +45,7 @@ let dump_dir dir : unit t =
     >> run_exit_code "diff" ["-Nr"; empty_dir; dir] >>| (fun _ -> ())
     |- censor [ empty_dir, "@@empty_dir@@"; ]
   )
+  |> set_env "LC_ALL" "C"
 
 let stacktrace = false
 
