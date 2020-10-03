@@ -71,6 +71,39 @@ let dump_dir dir : unit t =
 
 let stacktrace = false
 
+let filter_output f c =
+  capture [Std_io.Stdout] c
+  >>= fun (v, out) ->
+  echo ~n:() out
+  |- f
+  >> return v
+
+let run_function f =
+  let censor_normal c =
+    filter_output
+      (censor_tempdirs
+       |- reformat_sexp)
+      c
+  in
+  let censor_exception c =
+    filter_output
+      (censor_tempdirs)
+      c
+  in
+  try
+    with_formatter (fun outf -> f ~outf; Format.fprintf outf "@?")
+    |> censor_normal
+  with e ->
+    let c =
+      echo "Exception:"
+      >> echo (Printexc.to_string e)
+      >> if stacktrace
+      then echo "Stack trace:"
+        >> echo (Printexc.get_backtrace())
+      else return ()
+    in censor_exception c
+
+(* TODO Move to TestCommand module *)
 let test_install ?(replacements=[]) setup f : unit t =
   let test dest_dir temp_dir =
     let opam_prefix = Unix.open_process_in "opam var prefix" |> input_line (* Assume a path does not contain line breaks*) in
@@ -80,12 +113,11 @@ let test_install ?(replacements=[]) setup f : unit t =
         temp_dir, "@@temp_dir@@";
         Unix.getenv "HOME", "@@home_dir@@";
       ] @ replacements in
-    let filter_output f c =
-      capture [Std_io.Stdout] c
-      >>= fun (v, out) ->
-      echo ~n:() out
-      |- f
-      >> return v
+    let censor_user c =
+      filter_output
+        (censor replacements
+        )
+        c
     in
     let censor_no_sexp c =
       filter_output
@@ -104,18 +136,8 @@ let test_install ?(replacements=[]) setup f : unit t =
     >> echo_line
     >> censor (setup ~dest_dir ~temp_dir)
     >>= (fun setup_result ->
-        try
-          with_formatter (fun outf -> f setup_result ~dest_dir ~temp_dir ~outf; Format.fprintf outf "@?")
-          |> censor
-        with e ->
-          let c =
-            echo "Exception:"
-            >> echo (Printexc.to_string e)
-            >> if stacktrace
-            then echo "Stack trace:"
-              >> echo (Printexc.get_backtrace())
-            else return ()
-          in censor_no_sexp c
+        run_function (fun ~outf -> f setup_result ~dest_dir ~temp_dir ~outf)
+        |> censor_user
       )
     >> echo_line
     >> censor (dump_dir dest_dir)

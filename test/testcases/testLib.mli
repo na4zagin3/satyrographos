@@ -10,6 +10,10 @@ val censor : (string * string) list -> unit t
 
     [wordlist] is an associative list of pairs of a censored word and a replecement. *)
 
+val censor_tempdirs : unit t
+(** [censor_tempdirs] returns a Shexp process which behaves like a sed which masks
+    paths to temporary directories *)
+
 val with_formatter : ?where:Std_io.t -> (Format.formatter -> 'a) -> 'a t
 (** [with_formatter ~where f] returns a Shexp process which executes [f] with a formatter which redirect to
     the given Shexp IO [where], whose default value is [Stdout] *)
@@ -19,6 +23,10 @@ val echo_line : unit t
 
 val dump_dir : string -> unit t
 (** [dump_dir dir] returns a Shexp process which dumps directory [dir]’s content to Stdout. *)
+
+val run_function : (outf:Format.formatter -> unit) -> unit t
+(** [run_fuction f] return a Shexp running [f ~outf] where [~outf] is a Formatter.
+    Exceptions raised by [f] will be caught and its stacktraces will be output. *)
 
 val test_install :
   ?replacements:(string * string) list ->
