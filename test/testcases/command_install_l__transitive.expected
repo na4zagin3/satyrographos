@@ -110,15 +110,15 @@ Installation completed!
     TheanoModern -> fonts-theano:TheanoModern
     TheanoOldStyle -> fonts-theano:TheanoOldStyle
 
-
 [1;33mCompatibility notice[0m for library grcnum:
-                                                      Packages have been renamed.
-                                                      
-                                                        grcnum.satyh -> grcnum/grcnum.satyh
 
+  Packages have been renamed.
+  
+    grcnum.satyh -> grcnum/grcnum.satyh
 ------------------------------------------------------------
 @@dest_dir@@
 @@dest_dir@@/dest
+@@dest_dir@@/dest/.satyrographos
 @@dest_dir@@/dest/fonts
 @@dest_dir@@/dest/fonts/fonts-theano
 @@dest_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf
@@ -132,7 +132,6 @@ Installation completed!
 @@dest_dir@@/dest/packages/base/void.satyh
 @@dest_dir@@/dest/packages/grcnum
 @@dest_dir@@/dest/packages/grcnum/grcnum.satyh
-@@dest_dir@@/dest/.satyrographos
 ------------------------------------------------------------
 diff -Nr @@empty_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf @@dest_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf
 0a1
@@ -146,7 +145,7 @@ diff -Nr @@empty_dir@@/dest/fonts/fonts-theano/TheanoOldStyle-Regular.otf @@dest
 diff -Nr @@empty_dir@@/dest/hash/fonts.satysfi-hash @@dest_dir@@/dest/hash/fonts.satysfi-hash
 0a1
 > {"fonts-theano:TheanoDidot":<"Single":{"src-dist":"fonts-theano/TheanoDidot-Regular.otf"}>,"fonts-theano:TheanoModern":<"Single":{"src-dist":"fonts-theano/TheanoModern-Regular.otf"}>,"fonts-theano:TheanoOldStyle":<"Single":{"src-dist":"fonts-theano/TheanoOldStyle-Regular.otf"}>}
-\ No newline at end of file
+\ ファイル末尾に改行がありません
 diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 0a1,9
 > ((version 1) (libraryName base) (libraryVersion 1.1.1)

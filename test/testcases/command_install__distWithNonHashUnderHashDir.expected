@@ -47,6 +47,7 @@ Installation completed!
 ------------------------------------------------------------
 @@dest_dir@@
 @@dest_dir@@/dest
+@@dest_dir@@/dest/.satyrographos
 @@dest_dir@@/dest/fonts
 @@dest_dir@@/dest/fonts/Junicode.ttf
 @@dest_dir@@/dest/hash
@@ -54,7 +55,6 @@ Installation completed!
 @@dest_dir@@/dest/metadata
 @@dest_dir@@/dest/packages
 @@dest_dir@@/dest/packages/List.satyg
-@@dest_dir@@/dest/.satyrographos
 @@dest_dir@@/dest/unidata
 @@dest_dir@@/dest/unidata/UnicodeData.txt
 ------------------------------------------------------------
@@ -64,7 +64,7 @@ diff -Nr @@empty_dir@@/dest/fonts/Junicode.ttf @@dest_dir@@/dest/fonts/Junicode.
 diff -Nr @@empty_dir@@/dest/hash/fonts.satysfi-hash @@dest_dir@@/dest/hash/fonts.satysfi-hash
 0a1
 > {"Junicode":<"Single":{"src":"dist/fonts/Junicode.ttf"}>}
-\ No newline at end of file
+\ ファイル末尾に改行がありません
 diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 0a1,2
 > ((version 1) (libraryName dist) (libraryVersion "") (compatibility ())
