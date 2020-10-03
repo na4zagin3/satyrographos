@@ -4,5 +4,5 @@ Attempt to create a new library with the conflicting name
   Compatibility warning: You have opted in to use experimental features.
   test-lib already exists.
   [1]
-  $ LC_ALL=C find test-lib
+  $ find test-lib | LC_ALL=C sort
   test-lib
