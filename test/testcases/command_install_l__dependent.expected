@@ -86,7 +86,6 @@ Installation completed!
     TheanoDidot -> fonts-theano:TheanoDidot
     TheanoModern -> fonts-theano:TheanoModern
     TheanoOldStyle -> fonts-theano:TheanoOldStyle
-
 ------------------------------------------------------------
 @@dest_dir@@
 @@dest_dir@@/dest
@@ -112,7 +111,7 @@ diff -Nr @@empty_dir@@/dest/fonts/fonts-theano/TheanoOldStyle-Regular.otf @@dest
 diff -Nr @@empty_dir@@/dest/hash/fonts.satysfi-hash @@dest_dir@@/dest/hash/fonts.satysfi-hash
 0a1
 > {"fonts-theano:TheanoDidot":<"Single":{"src-dist":"fonts-theano/TheanoDidot-Regular.otf"}>,"fonts-theano:TheanoModern":<"Single":{"src-dist":"fonts-theano/TheanoModern-Regular.otf"}>,"fonts-theano:TheanoOldStyle":<"Single":{"src-dist":"fonts-theano/TheanoOldStyle-Regular.otf"}>}
-\ No newline at end of file
+\ ファイル末尾に改行がありません
 diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 0a1,7
 > ((version 1) (libraryName dist) (libraryVersion 2.0)
