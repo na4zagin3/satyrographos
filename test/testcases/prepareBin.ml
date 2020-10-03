@@ -46,7 +46,7 @@ esac
     |}
   in
   String.concat "\n"
-    [ "#!/bin/bash";
+    [ "#!/bin/sh";
       "LOG_FILE='" ^ log_file ^"'";
       "MODE=help";
       "INPUT=";
