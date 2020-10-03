@@ -108,12 +108,11 @@ Installation completed!
     TheanoModern -> fonts-theano:TheanoModern
     TheanoOldStyle -> fonts-theano:TheanoOldStyle
 
-
 [1;33mCompatibility notice[0m for library grcnum:
-                                                      Packages have been renamed.
-                                                      
-                                                        grcnum.satyh -> grcnum/grcnum.satyh
 
+  Packages have been renamed.
+  
+    grcnum.satyh -> grcnum/grcnum.satyh
 ------------------------------------------------------------
 @@dest_dir@@
 @@dest_dir@@/dest

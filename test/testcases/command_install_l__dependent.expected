@@ -86,7 +86,6 @@ Installation completed!
     TheanoDidot -> fonts-theano:TheanoDidot
     TheanoModern -> fonts-theano:TheanoModern
     TheanoOldStyle -> fonts-theano:TheanoOldStyle
-
 ------------------------------------------------------------
 @@dest_dir@@
 @@dest_dir@@/dest
