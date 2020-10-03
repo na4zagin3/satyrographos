@@ -14,8 +14,11 @@ let replace_tempdirs =
     let open Re in
     let temp_dir_name = Filename.get_temp_dir_name () in
     seq [
+      (* Mac OS X links /var to /private/var, which sometime appears *)
+      str "/private"
+      |> opt;
       FilePath.concat temp_dir_name "Satyrographos"
-      |> str ;
+      |> str;
       repn xdigit 6 (Some 6);
       rep wordc |> group;
     ] |> compile in
