@@ -18,14 +18,11 @@ Loaded libraries
           (Single ((Assoc ((src (String dist/fonts/Junicode.ttf))))))))))))))
   (files
    ((fonts/Junicode.ttf
-     (Filename
-      @@temp_dir@@/simple_dist/fonts/Junicode.ttf))
+     (Filename @@temp_dir@@/simple_dist/fonts/Junicode.ttf))
     (packages/List.satyg
-     (Filename
-      @@temp_dir@@/simple_dist/packages/List.satyg))
+     (Filename @@temp_dir@@/simple_dist/packages/List.satyg))
     (unidata/UnicodeData.txt
-     (Filename
-      @@temp_dir@@/simple_dist/unidata/UnicodeData.txt))))))
+     (Filename @@temp_dir@@/simple_dist/unidata/UnicodeData.txt))))))
 Installing ((name (dist)) (version ())
  (hashes
   ((hash/fonts.satysfi-hash

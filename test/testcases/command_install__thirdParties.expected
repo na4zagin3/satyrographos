@@ -46,8 +46,7 @@ Loaded libraries
  ((name (grcnum)) (version (0.2))
   (files
    ((packages/grcnum/grcnum.satyh
-     (Filename
-      @@temp_dir@@/opam_reg/grcnum/packages/grcnum/grcnum.satyh))))
+     (Filename @@temp_dir@@/opam_reg/grcnum/packages/grcnum/grcnum.satyh))))
   (compatibility
    ((rename_packages
      (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))

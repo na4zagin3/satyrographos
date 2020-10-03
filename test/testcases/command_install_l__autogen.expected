@@ -36,8 +36,7 @@ Loaded libraries
  ((name (base)) (version (1.1.1))
   (files
    ((packages/base/void.satyh
-     (Filename
-      @@temp_dir@@/opam_reg/base/packages/base/void.satyh)))))
+     (Filename @@temp_dir@@/opam_reg/base/packages/base/void.satyh)))))
  ((name (dist)) (version ()))
  ((name (fonts-theano)) (version (2.0))
   (hashes
@@ -77,8 +76,7 @@ Loaded libraries
  ((name (grcnum)) (version (0.2))
   (files
    ((packages/grcnum/grcnum.satyh
-     (Filename
-      @@temp_dir@@/opam_reg/grcnum/packages/grcnum/grcnum.satyh))))
+     (Filename @@temp_dir@@/opam_reg/grcnum/packages/grcnum/grcnum.satyh))))
   (compatibility
    ((rename_packages
      (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
