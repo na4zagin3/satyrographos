@@ -81,10 +81,9 @@ let show_compatibility_warnings ~outf ~libraries =
           Format.fprintf outf "@]@]@,";
         end
       in
-      Format.fprintf outf "\n\027[1;33mCompatibility notice\027[0m for library %s:" library_name;
+      Format.fprintf outf "\n\027[1;33mCompatibility notice\027[0m for library %s:@," library_name;
       print_rename "Packages" compatibility.rename_packages;
       print_rename "Fonts" compatibility.rename_fonts;
-      Format.fprintf outf "@.";
     end
   )
 
