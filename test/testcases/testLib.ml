@@ -39,7 +39,7 @@ let echo_line =
   echo "------------------------------------------------------------"
 
 let dump_dir dir : unit t =
-  with_temp_dir ~prefix:"Satyrographos" ~suffix:"dump_dir" (fun empty_dir ->
+  with_temp_dir ~prefix:"Satyrographos" ~suffix:"empty_dir" (fun empty_dir ->
     (run "find" [dir] |- run "sort" [])
     >> echo_line
     >> run_exit_code "diff" ["-Nr"; empty_dir; dir] >>| (fun _ -> ())
@@ -81,9 +81,9 @@ let test_install ?(replacements=[]) setup f : unit t =
       else return ())
     |- censor replacements
     |- censor_tempdirs in
-  (with_temp_dir ~prefix:"Satyrographos" ~suffix:"test_dest"
+  (with_temp_dir ~prefix:"Satyrographos" ~suffix:"dest_dir"
     (fun dest_dir ->
-      with_temp_dir ~prefix:"Satyrographos" ~suffix:"test_temp" (test dest_dir)))
+      with_temp_dir ~prefix:"Satyrographos" ~suffix:"temp_dir" (test dest_dir)))
 
 let read_env ?repo:_ ?opam_reg ?dist_library_dir () =
   Satyrographos.Environment.{
