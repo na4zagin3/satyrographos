@@ -44,7 +44,7 @@ build-doc:
 	@echo "Target: build-doc"
 	@echo 'Files under $$SATYSFI_RUNTIME'
 	@echo "=============================="
-	@cd "$(SATYSFI_RUNTIME)" ; ls -R
+	@cd "$(SATYSFI_RUNTIME)" ; find . | LC_ALL=C sort
 	@echo "=============================="
 |}
 

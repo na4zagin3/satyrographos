@@ -10,8 +10,7 @@ Loaded libraries
 (((name (base)) (version (1.1.1))
   (files
    ((packages/base/void.satyh
-     (Filename
-      @@temp_dir@@/opam_reg/base/packages/base/void.satyh)))))
+     (Filename @@temp_dir@@/opam_reg/base/packages/base/void.satyh)))))
  ((name (dist)) (version ()))
  ((name (fonts-theano)) (version (2.0))
   (hashes
@@ -51,8 +50,7 @@ Loaded libraries
  ((name (grcnum)) (version (0.2))
   (files
    ((packages/grcnum/grcnum.satyh
-     (Filename
-      @@temp_dir@@/opam_reg/grcnum/packages/grcnum/grcnum.satyh))))
+     (Filename @@temp_dir@@/opam_reg/grcnum/packages/grcnum/grcnum.satyh))))
   (compatibility
    ((rename_packages
      (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
@@ -119,6 +117,7 @@ Installation completed!
 ------------------------------------------------------------
 @@dest_dir@@
 @@dest_dir@@/dest
+@@dest_dir@@/dest/.satyrographos
 @@dest_dir@@/dest/fonts
 @@dest_dir@@/dest/fonts/fonts-theano
 @@dest_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf
@@ -132,7 +131,6 @@ Installation completed!
 @@dest_dir@@/dest/packages/base/void.satyh
 @@dest_dir@@/dest/packages/grcnum
 @@dest_dir@@/dest/packages/grcnum/grcnum.satyh
-@@dest_dir@@/dest/.satyrographos
 ------------------------------------------------------------
 diff -Nr @@empty_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf @@dest_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf
 0a1

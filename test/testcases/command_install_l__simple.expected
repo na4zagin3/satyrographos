@@ -10,8 +10,7 @@ Loaded libraries
 (((name (base)) (version (1.1.1))
   (files
    ((packages/base/void.satyh
-     (Filename
-      @@temp_dir@@/opam_reg/base/packages/base/void.satyh)))))
+     (Filename @@temp_dir@@/opam_reg/base/packages/base/void.satyh)))))
  ((name (dist)) (version ())))
 Installing ((name (base)) (version (1.1.1))
  (files
@@ -22,11 +21,11 @@ Installation completed!
 ------------------------------------------------------------
 @@dest_dir@@
 @@dest_dir@@/dest
+@@dest_dir@@/dest/.satyrographos
 @@dest_dir@@/dest/metadata
 @@dest_dir@@/dest/packages
 @@dest_dir@@/dest/packages/base
 @@dest_dir@@/dest/packages/base/void.satyh
-@@dest_dir@@/dest/.satyrographos
 ------------------------------------------------------------
 diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 0a1,2

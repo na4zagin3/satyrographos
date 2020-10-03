@@ -17,14 +17,11 @@ Loaded libraries
           (Single ((Assoc ((src (String dist/fonts/Junicode.ttf))))))))))))))
   (files
    ((fonts/Junicode.ttf
-     (Filename
-      @@temp_dir@@/simple_dist/fonts/Junicode.ttf))
+     (Filename @@temp_dir@@/simple_dist/fonts/Junicode.ttf))
     (packages/List.satyg
-     (Filename
-      @@temp_dir@@/simple_dist/packages/List.satyg))
+     (Filename @@temp_dir@@/simple_dist/packages/List.satyg))
     (unidata/UnicodeData.txt
-     (Filename
-      @@temp_dir@@/simple_dist/unidata/UnicodeData.txt))))))
+     (Filename @@temp_dir@@/simple_dist/unidata/UnicodeData.txt))))))
 Installing ((name (dist)) (version ())
  (hashes
   ((hash/fonts.satysfi-hash
@@ -46,6 +43,7 @@ Installation completed!
 ------------------------------------------------------------
 @@dest_dir@@
 @@dest_dir@@/dest
+@@dest_dir@@/dest/.satyrographos
 @@dest_dir@@/dest/fonts
 @@dest_dir@@/dest/fonts/Junicode.ttf
 @@dest_dir@@/dest/hash
@@ -53,7 +51,6 @@ Installation completed!
 @@dest_dir@@/dest/metadata
 @@dest_dir@@/dest/packages
 @@dest_dir@@/dest/packages/List.satyg
-@@dest_dir@@/dest/.satyrographos
 @@dest_dir@@/dest/unidata
 @@dest_dir@@/dest/unidata/UnicodeData.txt
 ------------------------------------------------------------
