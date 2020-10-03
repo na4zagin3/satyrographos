@@ -27,3 +27,7 @@ val test_install :
   unit t
 
 val read_env : ?repo:unit -> ?opam_reg:string -> ?dist_library_dir:string -> unit -> Satyrographos.Environment.t
+
+val prepare_files :
+  string -> (string * string) list -> unit t
+(** [prepare_files dir files] creates [files] under [directory] *)

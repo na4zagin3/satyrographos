@@ -137,3 +137,10 @@ let read_env ?repo:_ ?opam_reg ?dist_library_dir () =
       | None -> None end;
     dist_library_dir;
   }
+
+let prepare_files dir files =
+  List.iter files ~f:(fun (file, content) ->
+      let path = FilePath.concat dir file in
+      mkdir ~p:() (FilePath.dirname path)
+      >> (stdout_to path (echo content))
+    )

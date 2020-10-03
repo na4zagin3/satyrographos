@@ -1,6 +1,3 @@
-open Shexp_process
-open Shexp_process.Infix
-
 let theanoMetadata = "fonts-theano/metadata",
 {|((version 1) (libraryName fonts-theano) (libraryVersion 2.0)
  (compatibility
@@ -51,10 +48,7 @@ let baseFiles = [
 (dependencies ()))|};
   "base/packages/base/void.satyh", "@@void.satyh@@"; ]
 
-let prepare dir files =
-  List.iter files ~f:(fun (file, content) ->
-    let path = FilePath.concat dir file in
-    mkdir ~p:() (FilePath.dirname path)
-    >> (stdout_to path (echo content))
-  )
+(* TODO Remove this function *)
+let prepare =
+  TestLib.prepare_files
 
