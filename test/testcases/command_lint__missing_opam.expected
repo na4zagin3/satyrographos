@@ -1,0 +1,2 @@
+Exception:
+OpamSystem.Internal_error("File @@test_library@@/satysfi-package.opam does not exist or can't be read")

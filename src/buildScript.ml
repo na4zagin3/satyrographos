@@ -167,6 +167,10 @@ let get_name = function
   | Library l -> l.name
   | LibraryDoc l -> l.name
 
+let get_opam = function
+  | Library l -> Some l.opam
+  | LibraryDoc l -> Some l.opam
+
 (* Compatibility treatment *)
 let compatibility_treatment (p: library) (l: Library.t) =
   let f = function
