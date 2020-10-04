@@ -1,14 +1,17 @@
 open Core
 
 let opam_file_with_name_field =
-  "satysfi-package.opam", sprintf
-    {|opam-version: "2.0"
-name: "satysfi-package-mark-ii"
-|}
+  "satysfi-package.opam",
+  TestLib.opam_file_for_test
+    ~name:"satysfi-package-mark-ii"
+    ~version:"0.1"
+    ()
 
 let opam_file_without_name_field =
-  "satysfi-package-document.opam", sprintf
-    {|opam-version: "2.0"|}
+  "satysfi-package-document.opam", TestLib.opam_file_for_test
+    ?name:None
+    ~version:"0.1"
+    ()
 
 let satyristes =
   "Satyristes", sprintf

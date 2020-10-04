@@ -1,42 +1,62 @@
 open Core
 open Satyrographos
 
-let show_problem ~outf ~buildscript_path =
+type location =
+  | SatyristesModLoc of (string * string)
+  | OpamLoc of string
+
+let show_location ~outf ~basedir =
+  let concat_with_basedir = FilePath.concat basedir in
   function
-  | module_name, `E msg ->
-    Format.fprintf outf "@[<2>%s (module %s) Error:@,%s@]@." buildscript_path module_name msg
-  | module_name, `W msg ->
-    Format.fprintf outf "@[<2>%s (module %s) Warning:@,%s@]@." buildscript_path module_name msg
+  | SatyristesModLoc (buildscript_path, module_name) ->
+    Format.fprintf outf "%s (module %s):@." (concat_with_basedir buildscript_path) module_name
+  | OpamLoc (opam_path) ->
+    Format.fprintf outf "%s:@." (concat_with_basedir opam_path)
 
-let show_problems ~outf ~buildscript_path =
-  List.iter ~f:(show_problem ~outf ~buildscript_path)
+let show_locations ~outf ~basedir locs =
+  List.rev locs
+  |> List.iter ~f:(show_location ~outf ~basedir)
 
-let lint_module_opam ~basedir ~buildscript_basename:_ (m : BuildScript.m) opam_path =
+let show_problem ~outf ~basedir (locs, level, msg) =
+  show_locations ~outf ~basedir locs;
+  match level with
+  | `Error->
+    Format.fprintf outf "@[<2>Error:@ %s@]@.@." msg
+  | `Warning ->
+    Format.fprintf outf "@[<2>Warning:@ %s@]@.@." msg
+
+let show_problems ~outf ~basedir =
+  List.iter ~f:(show_problem ~outf ~basedir)
+
+let get_opam_name ~opam ~opam_path =
+  OpamFile.OPAM.name_opt opam
+  |> Option.map ~f:OpamPackage.Name.to_string
+  |> Option.value ~default:(FilePath.basename opam_path |> FilePath.chop_extension)
+
+let lint_module_opam ~loc ~basedir ~buildscript_basename:_ (m : BuildScript.m) opam_path =
+  let loc = OpamLoc opam_path :: loc in
   let opam_file =
     OpamFilename.create (OpamFilename.Dir.of_string basedir) (OpamFilename.Base.of_string opam_path)
       |> OpamFile.make
   in
   let open OpamFile in
   let opam = OPAM.read opam_file in
-  let opam_name =
-    OPAM.name_opt opam
-    |> Option.map ~f:OpamPackage.Name.to_string
-    |> Option.value ~default:(FilePath.basename opam_path |> FilePath.chop_extension)
-  in
-  let test_name module_name opam_name =
+  let module_name = BuildScript.get_name m in
+  let test_name =
+    let opam_name = get_opam_name ~opam ~opam_path in
     if String.equal ("satysfi-" ^ module_name) opam_name |> not
-    then (module_name, `E (sprintf "OPAM package name “%s” should be “satysfi-%s”." opam_name module_name))
-         |> Option.some
-    else None
+    then [loc, `Error, (sprintf "OPAM package name “%s” should be “satysfi-%s”." opam_name module_name)]
+    else []
   in
-  List.filter_opt
-    [ test_name (BuildScript.get_name m) opam_name
+  List.concat
+    [ test_name;
     ]
 
 let lint_module ~basedir ~buildscript_basename (m : BuildScript.m) =
+  let loc = [SatyristesModLoc (buildscript_basename, BuildScript.get_name m)] in
   let opam_problems =
-    BuildScript.get_opam m
-    |> Option.map ~f:(lint_module_opam ~basedir ~buildscript_basename m)
+    BuildScript.get_opam_opt m
+    |> Option.map ~f:(lint_module_opam ~loc ~basedir ~buildscript_basename m)
     |> Option.value ~default:[]
   in
   opam_problems
@@ -55,6 +75,6 @@ let lint ~outf ~verbose:_ ~buildscript_path =
     |> List.concat_map ~f:(fun (_, m) ->
         lint_module ~basedir ~buildscript_basename m)
   in
-  show_problems ~outf ~buildscript_path problems;
+  show_problems ~outf ~basedir problems;
   List.length problems
   |> Format.fprintf outf "%d problem(s) found.@."

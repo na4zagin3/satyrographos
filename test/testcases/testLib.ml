@@ -169,3 +169,52 @@ let prepare_files dir files =
       mkdir ~p:() (FilePath.dirname path)
       >> (stdout_to path (echo content))
     )
+
+let opam_file_for_test
+  ?(synopsis="Test Package")
+  ?name
+  ?version
+  ?(description="Test package for SATySFi")
+  ?(depends={|
+  "satysfi" {>= "0.0.5" & < "0.0.6"}
+  "satyrographos" {>= "0.0.2.6" & < "0.0.3"}
+
+  "satysfi-base" {>= "1.3.0" & < "2"}
+  "satysfi-fonts-junicode" {>= "1" & < "2"}
+|})
+  ?(satysfi_name="test-package")
+  ()
+  =
+  let name =
+    Option.map (Printf.sprintf {|name: "%s"|}) name
+    |> Option.value ~default:""
+  in
+  let version =
+    Option.map (Printf.sprintf {|version: "%s"|}) version
+    |> Option.value ~default:""
+  in
+  Printf.sprintf
+    {|opam-version: "2.0"
+synopsis: "%s"
+%s
+%s
+description: """
+%s
+"""
+maintainer: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
+authors: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
+license: "LGPL-3.0-or-later"
+homepage: "https://github.com/na4zagin3/satysfi-fss"
+dev-repo: "git+https://github.com/na4zagin3/satysfi-fss.git"
+bug-reports: "https://github.com/na4zagin3/satysfi-fss/issues"
+depends: [
+%s
+]
+build: [ ]
+install: [
+  ["satyrographos" "opam" "install"
+   "--name" "%s"
+   "--prefix" "%%{prefix}%%"
+   "--script" "%%{build}%%/Satyristes"]
+]
+|} synopsis name version description depends satysfi_name

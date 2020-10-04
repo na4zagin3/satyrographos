@@ -1,18 +1,18 @@
-open Core
+let satysfi_package_opam =
+  "satysfi-package.opam", TestLib.opam_file_for_test
+    ~name:"satysfi-package"
+    ~version:"0.1"
+    ()
 
-let opam_file_with_name_field =
-  "satysfi-package.opam", sprintf
-    {|opam-version: "2.0"
-|}
-
-let opam_file_without_name_field =
-  "satysfi-package-doc.opam", sprintf
-    {|opam-version: "2.0"
-|}
+let satysfi_package_doc_opam =
+  "satysfi-package-doc.opam", TestLib.opam_file_for_test
+    ~name:"satysfi-package-doc"
+    ~version:"0.1"
+    ()
 
 let files =
-  [ opam_file_with_name_field;
-    opam_file_without_name_field;
+  [ satysfi_package_opam;
+    satysfi_package_doc_opam;
   ]
 
 let () =

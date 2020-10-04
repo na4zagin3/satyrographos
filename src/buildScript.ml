@@ -167,7 +167,7 @@ let get_name = function
   | Library l -> l.name
   | LibraryDoc l -> l.name
 
-let get_opam = function
+let get_opam_opt = function
   | Library l -> Some l.opam
   | LibraryDoc l -> Some l.opam
 

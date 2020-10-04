@@ -39,3 +39,9 @@ val read_env : ?repo:unit -> ?opam_reg:string -> ?dist_library_dir:string -> uni
 val prepare_files :
   string -> (string * string) list -> unit t
 (** [prepare_files dir files] creates [files] under [directory] *)
+
+val opam_file_for_test :
+  ?synopsis:string ->
+  ?name:string ->
+  ?version:string ->
+  ?description:string -> ?depends:string -> ?satysfi_name:string -> unit -> string
