@@ -24,6 +24,7 @@ depends: [
   "json-derivers"
   "ppx_deriving"
   "opam-format" {>= "2.0" & < "2.1"}
+  "opam-state" {>= "2.0" & < "2.1"}
   "re" {with-test}
   "stringext" {with-test}
   "uri" {>= "3.0.0"}

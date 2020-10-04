@@ -28,6 +28,11 @@ let show_problem ~outf ~basedir (locs, level, msg) =
 let show_problems ~outf ~basedir =
   List.iter ~f:(show_problem ~outf ~basedir)
 
+let lint_opam_file ~opam ~opam_path:_ ~loc =
+  OpamFileTools.lint opam
+  |> List.map ~f:(fun (error_no, level, msg) ->
+      loc, level, sprintf "(%d) %s" error_no msg)
+
 let get_opam_name ~opam ~opam_path =
   OpamFile.OPAM.name_opt opam
   |> Option.map ~f:OpamPackage.Name.to_string
@@ -85,6 +90,7 @@ let lint_module_opam ~loc ~basedir ~buildscript_basename:_ (m : BuildScript.m) o
   List.concat
     [ test_name;
       test_version;
+      lint_opam_file ~opam ~opam_path ~loc;
     ]
 
 let lint_module ~basedir ~buildscript_basename (m : BuildScript.m) =

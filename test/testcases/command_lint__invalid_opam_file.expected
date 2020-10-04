@@ -1,0 +1,6 @@
+@@test_library@@/Satyristes (module package):
+@@test_library@@/satysfi-package.opam:
+Warning:
+  (47) Synopsis (or description first line) should start with a capital and not end with a dot
+
+1 problem(s) found.
