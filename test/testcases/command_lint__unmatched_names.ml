@@ -11,6 +11,12 @@ let opam_file_without_name_field =
   "satysfi-package-document.opam", TestLib.opam_file_for_test
     ?name:None
     ~version:"0.1"
+    ~depends:{|
+  "satysfi" {>= "0.0.5" & < "0.0.6"}
+  "satyrographos" {>= "0.0.2.6" & < "0.0.3"}
+
+  "satysfi-package" {= "0.1"}
+|}
     ()
 
 let satyristes =

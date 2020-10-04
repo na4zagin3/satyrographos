@@ -38,6 +38,22 @@ let get_opam_name ~opam ~opam_path =
   |> Option.map ~f:OpamPackage.Name.to_string
   |> Option.value ~default:(FilePath.basename opam_path |> FilePath.chop_extension)
 
+module StringSet = Set.Make(String)
+
+let extract_opam_package_names ~opam =
+  let rec sub =
+    let open OpamTypes in
+    function
+    | Empty -> StringSet.empty
+    | Atom (n, _) ->
+      OpamPackage.Name.to_string n
+      |> StringSet.singleton
+    | Block b -> sub b
+    | And (x, y) -> StringSet.union (sub x) (sub y)
+    | Or (x, y) -> StringSet.union (sub x) (sub y)
+  in
+  OpamFile.OPAM.depends opam |> sub
+
 let lint_module_opam ~loc ~basedir ~buildscript_basename:_ (m : BuildScript.m) opam_path =
   let loc = OpamLoc opam_path :: loc in
   let opam_file =
@@ -87,9 +103,30 @@ let lint_module_opam ~loc ~basedir ~buildscript_basename:_ (m : BuildScript.m) o
     | None ->
       [loc, `Error, (sprintf "OPAM file lacks the version field")]
   in
+  let test_dependencies =
+    let module_dependencies =
+      BuildScript.get_dependencies_opt m
+      |> Option.value_exn
+        ~message:(sprintf "BUG: Module %s lacks dependencies" module_name)
+      |> Library.Dependency.to_array
+      |> StringSet.of_array
+    in
+    let opam_dependencies =
+      extract_opam_package_names ~opam
+      |> StringSet.filter_map ~f:(String.chop_prefix ~prefix:"satysfi-")
+    in
+    let missing_dependencies =
+      StringSet.diff module_dependencies opam_dependencies
+    in
+    if StringSet.is_empty missing_dependencies |> not
+    then
+      [loc, `Warning, (sprintf !"The OPAM file lacks dependencies on specified SATySFi libraries: %{sexp:StringSet.t}." missing_dependencies)]
+    else []
+  in
   List.concat
     [ test_name;
       test_version;
+      test_dependencies;
       lint_opam_file ~opam ~opam_path ~loc;
     ]
 

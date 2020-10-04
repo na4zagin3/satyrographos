@@ -10,6 +10,12 @@ let satysfi_package_doc_opam =
   "satysfi-package-doc.opam", TestLib.opam_file_for_test
     ~name:"satysfi-package-doc"
     ~version:"0.1"
+    ~depends:{|
+  "satysfi" {>= "0.0.5" & < "0.0.6"}
+  "satyrographos" {>= "0.0.2.6" & < "0.0.3"}
+
+  "satysfi-package" {= "0.1"}
+|}
     ()
 
 let satyristes =

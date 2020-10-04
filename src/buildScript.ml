@@ -163,6 +163,10 @@ let export_opam_package = function
 let export_opam bs =
   StringMap.iter bs ~f:export_opam_package
 
+let get_dependencies_opt = function
+  | Library l -> Some l.dependencies
+  | LibraryDoc l -> Some l.dependencies
+
 let get_name = function
   | Library l -> l.name
   | LibraryDoc l -> l.name
