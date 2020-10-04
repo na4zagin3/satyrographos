@@ -171,6 +171,10 @@ let get_opam_opt = function
   | Library l -> Some l.opam
   | LibraryDoc l -> Some l.opam
 
+let get_version_opt = function
+  | Library l -> Some l.version
+  | LibraryDoc l -> Some l.version
+
 (* Compatibility treatment *)
 let compatibility_treatment (p: library) (l: Library.t) =
   let f = function

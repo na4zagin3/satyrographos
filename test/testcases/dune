@@ -18,8 +18,10 @@
    command_lint__missing_opam
    command_lint__missing_satyristes
    command_lint__unmatched_names
+   command_lint__unmatched_versions
    command_lint__valid
    command_lint__valid_in_specified_location
+   command_lint__valid_versions
    command_opam_build__doc_satysfi
    command_opam_install__doc
    command_opam_install__library

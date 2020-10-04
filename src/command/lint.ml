@@ -48,8 +48,43 @@ let lint_module_opam ~loc ~basedir ~buildscript_basename:_ (m : BuildScript.m) o
     then [loc, `Error, (sprintf "OPAM package name “%s” should be “satysfi-%s”." opam_name module_name)]
     else []
   in
+  let test_version =
+    let module_version =
+      BuildScript.get_version_opt m
+      |> Option.value_exn
+        ~message:(sprintf "BUG: Module %s lacks a version" module_name)
+    in
+    let opam_version = OPAM.version_opt opam |> Option.map ~f:OpamPackage.Version.to_string in
+    match opam_version with
+    | _ when String.is_empty module_version ->
+        [loc, `Error, (sprintf "Version should not be empty.")]
+    | Some opam_version when String.equal module_version opam_version ->
+      []
+    | Some opam_version when String.is_prefix ~prefix:module_version opam_version ->
+      let module_version_length = String.length module_version in
+      let last_module_version_char = String.get module_version (module_version_length - 1) in
+      let first_opam_version_char = String.get opam_version module_version_length in
+      begin match
+          Char.is_digit last_module_version_char,
+          Char.is_alpha last_module_version_char,
+          Char.is_digit first_opam_version_char,
+          Char.is_alpha first_opam_version_char
+        with
+        | false, false, _, _ ->
+          [loc, `Error, (sprintf "Library version “%s” should end with an alphabet or a digit." module_version)]
+        | _, true, _, true
+        | true, _, true, _ ->
+          [loc, `Error, (sprintf "OPAM package version “%s” should be prefixed with “%s”." opam_version module_version)]
+        | _, _, _, _ -> []
+      end
+    | Some opam_version ->
+      [loc, `Error, (sprintf "OPAM package version “%s” should be prefixed with “%s”." opam_version module_version)]
+    | None ->
+      [loc, `Error, (sprintf "OPAM file lacks the version field")]
+  in
   List.concat
     [ test_name;
+      test_version;
     ]
 
 let lint_module ~basedir ~buildscript_basename (m : BuildScript.m) =
