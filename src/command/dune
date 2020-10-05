@@ -2,4 +2,13 @@
  (name satyrographos_command)
  (inline_tests)
  (preprocess (staged_pps ppx_deriving.std ppx_jane -allow-unannotated-ignores))
- (libraries core fileutils satyrographos satyrographos_autogen satyrographos_template shexp.process))
+ (libraries
+   core
+   fileutils
+   opam-core
+   opam-format
+   opam-state
+   satyrographos
+   satyrographos_autogen
+   satyrographos_template
+   shexp.process))

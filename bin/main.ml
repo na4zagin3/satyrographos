@@ -8,6 +8,7 @@ let total_command =
       "opam", CommandOpam.opam_command;
       "library", CommandLibrary.library_command;
       "library-opam", CommandLibrary.library_opam_command;
+      "lint", CommandLint.lint_command;
       "satysfi", CommandSatysfi.satysfi_command;
       "status", CommandStatus.status_command;
       "pin", CommandPin.pin_command;

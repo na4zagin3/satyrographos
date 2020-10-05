@@ -14,8 +14,11 @@ let replace_tempdirs =
     let open Re in
     let temp_dir_name = Filename.get_temp_dir_name () in
     seq [
+      (* Mac OS X links /var to /private/var, which sometime appears *)
+      str "/private"
+      |> opt;
       FilePath.concat temp_dir_name "Satyrographos"
-      |> str ;
+      |> str;
       repn xdigit 6 (Some 6);
       rep wordc |> group;
     ] |> compile in
@@ -71,6 +74,39 @@ let dump_dir dir : unit t =
 
 let stacktrace = false
 
+let filter_output f c =
+  capture [Std_io.Stdout] c
+  >>= fun (v, out) ->
+  echo ~n:() out
+  |- f
+  >> return v
+
+let run_function f =
+  let censor_normal c =
+    filter_output
+      (censor_tempdirs
+       |- reformat_sexp)
+      c
+  in
+  let censor_exception c =
+    filter_output
+      (censor_tempdirs)
+      c
+  in
+  try
+    with_formatter (fun outf -> f ~outf; Format.fprintf outf "@?")
+    |> censor_normal
+  with e ->
+    let c =
+      echo "Exception:"
+      >> echo (Printexc.to_string e)
+      >> if stacktrace
+      then echo "Stack trace:"
+        >> echo (Printexc.get_backtrace())
+      else return ()
+    in censor_exception c
+
+(* TODO Move to TestCommand module *)
 let test_install ?(replacements=[]) setup f : unit t =
   let test dest_dir temp_dir =
     let opam_prefix = Unix.open_process_in "opam var prefix" |> input_line (* Assume a path does not contain line breaks*) in
@@ -80,12 +116,11 @@ let test_install ?(replacements=[]) setup f : unit t =
         temp_dir, "@@temp_dir@@";
         Unix.getenv "HOME", "@@home_dir@@";
       ] @ replacements in
-    let filter_output f c =
-      capture [Std_io.Stdout] c
-      >>= fun (v, out) ->
-      echo ~n:() out
-      |- f
-      >> return v
+    let censor_user c =
+      filter_output
+        (censor replacements
+        )
+        c
     in
     let censor_no_sexp c =
       filter_output
@@ -104,18 +139,8 @@ let test_install ?(replacements=[]) setup f : unit t =
     >> echo_line
     >> censor (setup ~dest_dir ~temp_dir)
     >>= (fun setup_result ->
-        try
-          with_formatter (fun outf -> f setup_result ~dest_dir ~temp_dir ~outf; Format.fprintf outf "@?")
-          |> censor
-        with e ->
-          let c =
-            echo "Exception:"
-            >> echo (Printexc.to_string e)
-            >> if stacktrace
-            then echo "Stack trace:"
-              >> echo (Printexc.get_backtrace())
-            else return ()
-          in censor_no_sexp c
+        run_function (fun ~outf -> f setup_result ~dest_dir ~temp_dir ~outf)
+        |> censor_user
       )
     >> echo_line
     >> censor (dump_dir dest_dir)
@@ -137,3 +162,59 @@ let read_env ?repo:_ ?opam_reg ?dist_library_dir () =
       | None -> None end;
     dist_library_dir;
   }
+
+let prepare_files dir files =
+  List.iter files ~f:(fun (file, content) ->
+      let path = FilePath.concat dir file in
+      mkdir ~p:() (FilePath.dirname path)
+      >> (stdout_to path (echo content))
+    )
+
+let opam_file_for_test
+  ?(synopsis="Test Package")
+  ?name
+  ?version
+  ?(description="Test package for SATySFi")
+  ?(depends={|
+  "satysfi" {>= "0.0.5" & < "0.0.6"}
+  "satyrographos" {>= "0.0.2.6" & < "0.0.3"}
+
+  "satysfi-base" {>= "1.3.0" & < "2"}
+  "satysfi-fonts-junicode" {>= "1" & < "2"}
+|})
+  ?(satysfi_name="test-package")
+  ()
+  =
+  let name =
+    Option.map (Printf.sprintf {|name: "%s"|}) name
+    |> Option.value ~default:""
+  in
+  let version =
+    Option.map (Printf.sprintf {|version: "%s"|}) version
+    |> Option.value ~default:""
+  in
+  Printf.sprintf
+    {|opam-version: "2.0"
+synopsis: "%s"
+%s
+%s
+description: """
+%s
+"""
+maintainer: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
+authors: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
+license: "LGPL-3.0-or-later"
+homepage: "https://github.com/na4zagin3/satysfi-fss"
+dev-repo: "git+https://github.com/na4zagin3/satysfi-fss.git"
+bug-reports: "https://github.com/na4zagin3/satysfi-fss/issues"
+depends: [
+%s
+]
+build: [ ]
+install: [
+  ["satyrographos" "opam" "install"
+   "--name" "%s"
+   "--prefix" "%%{prefix}%%"
+   "--script" "%%{build}%%/Satyristes"]
+]
+|} synopsis name version description depends satysfi_name
