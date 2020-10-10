@@ -1,9 +1,9 @@
-@@test_library@@/Satyristes (module package):
+@@test_library@@/Satyristes:3:1: (module package):
 @@test_library@@/satysfi-package.opam:
 Error:
   OPAM package name “satysfi-package-mark-ii” should be “satysfi-package”.
 
-@@test_library@@/Satyristes (module package-doc):
+@@test_library@@/Satyristes:10:1: (module package-doc):
 @@test_library@@/satysfi-package-document.opam:
 Error:
   OPAM package name “satysfi-package-document” should be “satysfi-package-doc”.

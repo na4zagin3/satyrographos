@@ -1,9 +1,9 @@
-@@test_library@@/Satyristes (module package):
+@@test_library@@/Satyristes:3:1: (module package):
 @@test_library@@/satysfi-package.opam:
 Warning:
   The OPAM file lacks dependencies on specified SATySFi libraries: (unspecified-package).
 
-@@test_library@@/Satyristes (module package-doc):
+@@test_library@@/Satyristes:10:1: (module package-doc):
 @@test_library@@/satysfi-package-doc.opam:
 Warning:
   The OPAM file lacks dependencies on specified SATySFi libraries: (package).

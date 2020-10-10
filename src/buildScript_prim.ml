@@ -1,5 +1,12 @@
 open Core
 
+type position = int * int
+[@@deriving sexp]
+
+let position_of_range (r : Sexp.Annotated.range) = 
+  let pos = r.start_pos in
+  (pos.line, pos.col + 1)
+
 type sources = {
   files: (string * string) list
     [@sexp.omit_nil];
@@ -36,6 +43,7 @@ type library = {
   sources: sources [@sexp.omit_nil];
   dependencies: Library.Dependency.t [@sexp.omit_nil];
   compatibility: CompatibilitySet.t [@sexp.omit_nil];
+  position: position option;
 } [@@deriving sexp]
 
 type documentSource =
@@ -50,6 +58,7 @@ type libraryDoc = {
   build: string list list [@sexp.omit_nil];
   sources: documentSource list [@sexp.omit_nil];
   dependencies: Library.Dependency.t [@sexp.omit_nil];
+  position: position option;
 } [@@deriving sexp]
 
 type m = Library of library | LibraryDoc of libraryDoc
@@ -94,6 +103,10 @@ let get_name = function
 let get_opam_opt = function
   | Library l -> Some l.opam
   | LibraryDoc l -> Some l.opam
+
+let get_position_opt = function
+  | Library l -> l.position
+  | LibraryDoc l -> l.position
 
 let get_version_opt = function
   | Library l -> Some l.version
