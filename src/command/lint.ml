@@ -2,14 +2,16 @@ open Core
 open Satyrographos
 
 type location =
-  | SatyristesModLoc of (string * string)
+  | SatyristesModLoc of (string * string * (int * int) option)
   | OpamLoc of string
 
 let show_location ~outf ~basedir =
   let concat_with_basedir = FilePath.concat basedir in
   function
-  | SatyristesModLoc (buildscript_path, module_name) ->
-    Format.fprintf outf "%s (module %s):@." (concat_with_basedir buildscript_path) module_name
+  | SatyristesModLoc (buildscript_path, module_name, None) ->
+    Format.fprintf outf "%s: (module %s):@." (concat_with_basedir buildscript_path) module_name
+  | SatyristesModLoc (buildscript_path, module_name, Some (line, col)) ->
+    Format.fprintf outf "%s:%d:%d: (module %s):@." (concat_with_basedir buildscript_path) line col module_name
   | OpamLoc (opam_path) ->
     Format.fprintf outf "%s:@." (concat_with_basedir opam_path)
 
@@ -131,7 +133,7 @@ let lint_module_opam ~loc ~basedir ~buildscript_basename:_ (m : BuildScript.m) o
     ]
 
 let lint_module ~basedir ~buildscript_basename (m : BuildScript.m) =
-  let loc = [SatyristesModLoc (buildscript_basename, BuildScript.get_name m)] in
+  let loc = [SatyristesModLoc BuildScript.(buildscript_basename, get_name m, get_position_opt m)] in
   let opam_problems =
     BuildScript.get_opam_opt m
     |> Option.map ~f:(lint_module_opam ~loc ~basedir ~buildscript_basename m)
