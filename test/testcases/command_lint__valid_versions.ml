@@ -1,4 +1,5 @@
 open Core
+open Satyrographos_testlib
 
 let opam_file_alpha_digit =
   "satysfi-package-alpha-digit.opam",

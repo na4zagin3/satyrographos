@@ -1,5 +1,6 @@
 module StdList = List
 
+open Satyrographos_testlib
 open TestLib
 
 open Shexp_process

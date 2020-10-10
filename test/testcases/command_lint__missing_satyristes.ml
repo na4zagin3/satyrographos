@@ -1,3 +1,5 @@
+open Satyrographos_testlib
+
 let satysfi_package_opam =
   "satysfi-package.opam", TestLib.opam_file_for_test
     ~name:"satysfi-package"

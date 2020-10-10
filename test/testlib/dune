@@ -1,0 +1,5 @@
+(library
+ (name satyrographos_testlib)
+ (preprocess (pps ppx_deriving.std ppx_jane))
+ (libraries core re satyrographos satyrographos_command fileutils shexp.process)
+)
