@@ -33,7 +33,7 @@
    library_write_dir__content
  )
  (preprocess (pps ppx_deriving.std ppx_jane))
- (libraries core re satyrographos satyrographos_command shexp.process uri)
+ (libraries core re satyrographos_command satyrographos_testlib shexp.process uri)
  )
 
 (cram

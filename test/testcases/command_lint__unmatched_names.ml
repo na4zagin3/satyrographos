@@ -1,4 +1,5 @@
 open Core
+open Satyrographos_testlib
 
 let opam_file_with_name_field =
   "satysfi-package.opam",
