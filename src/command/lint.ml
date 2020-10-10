@@ -147,7 +147,7 @@ let lint ~outf ~verbose:_ ~buildscript_path =
   in
   let basedir = FilePath.dirname buildscript_path in
   let buildscript_basename = FilePath.basename buildscript_path in
-  let buildscript = BuildScript.from_file buildscript_path in
+  let buildscript = BuildScript.load buildscript_path in
   let problems =
     Map.to_alist buildscript
     |> List.concat_map ~f:(fun (_, m) ->

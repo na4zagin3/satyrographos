@@ -63,7 +63,7 @@ let uninstall_opam ~outf:_ ~verbose:_ ~prefix ~build_module ~buildscript_path:_ 
   FileUtil.(rm ~force:Force ~recurse:true [dir])
 
 let buildfile ~outf ~process f () =
-  let s = BuildScript.from_file f in
+  let s = BuildScript.load f in
   Format.fprintf outf "Build file:@.";
   s |> [%sexp_of: BuildScript.t] |> Sexp.pp_hum outf;
   Format.fprintf outf "@.";
@@ -78,11 +78,11 @@ let buildfile ~outf ~process f () =
 
 
 let export f () =
-  let s = BuildScript.from_file f in
+  let s = BuildScript.load f in
   s |> BuildScript.export_opam
 
 let with_build_script f ~outf ~prefix ~buildscript_path ~name ~verbose ~env () =
-  let builsscript = BuildScript.from_file buildscript_path in
+  let builsscript = BuildScript.load buildscript_path in
   match name with
   | None -> begin
     if StringMap.length builsscript = 1
