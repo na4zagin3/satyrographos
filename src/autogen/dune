@@ -2,4 +2,4 @@
  (name satyrographos_autogen)
  (inline_tests)
  (preprocess (staged_pps ppx_deriving.std ppx_jane))
- (libraries core fileutils satyrographos shexp.process))
+ (libraries core fileutils satyrographos satyrographos_satysfi shexp.process))
