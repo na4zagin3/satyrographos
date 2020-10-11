@@ -1,6 +1,8 @@
 open Core
 open Satyrographos
 
+module Satysfi = Satyrographos_satysfi.Writer
+
 module StringMap = Map.Make(String)
 
 let name = "%libraries"
