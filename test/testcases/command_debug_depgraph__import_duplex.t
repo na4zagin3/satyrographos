@@ -13,27 +13,39 @@ Generate dependency graphs
   Compatibility warning: You have opted in to use experimental features.
   digraph G {
     "third.satyh" [shape=box, ];
-    "first.saty" [shape=box, ];
+    "second" [shape=doubleoctagon, ];
+    "third" [shape=doubleoctagon, ];
     "second.satyh" [shape=box, ];
+    "first.saty" [shape=box, ];
     
     
-    "first.saty" -> "second.satyh" [color="#001267",
-                                    label="@import: second (.satyh)", ];
-    "second.satyh" -> "third.satyh" [color="#001267",
-                                     label="@import: third (.satyh)", ];
+    "second" -> "second.satyh" [color="#002288", fontcolor="#002288",
+                                label=".satyh", ];
+    "third" -> "third.satyh" [color="#002288", fontcolor="#002288",
+                              label=".satyh", ];
+    "second.satyh" -> "third" [color="#004422", fontcolor="#004422",
+                               label="@import: third", ];
+    "first.saty" -> "second" [color="#004422", fontcolor="#004422",
+                              label="@import: second", ];
     
     }
   $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph --follow-required first.saty
   Compatibility warning: You have opted in to use experimental features.
   digraph G {
     "third.satyh" [shape=box, ];
-    "first.saty" [shape=box, ];
+    "second" [shape=doubleoctagon, ];
+    "third" [shape=doubleoctagon, ];
     "second.satyh" [shape=box, ];
+    "first.saty" [shape=box, ];
     
     
-    "first.saty" -> "second.satyh" [color="#001267",
-                                    label="@import: second (.satyh)", ];
-    "second.satyh" -> "third.satyh" [color="#001267",
-                                     label="@import: third (.satyh)", ];
+    "second" -> "second.satyh" [color="#002288", fontcolor="#002288",
+                                label=".satyh", ];
+    "third" -> "third.satyh" [color="#002288", fontcolor="#002288",
+                              label=".satyh", ];
+    "second.satyh" -> "third" [color="#004422", fontcolor="#004422",
+                               label="@import: third", ];
+    "first.saty" -> "second" [color="#004422", fontcolor="#004422",
+                              label="@import: second", ];
     
     }

@@ -53,23 +53,16 @@ let get_files ~outf r bs =
 
 module Vertex = struct
   type t =
+    | Basename of string
     | File of string
     | Package of string
   [@@deriving sexp, compare, hash, equal]
 end
 
-let vertex_of_directive =
-  let open Dependency in
-  let open Vertex in
-  function
-  | Import f -> File f
-  | Require f -> Package f
-
 module Edge = struct
-  type edge = {
-    directive: Dependency.directive;
-    mode: string option;
-  }
+  type edge =
+    | Directive of Dependency.directive
+    | Mode of string
   [@@deriving sexp, compare, hash, equal]
   type t = edge option
   [@@deriving sexp, compare, hash, equal]
@@ -83,19 +76,24 @@ module Dot =
   Graph.Graphviz.Dot(struct
     include G
     let edge_attributes ((_f : vertex), (e : Edge.t), (_t : vertex)) =
-      let open Dependency in
-      let edge_display e =
-        let Edge.{ directive; mode; } = e in
-        let directive_display = render_directive directive in
-        directive_display ^ Option.value_map ~default:"" ~f:(sprintf " (%s)") mode
+      let edge_display = function
+        | Edge.Directive d ->
+          let label = Dependency.render_directive d in
+          [`Label label; `Fontcolor 0x004422; `Color 0x004422]
+        | Mode m ->
+          [`Label m; `Fontcolor 0x002288; `Color 0x002288]
       in
-      let label = Option.value_map ~default:"" ~f:(edge_display) e in
-      [`Label label; `Color 4711]
+      Option.value_map ~default:[] ~f:(edge_display) e
     let default_edge_attributes _ = []
     let get_subgraph _ = None
-    let vertex_attributes _ = [`Shape `Box]
+    let vertex_attributes (v : vertex) =
+      match v with
+      | Basename _ -> [`Shape `Doubleoctagon]
+      | File _ -> [`Shape `Box]
+      | Package _ -> [`Shape `Ellipse]
     let vertex_name (v : vertex) =
       match v with
+      | Basename path -> sprintf "%S" path
       | File path -> sprintf "%S" path
       | Package p -> sprintf "%S" p
     let default_vertex_attributes _ = []
@@ -112,33 +110,33 @@ let dependency_graph ~outf ?(follow_required=false) ~package_root_dirs files =
       G.add_vertex g vf;
       Dependency.parse_file file
       |> Dependency.referred_file_basenames ~package_root_dirs
-      |> List.iter ~f:(
-        let add_edge_from_directive directive =
-          let vt : G.vertex = vertex_of_directive directive in
-          let e : Edge.t = Some {
-              directive;
-              mode = None;
-            } in
-          G.add_edge_e g (vf, e, vt)
+      |> List.iter ~f:(fun (directive, bs) ->
+        let vm =
+          match directive, bs with
+          | Import _, [b] ->
+            Vertex.Basename b
+          | Require p, _ ->
+            Package p
+          | directive, bs ->
+            failwithf !"BUG: Directive %{sexp:Dependency.directive} has wrong number of candidate basenames %{sexp: string list}"
+              directive bs ()
         in
-        function
-        | Dependency.Require _ as directive, _ when not follow_required ->
-          add_edge_from_directive directive
-        | directive, bs ->
-          match get_files ~outf directive bs with
-          | [] ->
-            add_edge_from_directive directive
-          | files ->
-            List.iter files ~f:(fun (mode, path) ->
-                let vt : G.vertex = File path in
-                let e : Edge.t = Some {
-                    directive;
-                    mode = Some mode;
-                  } in
-                f path;
-                G.add_edge_e g (vf, e, vt)
-              );
-      )
+        let e1 : Edge.t = Some (Directive directive) in
+        G.add_edge_e g (vf, e1, vm);
+        let recursion_enabled = match directive, follow_required with
+          | Require _, false -> false
+          | _ -> true
+        in
+        if recursion_enabled
+        then
+          get_files ~outf directive bs
+          |> List.iter ~f:(fun (mode, path) ->
+              let vt : G.vertex = File path in
+              let e2 : Edge.t = Some (Mode mode) in
+              f path;
+              G.add_edge_e g (vm, e2, vt)
+            )
+        )
     end
   in
   List.iter ~f files;

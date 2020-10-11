@@ -18,12 +18,14 @@ Generate dependency graphs
     - root/local/packages/lib1
   
   digraph G {
-    "second" [shape=box, ];
+    "second" [shape=doubleoctagon, ];
+    "lib1" [shape=ellipse, ];
     "first.saty" [shape=box, ];
-    "lib1" [shape=box, ];
     
     
-    "first.saty" -> "second" [color="#001267", label="@import: second", ];
-    "first.saty" -> "lib1" [color="#001267", label="@require: lib1", ];
+    "first.saty" -> "second" [color="#004422", fontcolor="#004422",
+                              label="@import: second", ];
+    "first.saty" -> "lib1" [color="#004422", fontcolor="#004422",
+                            label="@require: lib1", ];
     
     }

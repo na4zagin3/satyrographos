@@ -19,21 +19,29 @@ Generate dependency graphs
   Compatibility warning: You have opted in to use experimental features.
   digraph G {
     "root/local/packages/lib2.satyg" [shape=box, ];
-    "first.saty" [shape=box, ];
     "root/dist/packages/lib1.satyh" [shape=box, ];
+    "second" [shape=doubleoctagon, ];
+    "lib1" [shape=ellipse, ];
+    "lib2" [shape=ellipse, ];
     "second.satyh" [shape=box, ];
+    "first.saty" [shape=box, ];
     
     
-    "first.saty" -> "root/dist/packages/lib1.satyh" [color="#001267",
-                                                     label="@require: lib1 (.satyh)",
-                                                     ];
-    "first.saty" -> "second.satyh" [color="#001267",
-                                    label="@import: second (.satyh)", ];
-    "second.satyh" -> "root/dist/packages/lib1.satyh" [color="#001267",
-                                                       label="@require: lib1 (.satyh)",
-                                                       ];
-    "second.satyh" -> "root/local/packages/lib2.satyg" [color="#001267",
-                                                        label="@require: lib2 (.satyg)",
-                                                        ];
+    "second" -> "second.satyh" [color="#002288", fontcolor="#002288",
+                                label=".satyh", ];
+    "lib1" -> "root/dist/packages/lib1.satyh" [color="#002288",
+                                               fontcolor="#002288",
+                                               label=".satyh", ];
+    "lib2" -> "root/local/packages/lib2.satyg" [color="#002288",
+                                                fontcolor="#002288",
+                                                label=".satyg", ];
+    "second.satyh" -> "lib1" [color="#004422", fontcolor="#004422",
+                              label="@require: lib1", ];
+    "second.satyh" -> "lib2" [color="#004422", fontcolor="#004422",
+                              label="@require: lib2", ];
+    "first.saty" -> "second" [color="#004422", fontcolor="#004422",
+                              label="@import: second", ];
+    "first.saty" -> "lib1" [color="#004422", fontcolor="#004422",
+                            label="@require: lib1", ];
     
     }
