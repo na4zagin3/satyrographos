@@ -58,7 +58,7 @@ let long_flag_f rename_f arg_f ?doc_arg flag_name ?(aliases) arg ~doc =
   let doc_prefix = Option.map ~f:(fun x -> x ^ " ") doc_arg |> Option.value ~default:"" in
   [%map_open
     let new_opt = flag ("--" ^ flag_name) (arg_f arg) ?aliases ~doc:(doc_prefix ^ doc)
-    and old_opt = flag (flag_name) (arg_f arg) ~doc:(doc_prefix ^ "Deprecated. Use --" ^ flag_name ^ "instead")
+    and old_opt = flag (flag_name) (arg_f arg) ~doc:(doc_prefix ^ "Deprecated. Use --" ^ flag_name ^ " instead")
     in
       rename_f ("-" ^ flag_name) old_opt
         ("--" ^ flag_name) new_opt

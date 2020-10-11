@@ -16,7 +16,7 @@ let install_command =
       and autogen_library_list = long_flag_listed "autogen" string ~aliases:["a"] ~doc_arg:"AUTOGEN" ~doc:"Enable non-default autogen libraries (e.g., %libraries) (EXPERIMENTAL)"
       and library_list = long_flag_listed "library" string ~aliases:["l"] ~doc_arg:"LIBRARY" ~doc:"Library"
       and target_dir_old = anon (maybe ("DIR" %: string))
-      and target_dir = long_flag_optional "output" string ~doc_arg:"SATYSFI_ROOT" ~doc:("Install files to (default: " ^ default_target_dir ^ ")")
+      and target_dir = long_flag_optional "output" string ~doc_arg:"DIR" ~doc:("Install files to (default: " ^ default_target_dir ^ ")")
       and verbose = long_flag_bool "verbose" no_arg ~doc:"Make verbose"
       and copy = long_flag_bool "copy" no_arg ~doc:"Copy files instead of making symlinks"
       in
