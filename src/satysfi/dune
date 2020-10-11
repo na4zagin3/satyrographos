@@ -5,6 +5,7 @@
  (libraries
    core
    fileutils
+   ocamlgraph
    re
    shexp.process
 ))

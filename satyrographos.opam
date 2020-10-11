@@ -23,6 +23,7 @@ depends: [
   "fileutils"
   "json-derivers"
   "ppx_deriving"
+  "ocamlgraph"
   "opam-format" {>= "2.0" & < "2.1"}
   "opam-state" {>= "2.0" & < "2.1"}
   "re" {with-test}

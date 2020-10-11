@@ -15,6 +15,16 @@ let home_dir () = if String.equal Sys.os_type "Win32"
 let user_dir () =
     Option.map ~f:(fun s -> Filename.concat s ".satysfi") (home_dir ())
 
+let expand_package_root_dirs ~satysfi_version package_root_dirs =
+  let suffixes =
+    ["dist/packages"]
+    @ if Version.read_local_packages satysfi_version
+    then ["local/packages"]
+    else []
+  in
+  List.concat_map suffixes ~f:(fun suffix ->
+      List.map package_root_dirs ~f:(fun path -> FilePath.concat path suffix))
+
 let is_runtime_dir dir =
   FileUtil.(test Is_dir) (Filename.concat dir "packages")
 
