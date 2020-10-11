@@ -34,7 +34,7 @@ let expand_file_basename =
       |> Re.exec_opt re
       |> Option.bind ~f:(fun g ->
           if Re.Group.get g 1 |> String.equal basename
-          then Some (Re.Group.get g 2, file_path)
+          then Some (Re.Group.get g 2 |> Mode.of_extension_opt, file_path)
           else None)
     in
     if FileUtil.(test Is_dir dir)
@@ -62,7 +62,7 @@ end
 module Edge = struct
   type edge =
     | Directive of Dependency.directive
-    | Mode of string
+    | Mode of Mode.t
   [@@deriving sexp, compare, hash, equal]
   type t = edge option
   [@@deriving sexp, compare, hash, equal]
@@ -81,7 +81,8 @@ module Dot =
           let label = Dependency.render_directive d in
           [`Label label; `Fontcolor 0x004422; `Color 0x004422]
         | Mode m ->
-          [`Label m; `Fontcolor 0x002288; `Color 0x002288]
+          let label = Mode.to_extension m in
+          [`Label label; `Fontcolor 0x002288; `Color 0x002288]
       in
       Option.value_map ~default:[] ~f:(edge_display) e
     let default_edge_attributes _ = []
@@ -132,7 +133,7 @@ let dependency_graph ~outf ?(follow_required=false) ~package_root_dirs files =
           get_files ~outf directive bs
           |> List.iter ~f:(fun (mode, path) ->
               let vt : G.vertex = File path in
-              let e2 : Edge.t = Some (Mode mode) in
+              let e2 : Edge.t = Option.map ~f:(fun m -> Edge.Mode m) mode in
               f path;
               G.add_edge_e g (vm, e2, vt)
             )
