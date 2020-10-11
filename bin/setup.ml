@@ -1,6 +1,8 @@
 open Satyrographos
 open Core
 
+module SatysfiDirs = Satyrographos_satysfi.SatysfiDirs
+
 let scheme_version = 1
 
 let home_dir = match SatysfiDirs.home_dir () with
