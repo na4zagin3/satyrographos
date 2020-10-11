@@ -1,6 +1,8 @@
 open Satyrographos
 open Core
 
+module SatysfiDirs = Satyrographos_satysfi.SatysfiDirs
+
 
 let outf = Format.std_formatter
 
