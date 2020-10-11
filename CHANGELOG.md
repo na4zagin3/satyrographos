@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
+### Added
+- Add `new` subcommand to create a new project from templates ([#152], [#158], [#159]).
+- Add `lint` subcommand to detect errors in OPAM files ([#165]).
+
+### Changed
+- Internal representation of a build file now have location of each module declaration, wherefore outputs of `lint` and `opam buildfile` are changed ([#171])
+
+### Fixed
+- Unit tests get locale-invaliant ([#163]).
+- Weird indents in compatibility warnings are fixed ([#164] by @matsud224)
+- Missing spaces and confusing option docs are fixed ([#173])
 
 ## [v0.0.2.6] - 2020-08-30
 ### Added
@@ -160,6 +171,14 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#137]: https://github.com/na4zagin3/satyrographos/pull/137
 [#142]: https://github.com/na4zagin3/satyrographos/pull/142
 [#143]: https://github.com/na4zagin3/satyrographos/pull/143
+[#152]: https://github.com/na4zagin3/satyrographos/pull/152
+[#158]: https://github.com/na4zagin3/satyrographos/pull/158
+[#159]: https://github.com/na4zagin3/satyrographos/pull/159
+[#163]: https://github.com/na4zagin3/satyrographos/pull/163
+[#164]: https://github.com/na4zagin3/satyrographos/pull/164
+[#165]: https://github.com/na4zagin3/satyrographos/pull/165
+[#171]: https://github.com/na4zagin3/satyrographos/pull/171
+[#173]: https://github.com/na4zagin3/satyrographos/pull/173
 
 
 [Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.6...HEAD
