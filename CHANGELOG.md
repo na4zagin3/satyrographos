@@ -8,14 +8,18 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 ### Added
 - Add `new` subcommand to create a new project from templates ([#152], [#158], [#159]).
 - Add `lint` subcommand to detect errors in OPAM files ([#165]).
+- Add `debug` subcommand to run utilities for debugging ([#178]).
+- Add `debug depgraph` subcommand to output dependency graph of SATySFi source files ([#178]).
+- Add `doc/terminology.md` to define terms used in the project ([#177]).
 
 ### Changed
 - Internal representation of a build file now have location of each module declaration, wherefore outputs of `lint` and `opam buildfile` are changed ([#171])
 
 ### Fixed
 - Unit tests get locale-invaliant ([#163]).
-- Weird indents in compatibility warnings are fixed ([#164] by @matsud224)
-- Missing spaces and confusing option docs are fixed ([#173])
+- Weird indents in compatibility warnings are fixed ([#164] by @matsud224).
+- Missing spaces and confusing option docs are fixed ([#173]).
+- Compatibility opt-in warnings are now output to stderr instead of stdout ([#175])
 
 ## [v0.0.2.6] - 2020-08-30
 ### Added
@@ -179,6 +183,9 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#165]: https://github.com/na4zagin3/satyrographos/pull/165
 [#171]: https://github.com/na4zagin3/satyrographos/pull/171
 [#173]: https://github.com/na4zagin3/satyrographos/pull/173
+[#175]: https://github.com/na4zagin3/satyrographos/pull/175
+[#177]: https://github.com/na4zagin3/satyrographos/pull/177
+[#178]: https://github.com/na4zagin3/satyrographos/pull/178
 
 
 [Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.6...HEAD
