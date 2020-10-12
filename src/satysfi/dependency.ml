@@ -49,13 +49,17 @@ let parse_directives =
     match Re.Seq.matches file_c str () with
     | Nil -> []
     | Cons (ls, _) ->
+      let chop_suffix_cr str =
+        String.chop_suffix ~suffix:"\r" str
+        |> Option.value ~default:str
+      in
       let f g =
         match Group.all g with
         | [| _; "%"; _ |] -> []
         | [| _; "@import:"; c |] ->
-          [ Import c ]
+          [ Import (chop_suffix_cr c) ]
         | [| _; "@require:"; c |] ->
-          [ Require c ]
+          [ Require (chop_suffix_cr c) ]
         | a ->
           failwithf !"BUG: parse_line: Unmatched Re %{sexp:string array} Please report this." a ()
       in
@@ -92,6 +96,14 @@ let%expect_test "parse_string: empty" =
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
     ((path test.saty) (imports ()) (requires ())) |}]
+
+let%expect_test "parse_string: single import with crlf" =
+  let path = "test.saty" in
+  parse_string ~path "@import: imported/file1\r\n"
+  |> [%sexp_of: t]
+  |> Sexp.output_hum Out_channel.stdout;
+  [%expect{|
+    ((path test.saty) (imports (imported/file1)) (requires ())) |}]
 
 let%expect_test "parse_string: single import with eol" =
   let path = "test.saty" in
