@@ -27,21 +27,21 @@ Generate dependency graphs
     "first.saty" [shape=box, ];
     
     
-    "second" -> "second.satyh" [color="#002288", fontcolor="#002288",
-                                label=".satyh", ];
-    "lib1" -> "root/dist/packages/lib1.satyh" [color="#002288",
-                                               fontcolor="#002288",
-                                               label=".satyh", ];
-    "lib2" -> "root/local/packages/lib2.satyg" [color="#002288",
-                                                fontcolor="#002288",
-                                                label=".satyg", ];
-    "second.satyh" -> "lib1" [color="#004422", fontcolor="#004422",
+    "second" -> "second.satyh" [color="#000000", fontcolor="#000000",
+                                label=".satyh", style="dashed", ];
+    "lib1" -> "root/dist/packages/lib1.satyh" [color="#000000",
+                                               fontcolor="#000000",
+                                               label=".satyh", style="dashed", ];
+    "lib2" -> "root/local/packages/lib2.satyg" [color="#000000",
+                                                fontcolor="#000000",
+                                                label=".satyg", style="dashed", ];
+    "second.satyh" -> "lib1" [color="#117722", fontcolor="#117722",
                               label="@require: lib1", ];
-    "second.satyh" -> "lib2" [color="#004422", fontcolor="#004422",
+    "second.satyh" -> "lib2" [color="#117722", fontcolor="#117722",
                               label="@require: lib2", ];
-    "first.saty" -> "second" [color="#004422", fontcolor="#004422",
+    "first.saty" -> "second" [color="#002288", fontcolor="#002288",
                               label="@import: second", ];
-    "first.saty" -> "lib1" [color="#004422", fontcolor="#004422",
+    "first.saty" -> "lib1" [color="#117722", fontcolor="#117722",
                             label="@require: lib1", ];
     
     }

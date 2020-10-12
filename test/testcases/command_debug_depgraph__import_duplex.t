@@ -19,13 +19,13 @@ Generate dependency graphs
     "first.saty" [shape=box, ];
     
     
-    "second" -> "second.satyh" [color="#002288", fontcolor="#002288",
-                                label=".satyh", ];
-    "third" -> "third.satyh" [color="#002288", fontcolor="#002288",
-                              label=".satyh", ];
-    "second.satyh" -> "third" [color="#004422", fontcolor="#004422",
+    "second" -> "second.satyh" [color="#000000", fontcolor="#000000",
+                                label=".satyh", style="dashed", ];
+    "third" -> "third.satyh" [color="#000000", fontcolor="#000000",
+                              label=".satyh", style="dashed", ];
+    "second.satyh" -> "third" [color="#002288", fontcolor="#002288",
                                label="@import: third", ];
-    "first.saty" -> "second" [color="#004422", fontcolor="#004422",
+    "first.saty" -> "second" [color="#002288", fontcolor="#002288",
                               label="@import: second", ];
     
     }
@@ -39,13 +39,13 @@ Generate dependency graphs
     "first.saty" [shape=box, ];
     
     
-    "second" -> "second.satyh" [color="#002288", fontcolor="#002288",
-                                label=".satyh", ];
-    "third" -> "third.satyh" [color="#002288", fontcolor="#002288",
-                              label=".satyh", ];
-    "second.satyh" -> "third" [color="#004422", fontcolor="#004422",
+    "second" -> "second.satyh" [color="#000000", fontcolor="#000000",
+                                label=".satyh", style="dashed", ];
+    "third" -> "third.satyh" [color="#000000", fontcolor="#000000",
+                              label=".satyh", style="dashed", ];
+    "second.satyh" -> "third" [color="#002288", fontcolor="#002288",
                                label="@import: third", ];
-    "first.saty" -> "second" [color="#004422", fontcolor="#004422",
+    "first.saty" -> "second" [color="#002288", fontcolor="#002288",
                               label="@import: second", ];
     
     }

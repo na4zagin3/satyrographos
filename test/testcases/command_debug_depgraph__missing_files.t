@@ -23,9 +23,9 @@ Generate dependency graphs
     "first.saty" [shape=box, ];
     
     
-    "first.saty" -> "second" [color="#004422", fontcolor="#004422",
+    "first.saty" -> "second" [color="#002288", fontcolor="#002288",
                               label="@import: second", ];
-    "first.saty" -> "lib1" [color="#004422", fontcolor="#004422",
+    "first.saty" -> "lib1" [color="#117722", fontcolor="#117722",
                             label="@require: lib1", ];
     
     }

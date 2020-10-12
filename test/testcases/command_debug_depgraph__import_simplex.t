@@ -20,13 +20,13 @@ Generate dependency graphs
     "first.saty" [shape=box, ];
     
     
-    "second1" -> "second1.satyh" [color="#002288", fontcolor="#002288",
-                                  label=".satyh", ];
-    "second2/lib" -> "second2/lib.satyg" [color="#002288", fontcolor="#002288",
-                                          label=".satyg", ];
-    "first.saty" -> "second1" [color="#004422", fontcolor="#004422",
+    "second1" -> "second1.satyh" [color="#000000", fontcolor="#000000",
+                                  label=".satyh", style="dashed", ];
+    "second2/lib" -> "second2/lib.satyg" [color="#000000", fontcolor="#000000",
+                                          label=".satyg", style="dashed", ];
+    "first.saty" -> "second1" [color="#002288", fontcolor="#002288",
                                label="@import: second1", ];
-    "first.saty" -> "second2/lib" [color="#004422", fontcolor="#004422",
+    "first.saty" -> "second2/lib" [color="#002288", fontcolor="#002288",
                                    label="@import: second2/lib", ];
     
     }
@@ -40,13 +40,13 @@ Generate dependency graphs
     "first.saty" [shape=box, ];
     
     
-    "second1" -> "second1.satyh" [color="#002288", fontcolor="#002288",
-                                  label=".satyh", ];
-    "second2/lib" -> "second2/lib.satyg" [color="#002288", fontcolor="#002288",
-                                          label=".satyg", ];
-    "first.saty" -> "second1" [color="#004422", fontcolor="#004422",
+    "second1" -> "second1.satyh" [color="#000000", fontcolor="#000000",
+                                  label=".satyh", style="dashed", ];
+    "second2/lib" -> "second2/lib.satyg" [color="#000000", fontcolor="#000000",
+                                          label=".satyg", style="dashed", ];
+    "first.saty" -> "second1" [color="#002288", fontcolor="#002288",
                                label="@import: second1", ];
-    "first.saty" -> "second2/lib" [color="#004422", fontcolor="#004422",
+    "first.saty" -> "second2/lib" [color="#002288", fontcolor="#002288",
                                    label="@import: second2/lib", ];
     
     }

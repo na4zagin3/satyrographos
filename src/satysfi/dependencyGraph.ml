@@ -79,10 +79,14 @@ module Dot =
       let edge_display = function
         | Edge.Directive d ->
           let label = Dependency.render_directive d in
-          [`Label label; `Fontcolor 0x004422; `Color 0x004422]
+          let color = match d with
+            | Require _ -> 0x117722
+            | Import _ -> 0x002288
+          in
+          [`Label label; `Fontcolor color; `Color color]
         | Mode m ->
           let label = Mode.to_extension m in
-          [`Label label; `Fontcolor 0x002288; `Color 0x002288]
+          [`Label label; `Fontcolor 0x000000; `Color 0x000000; `Style `Dashed;]
       in
       Option.value_map ~default:[] ~f:(edge_display) e
     let default_edge_attributes _ = []
