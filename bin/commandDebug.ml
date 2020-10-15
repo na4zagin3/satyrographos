@@ -15,6 +15,7 @@ let depgraph_command =
       let runtime_dirs = flag "--satysfi-root-dirs" (optional string) ~aliases:["C"] ~doc:"DIRs Colon-separated list of SATySFi root directories"
       and _verbose = flag "--verbose" no_arg ~doc:"Make verbose"
       and follow_required = flag "--follow-required" no_arg ~aliases:["r"] ~doc:"Follow required package files"
+      and satysfi_version = flag "--satysfi-version" (optional (Arg_type.of_alist_exn Version.alist)) ~aliases:["S"] ~doc:"VERSION SATySFi version"
       and satysfi_files = anon (non_empty_sequence_as_list ("FILE" %: string))
       in
       fun () ->
@@ -27,10 +28,12 @@ let depgraph_command =
             Option.to_list (user_dir ()) @ runtime_dirs ()
         in
         let outf = Format.err_formatter in
-        (* TODO detect Satysfi version *)
-        let satysfi_version = Version.Satysfi_0_0_5 in
+        let satysfi_version =
+          (* TODO detect Satysfi version *)
+          Option.value ~default:Version.Satysfi_0_0_5 satysfi_version
+        in
         let package_root_dirs = SatysfiDirs.expand_package_root_dirs ~satysfi_version runtime_dirs in
-        let g = DependencyGraph.dependency_graph ~outf ~package_root_dirs ~follow_required satysfi_files in
+        let g = DependencyGraph.dependency_graph ~outf ~package_root_dirs ~satysfi_version ~follow_required satysfi_files in
         DependencyGraph.Dot.fprint_graph Format.std_formatter g
     ]
 
