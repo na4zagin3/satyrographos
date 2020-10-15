@@ -11,7 +11,7 @@ let pin_list_command =
       in
       fun () ->
       Compatibility.optin ();
-      let repo = (Setup.read_depot ()).repo in
+      let repo = (Setup.read_depot_exn ()).repo in
       Satyrographos_command.Pin.pin_list ~outf repo
     ]
 
@@ -24,7 +24,7 @@ let pin_dir_command =
       in
       fun () ->
         Compatibility.optin ();
-        let repo = (Setup.read_depot ()).repo in
+        let repo = (Setup.read_depot_exn ()).repo in
         Satyrographos_command.Pin.pin_dir ~outf repo p
     ]
 
@@ -40,7 +40,7 @@ let pin_add_command =
         Compatibility.optin ();
         Printf.printf "Compatibility warning: Although currently Satyrographos simply copies the given directory,\n";
         Printf.printf "it will have a build script to control library installation, which is a breaking change.";
-        let env = Setup.read_depot () in
+        let env = Setup.read_depot_exn () in
         Satyrographos_command.Pin.pin_add ~outf env p url
     ]
 
@@ -53,7 +53,7 @@ let pin_remove_command =
       in
       fun () ->
         Compatibility.optin ();
-        let repo = (Setup.read_depot ()).repo in
+        let repo = (Setup.read_depot_exn ()).repo in
         Satyrographos_command.Pin.pin_remove ~outf repo p
     ]
 

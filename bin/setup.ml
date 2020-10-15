@@ -53,13 +53,6 @@ let try_read_depot () =
     Some (Environment.{ repo; reg })
   end
 
-let read_depot () =
-  if depot_exists () |> not
-  then initialize ();
-  match try_read_depot () with
-  | None -> failwith "BUG: Something went wrong."
-  | Some r -> r
-
 let default_target_dir =
   Sys.getenv "SATYSFI_RUNTIME"
   |> Option.value ~default:(Filename.concat home_dir ".satysfi")
@@ -70,3 +63,7 @@ let read_environment () =
   let dist_library_dir = SatysfiDirs.satysfi_dist_dir ~outf:Format.std_formatter in
   Environment.{ depot; opam_reg = reg_opam; dist_library_dir }
 
+let read_depot_exn () =
+  let env = read_environment () in
+  env.Environment.depot
+  |> Option.value_exn ~message:"Satyrographos directory (e.g., ~/.satyrographs) does not exist."

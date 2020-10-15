@@ -25,16 +25,8 @@ val depot_exists : unit -> bool
 (** Initialize the depot directory only when it does not exist or is not initialized. *)
 val initialize : unit -> unit
 
-(** OPAM registry. TODO Rename and/or make it private *)
-val reg_opam : Satyrographos.OpamSatysfiRegistry.t option
-
-(** Try to read Satyrographos depot. It returns None if it does not exists.
-    TODO make it private *)
-val try_read_depot : unit -> Satyrographos.Environment.depot option
-
-(** Try to read Satyrographos depot. If the depot does not exists, it returns a new initialized depot.
-    TODO work on Environment.t instead *)
-val read_depot : unit -> Satyrographos.Environment.depot
+(** Try to read Satyrographos depot. If the depot does not exists, throws an error. *)
+val read_depot_exn : unit -> Satyrographos.Environment.depot
 
 (** Default location of target of install subcommand *)
 val default_target_dir : string
