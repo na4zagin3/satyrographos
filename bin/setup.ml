@@ -12,7 +12,7 @@ let home_dir = match SatysfiDirs.home_dir () with
 let root_dir = Sys.getenv "SATYROGRAPHOS_DIR"
   |> Option.value ~default:(Filename.concat home_dir ".satyrographos")
 let repository_dir = SatyrographosDirs.repository_dir root_dir
-let library_dir = SatyrographosDirs.library_dir root_dir
+let registry_dir = SatyrographosDirs.registry_dir root_dir
 let metadata_file = SatyrographosDirs.metadata_file root_dir
 
 let current_scheme_version = SatyrographosDirs.get_scheme_version root_dir
@@ -32,7 +32,7 @@ let initialize () =
   else begin
     depot_initialized := true;
     Repository.initialize repository_dir metadata_file;
-    Registry.initialize library_dir metadata_file;
+    Registry.initialize registry_dir metadata_file;
     SatyrographosDirs.mark_scheme_version root_dir scheme_version
   end
 
@@ -49,7 +49,7 @@ let try_read_depot () =
     (* Source repository *)
     let repo = Repository.read repository_dir metadata_file in
     (* Binary registry *)
-    let reg = Registry.read library_dir repo metadata_file in
+    let reg = Registry.read registry_dir repo metadata_file in
     Some (Environment.{ repo; reg })
   end
 
