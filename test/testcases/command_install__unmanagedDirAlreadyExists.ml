@@ -11,7 +11,7 @@ let env ~dest_dir ~temp_dir : Satyrographos.Environment.t t =
   PrepareDist.empty empty_dist
   >> mkdir (FilePath.concat dest_dir "dest")
   >> return Satyrographos.Environment.{
-    repo = None;
+    depot = None;
     opam_reg = None;
     dist_library_dir = Some empty_dist;
   }

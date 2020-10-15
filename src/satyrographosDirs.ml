@@ -1,7 +1,8 @@
 open Core
 
 let repository_dir sg_dir = Filename.concat sg_dir "repo"
-let library_dir sg_dir = Filename.concat sg_dir "libraries"
+(* TODO Rename libraries with registry in the next major version. *)
+let registry_dir sg_dir = Filename.concat sg_dir "libraries"
 let metadata_file sg_dir = Filename.concat sg_dir "metadata"
 let version_file sg_dir = FilePath.concat sg_dir "version"
 
@@ -19,7 +20,7 @@ let get_scheme_version d =
     Option.value_exn line
     |> int_of_string
   in
-  match FileUtil.test FileUtil.Is_file file, FileUtil.test FileUtil.Is_dir (library_dir d) with
+  match FileUtil.test FileUtil.Is_file file, FileUtil.test FileUtil.Is_dir (registry_dir d) with
   | false, false -> None
   | false, true -> Some 0
   | true, false -> Some 0

@@ -156,7 +156,7 @@ let test_install ?(replacements=[]) setup f : unit t =
 
 let read_env ?repo:_ ?opam_reg ?dist_library_dir () =
   Satyrographos.Environment.{
-    repo = None;
+    depot = None;
     opam_reg = begin match opam_reg with
       | Some opam_reg -> Satyrographos.OpamSatysfiRegistry.read opam_reg
       | None -> None end;
