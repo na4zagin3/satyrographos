@@ -137,9 +137,9 @@ let add_autogen_libraries ~outf ~libraries ~env:(_ : Environment.t) library_map 
 let install d ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~verbose ?(safe=false) ~copy ~(env: Environment.t) () =
   (* TODO build all *)
   Format.open_vbox 0;
-  let maybe_repo = env.repo in
+  let maybe_depot = env.depot in
   begin if safe
-    then Option.iter maybe_repo ~f:(fun {repo; reg} ->
+    then Option.iter maybe_depot ~f:(fun {repo; reg} ->
       Format.fprintf outf "Updating libraries@,";
       begin match Repository.update_all ~outf repo with
       | Some updated_libraries -> begin
@@ -159,7 +159,7 @@ let install d ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~verb
         Format.fprintf outf "No libraries built@,"
       end)
   end;
-  let maybe_reg = Option.map maybe_repo ~f:(fun p -> p.reg) in
+  let maybe_reg = Option.map maybe_depot ~f:(fun p -> p.reg) in
   let library_map = get_libraries ~outf ~maybe_reg ~env ~libraries in
   let library_map = match system_font_prefix with
     | None -> Format.fprintf outf "Not gathering system fonts\n"; library_map

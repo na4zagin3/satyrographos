@@ -1,5 +1,5 @@
-(** Satyrographos depot. TODO Rename *)
-type repo = {
+(** Satyrographos depot. *)
+type depot = {
 
   repo: Repository.t;
   (** Satyrographos repository, which is a store of sourcecodes. *)
@@ -10,9 +10,8 @@ type repo = {
 
 (** A type represents runtime environment. *)
 type t = {
-  repo: repo option;
-  (** Satyrographos depot. I.e., ~/.satyrograpos.
-      TODO Rename with depot. *)
+  depot: depot option;
+  (** Satyrographos depot. I.e., ~/.satyrograpos. *)
 
   opam_reg: OpamSatysfiRegistry.t option;
   (** OPAM Registry. I.e., ~/.satyrograpos *)

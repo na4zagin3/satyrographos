@@ -9,7 +9,7 @@ let outf = Format.std_formatter
 let status () =
   printf "Scheme version: ";
   [%derive.show: int option] Setup.current_scheme_version |> print_endline;
-  Setup.try_read_repo () |> Option.iter ~f:(fun { repo; reg; } ->
+  Setup.try_read_depot () |> Option.iter ~f:(fun { repo; reg; } ->
     printf "Source repository: ";
     [%derive.show: string list] (Repository.list repo) |> print_endline;
     printf "Built library registry: ";

@@ -18,8 +18,8 @@ let metadata_file = SatyrographosDirs.metadata_file root_dir
 let current_scheme_version = SatyrographosDirs.get_scheme_version root_dir
 
 (* TODO Move this to a new module *)
-let repo_initialized = ref false
-let repository_exists () =
+let depot_initialized = ref false
+let depot_exists () =
   match current_scheme_version with
   | None -> false
   | Some 0 -> Printf.sprintf "Semantics of `pin add` has been changed.\nPlease remove %s to continue." root_dir |> failwith
@@ -27,10 +27,10 @@ let repository_exists () =
   | Some v -> Printf.sprintf "Unknown scheme version %d" v |> failwith
 
 let initialize () =
-  if !repo_initialized || repository_exists ()
+  if !depot_initialized || depot_exists ()
   then ()
   else begin
-    repo_initialized := true;
+    depot_initialized := true;
     Repository.initialize repository_dir metadata_file;
     Registry.initialize library_dir metadata_file;
     SatyrographosDirs.mark_scheme_version root_dir scheme_version
@@ -41,8 +41,8 @@ let reg_opam =
   |> Option.bind ~f:(fun opam_share_dir ->
       OpamSatysfiRegistry.read (Filename.concat opam_share_dir "satysfi"))
 
-let try_read_repo () =
-  if repository_exists () |> not
+let try_read_depot () =
+  if depot_exists () |> not
   then None
   else begin
     initialize ();
@@ -53,10 +53,10 @@ let try_read_repo () =
     Some (Environment.{ repo; reg })
   end
 
-let read_repo () =
-  if repository_exists () |> not
+let read_depot () =
+  if depot_exists () |> not
   then initialize ();
-  match try_read_repo () with
+  match try_read_depot () with
   | None -> failwith "BUG: Something went wrong."
   | Some r -> r
 
@@ -66,7 +66,7 @@ let default_target_dir =
   |> (fun dir -> Filename.concat dir "dist")
 
 let read_environment () =
-  let repo = try_read_repo () in
+  let depot = try_read_depot () in
   let dist_library_dir = SatysfiDirs.satysfi_dist_dir ~outf:Format.std_formatter in
-  Environment.{ repo; opam_reg = reg_opam; dist_library_dir }
+  Environment.{ depot; opam_reg = reg_opam; dist_library_dir }
 

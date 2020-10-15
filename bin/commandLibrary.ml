@@ -27,7 +27,7 @@ let library_list_command_g p_list =
 
 let library_list () =
   Compatibility.optin ();
-  match Setup.try_read_repo () with
+  match Setup.try_read_depot () with
   | Some Environment.{ repo=_; reg; } ->
     [%derive.show: string list] (Registry.list reg) |> print_endline
   | None -> printf "No libraries"
@@ -36,7 +36,7 @@ let library_list () =
 
 let library_show p () =
   Compatibility.optin ();
-  let Environment.{ repo=_; reg; } = Setup.read_repo () in
+  let Environment.{ repo=_; reg; } = Setup.read_depot () in
   Registry.directory reg p
     |> Library.read_dir ~outf
     |> [%sexp_of: Library.t]

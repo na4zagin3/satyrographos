@@ -9,13 +9,13 @@ val pin_list : outf:Format.formatter -> Repository.t -> unit
 (* TODO Receive env instead of repo *)
 val pin_dir : outf:Format.formatter -> Repository.t -> string -> unit
 
-(** [pin_add ~outf repo package_name url]
+(** [pin_add ~outf depot package_name url]
     Register library [package_name] stored in [url], followed by building all the packages in the repository.
     TODO Build only related packages.
     TODO Error handling.
     TODO Retrieving remote codes. *)
 (* TODO Receive env instead of depot *)
-val pin_add : outf:Format.formatter -> Environment.repo -> string -> string -> unit
+val pin_add : outf:Format.formatter -> Environment.depot -> string -> string -> unit
 
 (** [pin_remove ~outf repo package_name]
     Remove library [package_name] from the repo.

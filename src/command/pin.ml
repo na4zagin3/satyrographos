@@ -9,8 +9,8 @@ let pin_list ~outf:(_: Format.formatter) repo =
 let pin_dir ~outf:(_: Format.formatter) repo p =
   Repository.directory repo p |> print_endline
 
-let pin_add ~outf env p url =
-  let Environment.{ repo; reg; } = env in
+let pin_add ~outf depot p url =
+  let Environment.{ repo; reg; } = depot in
   let (_: string list option) =
   Uri.of_string url
   |> Repository.add ~outf repo p in
