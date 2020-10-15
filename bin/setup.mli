@@ -1,21 +1,6 @@
 (** Satyrographos depot schema version. *)
 val scheme_version : int
 
-(** Home directory. TODO Remove this. *)
-val home_dir : string
-
-(** Satyrographos depot directory path. *)
-val root_dir : string
-
-(** Satyrographos source repository directory path. *)
-val repository_dir : string
-
-(** Satyrographos binary registry directory path. *)
-val registry_dir : string
-
-(** Satyrographos metadata file path. *)
-val metadata_file : string
-
 (** Satyrographos depot schema version of the current depot directory. *)
 val current_scheme_version : int option
 

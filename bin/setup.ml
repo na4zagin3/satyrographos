@@ -5,13 +5,19 @@ module SatysfiDirs = Satyrographos_satysfi.SatysfiDirs
 
 let scheme_version = 1
 
+(** Home directory. TODO Remove this. *)
 let home_dir = match SatysfiDirs.home_dir () with
   | Some(d) -> d
   | None -> failwith "Cannot find home directory"
 
+(** Satyrographos depot directory path. *)
 let root_dir = Sys.getenv "SATYROGRAPHOS_DIR"
   |> Option.value ~default:(Filename.concat home_dir ".satyrographos")
+
+(** Satyrographos source repository directory path. *)
 let repository_dir = SatyrographosDirs.repository_dir root_dir
+
+(** Satyrographos binary registry directory path. *)
 let registry_dir = SatyrographosDirs.registry_dir root_dir
 let metadata_file = SatyrographosDirs.metadata_file root_dir
 
