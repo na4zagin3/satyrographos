@@ -1,10 +1,25 @@
 open Core
 
-let expand_file_basename =
+let expand_file_basename ~satysfi_version =
   let mode_name =
     let open Re in
     (* TODO Is this correct?  Shouldn't we put more restriction? *)
     rep (diff any (char ','))
+  in
+  let extensions_re =
+    let open Re in
+    List.concat [
+      [str ".satyh";];
+      if Version.read_local_packages satysfi_version
+      then [
+        seq [
+          str ".satyh-";
+          mode_name;
+        ];
+        str ".satyg";
+      ]
+      else [];
+    ]
   in
   let re =
     let open Re in
@@ -12,15 +27,7 @@ let expand_file_basename =
       bos;
       rep any
       |> group;
-      alt [
-        str ".satyh";
-        (* TODO Exclude these for Satysfi 0.0.3 and earlier *)
-        seq [
-          str ".satyh-";
-          mode_name;
-        ];
-        str ".satyg";
-      ]
+      alt extensions_re
       |> group;
       eos;
     ]
@@ -41,10 +48,10 @@ let expand_file_basename =
     then FileUtil.(ls dir |> List.filter_map ~f)
     else []
 
-let get_files ~outf r bs =
+let get_files ~outf ~expand_file_basename directive bs =
   match List.concat_map ~f:expand_file_basename bs with
   | [] ->
-    Format.fprintf outf "Cannot read files for “%s”@." (Dependency.render_directive r);
+    Format.fprintf outf "Cannot read files for “%s”@." (Dependency.render_directive directive);
     Format.fprintf outf "@[<v 2>Candidate basenames:";
     List.iter bs ~f:(Format.fprintf outf "@;- %s");
     Format.fprintf outf "@]@.@.";
@@ -105,7 +112,8 @@ module Dot =
     let graph_attributes _ = []
   end)
 
-let dependency_graph ~outf ?(follow_required=false) ~package_root_dirs files =
+let dependency_graph ~outf ?(follow_required=false) ~package_root_dirs ~satysfi_version files =
+  let expand_file_basename = expand_file_basename ~satysfi_version in
   let g = G.create () in
   let rec f file =
     let vf : G.vertex = File file in
@@ -134,7 +142,7 @@ let dependency_graph ~outf ?(follow_required=false) ~package_root_dirs files =
         in
         if recursion_enabled
         then
-          get_files ~outf directive bs
+          get_files ~outf ~expand_file_basename directive bs
           |> List.iter ~f:(fun (mode, path) ->
               let vt : G.vertex = File path in
               let e2 : Edge.t = Option.map ~f:(fun m -> Edge.Mode m) mode in
