@@ -7,14 +7,20 @@ let position_of_range (r : Sexp.Annotated.range) =
   let pos = r.start_pos in
   (pos.line, pos.col + 1)
 
+type link = {
+  dst: string;
+  src: string;
+}
+[@@deriving sexp]
+
 type sources = {
-  files: (string * string) list
+  files: link list
     [@sexp.omit_nil];
-  fonts: (string * string) list
+  fonts: link list
     [@sexp.omit_nil];
-  hashes: (string * string) list
+  hashes: link list
     [@sexp.omit_nil];
-  packages: (string * string) list
+  packages: link list
     [@sexp.omit_nil];
 }
 [@@deriving sexp]
@@ -131,7 +137,7 @@ let compatibility_treatment (p: library) (l: Library.t) =
       }
     | Satyrographos "0.0.1" ->
       let open Library in
-      let rename_packages = List.map p.sources.packages ~f:(fun (name, _) ->
+      let rename_packages = List.map p.sources.packages ~f:(fun {dst=name; _} ->
         let old_package_name = name in
         let new_package_name = p.name ^ "/" ^ name in
         Rename.{ old_name = old_package_name; new_name = new_package_name }
@@ -162,12 +168,12 @@ let read_library (p: library) ~src_dir =
       if String.is_empty dst_dir
       then ident
       else Filename.concat dst_dir in
-    List.map ~f:(fun (dst, src) -> (append_prefix dst, Filename.concat src_dir src))
+    List.map ~f:(fun {dst; src} -> {dst=append_prefix dst; src=Filename.concat src_dir src})
   in
   let other_files = map_file "" p.sources.files in
   let hashes =
     map_file "hash" p.sources.hashes
-    |> List.fold ~init:Library.empty ~f:(fun a (dst, src) -> Library.add_hash dst src a)
+    |> List.fold ~init:Library.empty ~f:(fun a {dst; src} -> Library.add_hash dst src a)
   in
   let fonts = map_file (Filename.concat "fonts" p.name) p.sources.fonts in
   let packages = map_file (Filename.concat "packages" p.name) p.sources.packages in
@@ -176,7 +182,7 @@ let read_library (p: library) ~src_dir =
     version = Some p.version;
     files =
       List.concat [other_files; fonts; packages]
-      |> List.map ~f:(fun (dst, fn) -> dst, `Filename fn)
+      |> List.map ~f:(fun {dst; src} -> dst, `Filename src)
       |> Library.LibraryFiles.of_alist_exn;
     dependencies=p.dependencies;
   }
