@@ -10,10 +10,10 @@ let recursively f base_dir src acc =
     f dst src_path acc
   )) acc
 
-let add_files dst src acc = {acc with files=(dst, src) :: acc.files}
-let add_fonts dst src acc = {acc with fonts=(dst, src) :: acc.fonts}
-let add_hashes dst src acc = {acc with hashes=(dst, src) :: acc.hashes}
-let add_packages dst src acc = {acc with packages=(dst, src) :: acc.packages}
+let add_files dst src acc = `File {dst; src} :: acc
+let add_fonts dst src acc = `Font {dst; src} :: acc
+let add_hashes dst src acc = `Hash {dst; src} :: acc
+let add_packages dst src acc = `Package {dst; src} :: acc
 
 type source =
   | File of string * string

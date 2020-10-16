@@ -7,24 +7,31 @@ let position_of_range (r : Sexp.Annotated.range) =
   let pos = r.start_pos in
   (pos.line, pos.col + 1)
 
-type sources = {
-  files: (string * string) list
-    [@sexp.omit_nil];
-  fonts: (string * string) list
-    [@sexp.omit_nil];
-  hashes: (string * string) list
-    [@sexp.omit_nil];
-  packages: (string * string) list
-    [@sexp.omit_nil];
+type link = {
+  dst: string;
+  src: string;
 }
 [@@deriving sexp]
 
-let empty_sources = {
-  files=[];
-  fonts=[];
-  hashes=[];
-  packages=[];
-}
+type source = [
+  | `File of link
+  | `Font of link
+  | `Hash of link
+  | `Package of link
+]
+[@@deriving sexp]
+
+type sources = source list
+[@@deriving sexp]
+
+let pacages_of_sources =
+  let f = function
+    | `Package l -> [l]
+    | _ -> []
+  in
+  List.concat_map ~f
+
+let empty_sources = []
 
 module CompatibilityIdents = Set.Make(String)
 module Compatibility = struct
@@ -131,7 +138,7 @@ let compatibility_treatment (p: library) (l: Library.t) =
       }
     | Satyrographos "0.0.1" ->
       let open Library in
-      let rename_packages = List.map p.sources.packages ~f:(fun (name, _) ->
+      let rename_packages = List.map (pacages_of_sources p.sources) ~f:(fun {dst=name; _} ->
         let old_package_name = name in
         let new_package_name = p.name ^ "/" ^ name in
         Rename.{ old_name = old_package_name; new_name = new_package_name }
@@ -157,30 +164,42 @@ let compatibility_treatment (p: library) (l: Library.t) =
 
 (* Read *)
 let read_library (p: library) ~src_dir =
-  let map_file dst_dir =
-    let append_prefix =
+  let append_prefix dst_dir {dst; src} =
+    let dst_prefix =
       if String.is_empty dst_dir
       then ident
       else Filename.concat dst_dir in
-    List.map ~f:(fun (dst, src) -> (append_prefix dst, Filename.concat src_dir src))
+    {dst=dst_prefix dst; src=Filename.concat src_dir src}
   in
-  let other_files = map_file "" p.sources.files in
-  let hashes =
-    map_file "hash" p.sources.hashes
-    |> List.fold ~init:Library.empty ~f:(fun a (dst, src) -> Library.add_hash dst src a)
+  let rebase_file = function
+    | `File l ->
+      `Filename (append_prefix "" l)
+    | `Hash l ->
+      `Hash (append_prefix "hash" l)
+    | `Font l ->
+      `Filename (append_prefix (Filename.concat "fonts" p.name) l)
+    | `Package l ->
+      `Filename (append_prefix (Filename.concat "packages" p.name) l)
   in
-  let fonts = map_file (Filename.concat "fonts" p.name) p.sources.fonts in
-  let packages = map_file (Filename.concat "packages" p.name) p.sources.packages in
-  Library.{ empty with
-    name = Some p.name;
-    version = Some p.version;
-    files =
-      List.concat [other_files; fonts; packages]
-      |> List.map ~f:(fun (dst, fn) -> dst, `Filename fn)
-      |> Library.LibraryFiles.of_alist_exn;
-    dependencies=p.dependencies;
-  }
-  |> Library.union hashes
+  let to_update_library_function = function
+    | `Hash {dst; src} ->
+      Library.add_hash dst src
+    | `Filename {dst; src} ->
+      Library.add_file dst src
+  in
+  let initial_library =
+    Library.{ empty with
+              name = Some p.name;
+              version = Some p.version;
+              dependencies=p.dependencies;
+            }
+  in
+  let libraries =
+    List.fold p.sources ~init:initial_library ~f:(fun l s ->
+        (rebase_file s |> to_update_library_function) l
+      )
+  in
+  Library.union initial_library libraries
   |> compatibility_treatment p
 
 let read_libraryDoc (p: libraryDoc) ~src_dir =
