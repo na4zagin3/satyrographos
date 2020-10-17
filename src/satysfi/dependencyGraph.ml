@@ -63,6 +63,7 @@ module Vertex = struct
     | Basename of string
     | File of string
     | Package of string
+    | MissingFile of string
   [@@deriving sexp, compare, hash, equal]
 end
 
@@ -137,54 +138,68 @@ module Dot =
       match v with
       | Basename _ -> [`Shape `Doubleoctagon]
       | File _ -> [`Shape `Box]
+      | MissingFile _ -> [`Shape `Mdiamond]
       | Package _ -> [`Shape `Ellipse]
     let vertex_name (v : vertex) =
       match v with
       | Basename path -> sprintf "%S" path
       | File path -> sprintf "%S" path
+      | MissingFile path -> sprintf "%S" path
       | Package p -> sprintf "%S" p
     let default_vertex_attributes _ = []
     let graph_attributes _ = []
   end)
 
+let vertex_of_file_path path =
+  if FileUtil.(test Is_file path)
+  then Vertex.File path
+  else MissingFile path
+
 let dependency_graph ~outf ?(follow_required=false) ~package_root_dirs ~satysfi_version files =
   let expand_file_basename = expand_file_basename ~satysfi_version in
   let g = G.create () in
   let rec f file =
-    let vf : G.vertex = File file in
+    let vf : G.vertex = vertex_of_file_path file in
+    let add_files_read_by_directive ((directive: Dependency.directive), bs) =
+      let vm =
+        match directive, bs with
+        | Import _, [b] ->
+          Vertex.Basename b
+        | Require p, _ ->
+          Package p
+        | directive, bs ->
+          failwithf !"BUG: Directive %{sexp:Dependency.directive} has wrong number of candidate basenames %{sexp: string list}"
+            directive bs ()
+      in
+      let e1 : Edge.t = Some (Directive directive) in
+      G.add_edge_e g (vf, e1, vm);
+      let recursion_enabled = match directive, follow_required with
+        | Require _, false -> false
+        | _ -> true
+      in
+      if recursion_enabled
+      then
+        get_files ~outf ~expand_file_basename directive bs
+        |> List.iter ~f:(fun (mode, path) ->
+            let vt : G.vertex = vertex_of_file_path path in
+            let e2 : Edge.t = Option.map ~f:(fun m -> Edge.Mode m) mode in
+            f path;
+            G.add_edge_e g (vm, e2, vt)
+          )
+    in
+
     if G.mem_vertex g vf
     then ()
     else begin
       G.add_vertex g vf;
-      Dependency.parse_file file
-      |> Dependency.referred_file_basenames ~package_root_dirs
-      |> List.iter ~f:(fun (directive, bs) ->
-        let vm =
-          match directive, bs with
-          | Import _, [b] ->
-            Vertex.Basename b
-          | Require p, _ ->
-            Package p
-          | directive, bs ->
-            failwithf !"BUG: Directive %{sexp:Dependency.directive} has wrong number of candidate basenames %{sexp: string list}"
-              directive bs ()
-        in
-        let e1 : Edge.t = Some (Directive directive) in
-        G.add_edge_e g (vf, e1, vm);
-        let recursion_enabled = match directive, follow_required with
-          | Require _, false -> false
-          | _ -> true
-        in
-        if recursion_enabled
-        then
-          get_files ~outf ~expand_file_basename directive bs
-          |> List.iter ~f:(fun (mode, path) ->
-              let vt : G.vertex = File path in
-              let e2 : Edge.t = Option.map ~f:(fun m -> Edge.Mode m) mode in
-              f path;
-              G.add_edge_e g (vm, e2, vt)
-            )
-        )
+      match Dependency.parse_file_result file with
+      | Result.Ok deps ->
+        deps
+        |> Dependency.referred_file_basenames ~package_root_dirs
+        |> List.iter ~f:add_files_read_by_directive
+      | Result.Error _exn ->
+        (* TODO Connditionally output the exception *)
+        ()
     end
   in
   List.iter ~f files;
