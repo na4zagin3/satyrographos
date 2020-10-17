@@ -26,7 +26,7 @@ let satyristes =
 (library
   (name "package")
   (version "0.1")
-  (sources ())
+  (sources ((package "test.satyh" "test.satyh")))
   (opam "satysfi-package.opam")
   (dependencies ()))
 
@@ -39,11 +39,24 @@ let satyristes =
   (dependencies ((package ()))))
 |}
 
+let test_satyh =
+  "test.satyh", {||}
+
+let opam_libs = Satyrographos.Library.[
+    {empty with
+     name = Some "package";
+     files = LibraryFiles.of_alist_exn [
+         "packages/package/test.satyh", `Content ""
+       ]
+    };
+]
+
 let files =
   [ satysfi_package_opam;
     satysfi_package_doc_opam;
     satyristes;
+    test_satyh;
   ]
 
 let () =
-  TestCommand.test_lint_command files
+  TestCommand.test_lint_command ~opam_libs files

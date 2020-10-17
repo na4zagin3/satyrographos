@@ -39,5 +39,10 @@ let files =
     satyristes;
   ]
 
+let opam_libs = Satyrographos.Library.[
+    {empty with name = Some "package"};
+    {empty with name = Some "unspecified-package"};
+  ]
+
 let () =
-  TestCommand.test_lint_command files
+  TestCommand.test_lint_command ~opam_libs files

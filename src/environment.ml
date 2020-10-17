@@ -9,3 +9,8 @@ type t = {
   dist_library_dir: string option;
 }
 
+let empty = {
+  depot=None;
+  opam_reg=None;
+  dist_library_dir=None;
+}
