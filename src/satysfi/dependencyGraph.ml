@@ -76,8 +76,37 @@ module Edge = struct
   let default = None
 end
 
-module G =
-  Graph.Imperative.Digraph.ConcreteBidirectionalLabeled(Vertex)(Edge)
+module G = struct
+  module GOrig = Graph.Imperative.Digraph.ConcreteBidirectionalLabeled(Vertex)(Edge)
+  include GOrig
+
+  let edge_of_sexp =
+    [%of_sexp: Vertex.t * Edge.t * Vertex.t]
+  let sexp_of_edge =
+    [%sexp_of: Vertex.t * Edge.t * Vertex.t]
+  let compare_edge =
+    [%compare: Vertex.t * Edge.t * Vertex.t]
+  let hash_edge =
+    [%hash: Vertex.t * Edge.t * Vertex.t]
+  let hash_fold_edge =
+    [%hash_fold: Vertex.t * Edge.t * Vertex.t]
+  let equal_edge =
+    [%equal: Vertex.t * Edge.t * Vertex.t]
+
+  module E = struct
+    include GOrig.E
+
+    let t_of_sexp = edge_of_sexp
+    let sexp_of_t = sexp_of_edge
+    let compare = compare_edge
+    let hash = hash_edge
+    let hash_fold = hash_fold_edge
+    let equal =  equal_edge
+  end
+end
+
+module EdgeSet =
+  Set.Make(G.E)
 
 module Dot =
   Graph.Graphviz.Dot(struct
@@ -153,4 +182,17 @@ let dependency_graph ~outf ?(follow_required=false) ~package_root_dirs ~satysfi_
     end
   in
   List.iter ~f files;
+  g
+
+let subgraph_with_mode ~mode g =
+  let g = G.copy g in
+  let edges_to_be_removed =
+    G.fold_edges_e (fun (e : G.edge) acc ->
+        match e with
+        | _, Some (Mode m), _ when not Mode.(m <=: mode) ->
+          EdgeSet.add acc e
+        | _ -> acc
+      ) g EdgeSet.empty
+  in
+  EdgeSet.iter edges_to_be_removed ~f:(G.remove_edge_e g);
   g
