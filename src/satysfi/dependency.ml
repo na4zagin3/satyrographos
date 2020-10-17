@@ -84,10 +84,11 @@ let parse_string ~path str =
   parse_directives str
   |> of_directives ~path
 
-let parse_file path =
-  In_channel.read_all path
-  |> parse_directives
-  |> of_directives ~path
+let parse_file_result path =
+  Result.try_with (fun () ->
+      In_channel.read_all path
+    )
+  |> Result.map ~f:(parse_string ~path)
 
 let%expect_test "parse_string: empty" =
   let path = "test.saty" in
