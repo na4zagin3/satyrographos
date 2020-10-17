@@ -105,8 +105,14 @@ module G = struct
   end
 end
 
+module Oper =
+  Graph.Oper.I(G)
+
 module EdgeSet =
   Set.Make(G.E)
+
+module VertexSet =
+  Set.Make(Vertex)
 
 module Dot =
   Graph.Graphviz.Dot(struct
@@ -196,3 +202,30 @@ let subgraph_with_mode ~mode g =
   in
   EdgeSet.iter edges_to_be_removed ~f:(G.remove_edge_e g);
   g
+
+let reachable_sinks g root_vertices =
+  let gc = Oper.transitive_closure g in
+  List.fold_left root_vertices ~init:VertexSet.empty ~f:(fun acc v ->
+      let sinks =
+        G.succ gc v
+        |> VertexSet.of_list
+        |> VertexSet.filter ~f:(fun v -> G.out_degree g v = 0)
+      in
+      VertexSet.union acc sinks
+    )
+  |> VertexSet.to_list
+
+let%expect_test "reachable_sinks: test 1" =
+  let g = G.create () in
+  G.add_edge g (File "a.saty") (Basename "b");
+  G.add_edge g (Basename "b") (File "b.satyh");
+  G.add_edge g (File "b.satyh") (Basename "c");
+  G.add_edge g (Basename "c") (File "b.satyg");
+  G.add_edge g (File "b.satyh") (Package "p");
+  G.add_edge g (File "b.saty-md") (Package "q");
+  G.add_vertex g (File "d.saty");
+  reachable_sinks g [File "a.saty"; File "d.saty"]
+  |> List.iter ~f:(printf !"%{sexp:Vertex.t}\n");
+  [%expect{|
+    (File b.satyg)
+    (Package p) |}]
