@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
+### Added
+- Add `new` subcommand to create a new project from templates ([#152], [#158], [#159]).
+- Add `lint` subcommand to detect errors in Satyrographos libraries ([#165], [#185], [#186]).
+- Add `debug` subcommand to run utilities for debugging ([#178]).
+- Add `debug depgraph` subcommand to output dependency graph of SATySFi source files ([#178], [#180], [#183], [#185]).
+- Add `doc/terminology.md` to define terms used in the project ([#177]).
+
+### Changed
+- Internal representation of a build file now have location of each module declaration, wherefore outputs of `lint` and `opam buildfile` are changed ([#171])
+
+### Fixed
+- Unit tests get locale-invaliant ([#163]).
+- Weird indents in compatibility warnings are fixed ([#164] by @matsud224).
+- Missing spaces and confusing option docs are fixed ([#173]).
+- Compatibility opt-in warnings are now output to stderr instead of stdout ([#175])
 
 ## [v0.0.2.6] - 2020-08-30
 ### Added
@@ -160,6 +175,21 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#137]: https://github.com/na4zagin3/satyrographos/pull/137
 [#142]: https://github.com/na4zagin3/satyrographos/pull/142
 [#143]: https://github.com/na4zagin3/satyrographos/pull/143
+[#152]: https://github.com/na4zagin3/satyrographos/pull/152
+[#158]: https://github.com/na4zagin3/satyrographos/pull/158
+[#159]: https://github.com/na4zagin3/satyrographos/pull/159
+[#163]: https://github.com/na4zagin3/satyrographos/pull/163
+[#164]: https://github.com/na4zagin3/satyrographos/pull/164
+[#165]: https://github.com/na4zagin3/satyrographos/pull/165
+[#171]: https://github.com/na4zagin3/satyrographos/pull/171
+[#173]: https://github.com/na4zagin3/satyrographos/pull/173
+[#175]: https://github.com/na4zagin3/satyrographos/pull/175
+[#177]: https://github.com/na4zagin3/satyrographos/pull/177
+[#178]: https://github.com/na4zagin3/satyrographos/pull/178
+[#180]: https://github.com/na4zagin3/satyrographos/pull/180
+[#183]: https://github.com/na4zagin3/satyrographos/pull/183
+[#185]: https://github.com/na4zagin3/satyrographos/pull/185
+[#186]: https://github.com/na4zagin3/satyrographos/pull/186
 
 
 [Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.6...HEAD
