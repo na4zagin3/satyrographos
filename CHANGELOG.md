@@ -7,7 +7,7 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 ## [Unreleased]
 
 
-## [0.0.2.7]
+## [0.0.2.7] - 2020-10-19
 ### Added
 - Add `new` subcommand to create a new project from templates ([#152], [#158], [#159]).
 - Add `lint` subcommand to detect errors in Satyrographos libraries ([#165], [#185], [#186]).
