@@ -134,6 +134,25 @@ let add_autogen_libraries ~outf ~libraries ~env:(_ : Environment.t) library_map 
   |> add_library Autogen.Fonts.name Autogen.Fonts.generate
   |> add_library Autogen.Libraries.name Autogen.Libraries.generate
 
+let get_library_map ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~(env: Environment.t) () =
+  let maybe_depot = env.depot in
+  let maybe_reg = Option.map maybe_depot ~f:(fun p -> p.reg) in
+  let library_map = get_libraries ~outf ~maybe_reg ~env ~libraries in
+  let library_map = match system_font_prefix with
+    | None -> Format.fprintf outf "Not gathering system fonts\n"; library_map
+    | Some(prefix) ->
+      Format.fprintf outf "Gathering system fonts with prefix %s\n" prefix;
+      let systemFontLibrary = SystemFontLibrary.get_library prefix ~outf () in
+      Map.add_exn ~key:"%fonts-system" ~data:systemFontLibrary library_map
+  in
+  let autogen_libraries =
+    autogen_libraries
+    |> Set.of_list (module String)
+  in
+  if Set.is_empty autogen_libraries
+  then library_map
+  else add_autogen_libraries ~outf ~libraries:autogen_libraries ~env library_map
+
 let install d ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~verbose ?(safe=false) ~copy ~(env: Environment.t) () =
   (* TODO build all *)
   Format.open_vbox 0;
@@ -159,23 +178,8 @@ let install d ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~verb
         Format.fprintf outf "No libraries built@,"
       end)
   end;
-  let maybe_reg = Option.map maybe_depot ~f:(fun p -> p.reg) in
-  let library_map = get_libraries ~outf ~maybe_reg ~env ~libraries in
-  let library_map = match system_font_prefix with
-    | None -> Format.fprintf outf "Not gathering system fonts\n"; library_map
-    | Some(prefix) ->
-      Format.fprintf outf "Gathering system fonts with prefix %s\n" prefix;
-      let systemFontLibrary = SystemFontLibrary.get_library prefix ~outf () in
-      Map.add_exn ~key:"%fonts-system" ~data:systemFontLibrary library_map
-  in
-  let autogen_libraries =
-    autogen_libraries
-    |> Set.of_list (module String)
-  in
   let library_map =
-     if Set.is_empty autogen_libraries
-     then library_map
-     else add_autogen_libraries ~outf ~libraries:autogen_libraries ~env library_map
+    get_library_map ~outf ~system_font_prefix ~autogen_libraries ~libraries ~env ()
   in
   install_libraries d ~verbose ~outf ~library_map ~copy ();
   Format.close_box ()
