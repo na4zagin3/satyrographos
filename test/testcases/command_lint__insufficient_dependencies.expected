@@ -1,0 +1,16 @@
+@@test_library@@/test.satyh:3.2-3.11:
+Error:
+  Missing dependency for “@require: missing-in-the-dist” (mode (Pdf))
+
+@@test_library@@/test.satyh:2.2-2.11:
+Error:
+  Missing dependency for “@require: package/missing-in-the-library” (mode (Pdf))
+
+@@test_library@@/test.satyh:1.1-1.10:
+Error:
+  Missing dependency for “@require: unspecified-library/package” (mode (Pdf))
+
+  Hint: You may need to add dependency on “unspecified-library” to Satyristes.
+
+
+3 problem(s) found.

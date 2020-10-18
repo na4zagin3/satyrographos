@@ -1,15 +1,18 @@
-let test_lint_command ?(f=fun cwd -> cwd, None) ?(satysfi_files=[]) ?opam_libs files =
+let test_lint_command ?(f=fun cwd -> cwd, None) ?(satysfi_files=[]) ?(satysfi_version=Satyrographos_satysfi.Version.Satysfi_0_0_5) ?opam_libs files =
   let outf = Format.std_formatter in
   let open Shexp_process in
   let open Shexp_process.Infix in
-  let test_cmd _env =
+  let test_cmd env =
     Shexp_process.cwd_logical
     >>= fun cwd ->
     TestLib.run_function (fun ~outf ->
         let cwd, path = f cwd in
         Unix.chdir cwd;
-        Satyrographos_command.Lint.lint ~outf ~verbose:false ~buildscript_path:path)
-  in
+        let (_: int) =
+          Satyrographos_command.Lint.lint ~env ~outf ~satysfi_version ~verbose:false ~buildscript_path:path
+        in ()
+      )
+in
   let test_cmd work_dir reg_dir =
     let open Satyrographos in
     let opam_dir = FilePath.concat reg_dir "opam-satysfi" in

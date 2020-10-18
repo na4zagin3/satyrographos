@@ -1,0 +1,13 @@
+@@test_library@@/test3.satyg:1.1-1.10:
+@@test_library@@/test.satyg:1.1-1.10:
+Error: Cyclic dependency found for mode Pdf
+
+@@test_library@@/test3.satyg:1.1-1.10:
+@@test_library@@/test.satyg:1.1-1.10:
+Error: Cyclic dependency found for mode (Text md)
+
+@@test_library@@/test3.satyg:1.1-1.10:
+@@test_library@@/test.satyg:1.1-1.10:
+Error: Cyclic dependency found for mode Generic
+
+3 problem(s) found.
