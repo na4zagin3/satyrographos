@@ -6,7 +6,7 @@ Prepare SATySFi source
   $ mkdir root
 
 Generate dependency graphs
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph --satysfi-root-dirs 'root' --follow-require first.saty missing.saty
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph -S 0.0.5 --satysfi-root-dirs 'root' --follow-require first.saty missing.saty
   Compatibility warning: You have opted in to use experimental features.
   Cannot read files for “@import: second”
   Candidate basenames:

@@ -15,7 +15,7 @@ Prepare SATySFi source
   > EOF
 
 Generate dependency graphs
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph --satysfi-root-dirs 'root' --follow-require first.saty
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph -S 0.0.5 --satysfi-root-dirs 'root' --follow-require first.saty
   Compatibility warning: You have opted in to use experimental features.
   digraph G {
     "root/local/packages/lib2.satyg" [shape=box, ];
