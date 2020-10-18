@@ -229,6 +229,14 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~buildscript_bas
           |> List.filter ~f:(String.is_prefix ~prefix:"packages/")
           |> List.map ~f:(FilePath.concat d)
         in
+        let missing_file_errors =
+          List.filter packages ~f:FileUtil.(test (Not Is_file))
+          |> List.map ~f:(function path ->
+              let path = decode_path path in
+              let floc = Location.{path; range=None;} in
+              FileLoc floc :: loc, `Error, "Missing file"
+            )
+        in
         let dep_graph =
           Result.try_with (fun () ->
               DependencyGraph.dependency_graph
@@ -332,10 +340,11 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~buildscript_bas
             |> Result.map_error ~f:(List.concat)
             |> Result.map ~f:(List.map ~f:(render_missing_dependency `Error))
           )
-      )
-    >>| (function
-        | Ok e -> e
-        | Error e -> e
+        |> (function
+            | Ok e -> e
+            | Error e -> e
+          )
+        |> List.append missing_file_errors
       )
   in
   let cmd =
