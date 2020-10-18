@@ -379,4 +379,6 @@ let lint ~outf ~satysfi_version ~verbose ~buildscript_path ~(env : Environment.t
   in
   show_problems ~outf ~basedir problems;
   List.length problems
-  |> Format.fprintf outf "%d problem(s) found.@."
+  |> Format.fprintf outf "%d problem(s) found.@.";
+  List.find problems ~f:(function _, `Error, _ -> true | _ -> false)
+  |> Option.value_map ~default:0 ~f:(const 1)

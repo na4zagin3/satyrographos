@@ -8,8 +8,11 @@ let test_lint_command ?(f=fun cwd -> cwd, None) ?(satysfi_files=[]) ?(satysfi_ve
     TestLib.run_function (fun ~outf ->
         let cwd, path = f cwd in
         Unix.chdir cwd;
-        Satyrographos_command.Lint.lint ~env ~outf ~satysfi_version ~verbose:false ~buildscript_path:path)
-  in
+        let (_: int) =
+          Satyrographos_command.Lint.lint ~env ~outf ~satysfi_version ~verbose:false ~buildscript_path:path
+        in ()
+      )
+in
   let test_cmd work_dir reg_dir =
     let open Satyrographos in
     let opam_dir = FilePath.concat reg_dir "opam-satysfi" in

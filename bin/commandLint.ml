@@ -17,11 +17,14 @@ let lint_command =
       in
       fun () ->
         Compatibility.optin ();
-        Satyrographos_command.Lint.lint
-          ~env
-          ~satysfi_version
-          ~outf:Format.std_formatter
-          ~buildscript_path
-          ~verbose;
-        reprint_err_warn ()
+        let exit_code =
+          Satyrographos_command.Lint.lint
+            ~env
+            ~satysfi_version
+            ~outf:Format.std_formatter
+            ~buildscript_path
+            ~verbose
+        in
+        reprint_err_warn ();
+        exit exit_code
     ]
