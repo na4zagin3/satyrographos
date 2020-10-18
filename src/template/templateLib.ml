@@ -135,14 +135,16 @@ Brilliant description comes here.
 maintainer: "Your name <email@example.com>"
 authors: "Your name <email@example.com>"
 license: "@@license@@"
-homepage: "<product home page>"
-bug-reports: "<product issue tracker>"
-dev-repo: "<repo url>"
+homepage: "https://github.com/<github-username>/satysfi-@@library@@"
+dev-repo: "git+https://github.com/<github-username>/satysfi-@@library@@.git"
+bug-reports: "https://github.com/<github-username>/satysfi-@@library@@/issues"
 depends: [
   "satysfi" { @@satysfi_version@@ }
   "satyrographos" { @@satyrographos_version@@ }
 
   # If your library depends on other libraries, please write down here
+  "satysfi-dist"
+  "satysfi-base"
 ]
 build: [ ]
 install: [
@@ -165,9 +167,9 @@ Brilliant description comes here.
 maintainer: "Your name <email@example.com>"
 authors: "Your name <email@example.com>"
 license: "@@license@@" # Choose what you want
-homepage: "<product home page>"
-bug-reports: "<product issue tracker>"
-dev-repo: "<repo url>"
+homepage: "https://github.com/<github-username>/satysfi-@@library@@"
+dev-repo: "git+https://github.com/<github-username>/satysfi-@@library@@.git"
+bug-reports: "https://github.com/<github-username>/satysfi-@@library@@/issues"
 depends: [
   "satysfi" { @@satysfi_version@@ }
   "satyrographos" { @@satyrographos_version@@ }
@@ -175,6 +177,8 @@ depends: [
 
   # You may want to include the corresponding library
   "satysfi-@@library@@" {= "%{version}%"}
+  "satysfi-dist"
+  "satysfi-base"
 ]
 build: [
   ["satyrographos" "opam" "build"
