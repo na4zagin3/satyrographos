@@ -23,8 +23,6 @@ Generate dependency graphs for satyh
     
     "second" -> "second.satyg" [color="#000000", fontcolor="#000000",
                                 label=".satyg", style="dashed", ];
-    "second" -> "second.satyh" [color="#000000", fontcolor="#000000",
-                                label=".satyh", style="dashed", ];
     "first.saty" -> "second" [color="#002288", fontcolor="#002288",
                               label="@import: second", ];
     
@@ -43,8 +41,6 @@ Generate dependency graphs for satyh-md
     
     "second" -> "second.satyg" [color="#000000", fontcolor="#000000",
                                 label=".satyg", style="dashed", ];
-    "second" -> "second.satyh-md" [color="#000000", fontcolor="#000000",
-                                   label=".satyh-md", style="dashed", ];
     "first.saty" -> "second" [color="#002288", fontcolor="#002288",
                               label="@import: second", ];
     

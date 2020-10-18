@@ -212,15 +212,79 @@ let dependency_graph ~outf ?(follow_required=false) ~package_root_dirs ~satysfi_
 let subgraph_with_mode ~mode g =
   let g = G.copy g in
   let edges_to_be_removed =
-    G.fold_edges_e (fun (e : G.edge) acc ->
-        match e with
-        | _, Some (Mode m), _ when not Mode.(m <=: mode) ->
-          EdgeSet.add acc e
-        | _ -> acc
+    G.fold_vertex (fun (v : Vertex.t) acc ->
+        let filter_edge e =
+          match e with
+          | _, Some (Edge.Mode m), _ ->
+            Some (m, e)
+          | _ -> None
+        in
+        let edges =
+          G.succ_e g v
+          |> List.filter_map ~f:filter_edge
+        in
+        let modes =
+          List.map edges ~f:fst
+        in
+        let chosen_mode =
+          modes
+          |> List.filter ~f:(fun m -> Mode.(m <=: mode))
+          |> List.sort ~compare:Mode.compare
+          |> List.last
+        in
+        let edges =
+          List.filter_map edges ~f:(fun (m, e) ->
+              Option.some_if ([%equal: Mode.t option] (Some m) chosen_mode |> not) e
+            )
+          |> EdgeSet.of_list
+        in
+        EdgeSet.union edges acc
       ) g EdgeSet.empty
   in
   EdgeSet.iter edges_to_be_removed ~f:(G.remove_edge_e g);
   g
+
+let%expect_test "subgraph_with_mode: test 1" =
+  let g = G.create () in
+  let print_result (g : G.t) : unit =
+    G.iter_edges_e
+      (printf !"%{sexp:(Vertex.t * Edge.t * Vertex.t)}\n")
+      g
+  in
+  let test g mode =
+    subgraph_with_mode g ~mode
+    |> print_result;
+    printf "\n"
+  in
+  let line f l = Location.{
+      path=f;
+      range=Some (Line l);
+    }
+  in
+  G.add_edge_e g (File "a.saty", Some (Edge.Directive (line "a.saty" 0, Dependency.Require "b")), Basename "b");
+  G.add_edge_e g (Basename "b", Some (Edge.Mode Mode.Pdf), File "b.satyh");
+  G.add_edge_e g (File "b.satyh", Some (Edge.Directive (line "b.satyh" 1, Dependency.Require "c")), Basename "c");
+  G.add_edge_e g (Basename "c", Some (Edge.Mode Mode.Generic), File "c.satyg");
+  G.add_edge_e g (File "b.satyh", Some (Edge.Directive (line "b.satyh" 2, Dependency.Require "p")), Package "p");
+  G.add_edge_e g (Basename "b", Some (Edge.Mode Mode.(Text "md")), File "b.satyh-md");
+  G.add_edge_e g (File "b.satyh-md", Some (Edge.Directive (line "b.satyh-md" 3, Dependency.Require "q")), Package "q");
+  G.add_edge_e g (File "c.satyg", Some (Edge.Directive (line "c.satyg" 4, Dependency.Require "b")), Basename "b");
+  G.add_vertex g (File "d.saty");
+  test g Mode.Pdf;
+  [%expect{|
+    ((File a.saty) ((Directive ((path a.saty) (range ((Line 0)))) (Require b)))
+     (Basename b))
+    ((Basename c) ((Mode Generic)) (File c.satyg))
+    ((File b.satyh) ((Directive ((path b.satyh) (range ((Line 1)))) (Require c)))
+     (Basename c))
+    ((File b.satyh) ((Directive ((path b.satyh) (range ((Line 2)))) (Require p)))
+     (Package p))
+    ((File b.satyh-md)
+     ((Directive ((path b.satyh-md) (range ((Line 3)))) (Require q)))
+     (Package q))
+    ((File c.satyg) ((Directive ((path c.satyg) (range ((Line 4)))) (Require b)))
+     (Basename b))
+    ((Basename b) ((Mode Pdf)) (File b.satyh)) |}]
 
 let reachable_sinks g root_vertices =
   let gc = Oper.transitive_closure g in
