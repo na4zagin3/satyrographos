@@ -265,10 +265,11 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~buildscript_bas
                   let loc = {loc with path} in
                   let hint = match d with
                     | Dependency.Require r ->
-                      String.split r ~on:'/'
-                      |> List.hd
-                      |> Option.filter ~f:(StringSet.mem library_names |> Fun.negate)
-                      |> Option.map ~f:(fun l -> MissingDependency l)
+                      begin match String.split r ~on:'/' with
+                      | l :: _ :: _ when StringSet.mem library_names l |> not ->
+                        Some (MissingDependency l)
+                      | _ -> None
+                      end
                     | _ -> None
                   in
                   {

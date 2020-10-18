@@ -42,10 +42,7 @@ let satyristes =
 let test_satyh =
   "test.satyh", {|@require: unspecified-library/package
 @require: package/missing-in-the-library
-|}
-
-let test2_satyh =
-  "test2.satyh", {|@require: package/test
+@require: missing-in-the-dist
 |}
 
 let opam_libs = Satyrographos.Library.[
