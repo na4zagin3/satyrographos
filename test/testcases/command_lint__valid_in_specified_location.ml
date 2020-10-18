@@ -45,8 +45,12 @@ let files =
     satyristes;
   ]
 
+let opam_libs = Satyrographos.Library.[
+    {empty with name = Some "package"};
+  ]
+
 let () =
   let f cwd =
     ".", Some (FilePath.concat cwd "Satyristes")
   in
-  TestCommand.test_lint_command ~f files
+  TestCommand.test_lint_command ~f ~opam_libs files

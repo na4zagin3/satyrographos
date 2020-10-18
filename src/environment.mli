@@ -20,3 +20,6 @@ type t = {
   (** A directory with SATySFi dist for the current SATySFi compiler.
       Typically, this points a directory under OPAM reg or /usr/local/share/satysfi/dist. *)
 }
+
+(** An empty runtime environment. *)
+val empty: t
