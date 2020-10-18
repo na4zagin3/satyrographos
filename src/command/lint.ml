@@ -250,7 +250,17 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~buildscript_bas
         let check_dependency mode dep_graph =
           (* TODO Share subgraphs *)
           let dep_graph = DependencyGraph.subgraph_with_mode ~mode dep_graph in
-          let sources = List.map packages ~f:(fun f -> DependencyGraph.vertex_of_file_path f) in
+          let sources =
+            List.map packages ~f:(fun f -> DependencyGraph.vertex_of_file_path f)
+            |> List.filter ~f:(function
+                | DependencyGraph.Vertex.File p
+                | DependencyGraph.Vertex.MissingFile p
+                  ->
+                  Mode.of_basename_opt p
+                  |> [%equal: Mode.t option] (Some mode)
+                | _ -> true
+              )
+          in
           let problematic_sinks =
             DependencyGraph.reachable_sinks dep_graph sources
             |> List.filter ~f:(function

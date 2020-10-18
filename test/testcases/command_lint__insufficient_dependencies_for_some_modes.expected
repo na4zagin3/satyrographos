@@ -1,0 +1,4 @@
+@@test_library@@/second.satyg:1.1-1.9:
+Error: Missing dependency for “@import: third” (mode (Generic))
+
+1 problem(s) found.

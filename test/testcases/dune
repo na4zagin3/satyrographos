@@ -18,10 +18,12 @@
    command_lint__acyclic_for_each_mode
    command_lint__cyclic_dependencies
    command_lint__insufficient_dependencies
+   command_lint__insufficient_dependencies_for_some_modes
    command_lint__invalid_opam_file
    command_lint__missing_dependencies
    command_lint__missing_opam
    command_lint__missing_satyristes
+   command_lint__packages_for_different_modes
    command_lint__unmatched_names
    command_lint__unmatched_versions
    command_lint__valid
