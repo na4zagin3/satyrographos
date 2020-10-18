@@ -13,7 +13,7 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 - Add `doc/terminology.md` to define terms used in the project ([#177]).
 
 ### Changed
-- Internal representation of a build file now have location of each module declaration, wherefore outputs of `lint` and `opam buildfile` are changed ([#171])
+- Internal representation of a build file now have location of each module declaration, wherefore outputs of `lint` and `opam buildfile` have line numbers ([#171])
 
 ### Fixed
 - Unit tests get locale-invaliant ([#163]).
