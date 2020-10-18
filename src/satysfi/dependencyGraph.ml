@@ -1,5 +1,7 @@
 open Core
 
+module Location = Satyrographos.Location
+
 let expand_file_basename ~satysfi_version =
   let mode_name =
     let open Re in
@@ -69,7 +71,7 @@ end
 
 module Edge = struct
   type edge =
-    | Directive of Dependency.directive
+    | Directive of Location.t * Dependency.directive
     | Mode of Mode.t
   [@@deriving sexp, compare, hash, equal]
   type t = edge option
@@ -120,7 +122,7 @@ module Dot =
     include G
     let edge_attributes ((_f : vertex), (e : Edge.t), (_t : vertex)) =
       let edge_display = function
-        | Edge.Directive d ->
+        | Edge.Directive (_, d) ->
           let label = Dependency.render_directive d in
           let color = match d with
             | Require _ -> 0x117722
@@ -160,7 +162,7 @@ let dependency_graph ~outf ?(follow_required=false) ~package_root_dirs ~satysfi_
   let g = G.create () in
   let rec f file =
     let vf : G.vertex = vertex_of_file_path file in
-    let add_files_read_by_directive ((directive: Dependency.directive), bs) =
+    let add_files_read_by_directive (off, (directive: Dependency.directive), bs) =
       let vm =
         match directive, bs with
         | Import _, [b] ->
@@ -171,7 +173,7 @@ let dependency_graph ~outf ?(follow_required=false) ~package_root_dirs ~satysfi_
           failwithf !"BUG: Directive %{sexp:Dependency.directive} has wrong number of candidate basenames %{sexp: string list}"
             directive bs ()
       in
-      let e1 : Edge.t = Some (Directive directive) in
+      let e1 : Edge.t = Some (Directive (off, directive)) in
       G.add_edge_e g (vf, e1, vm);
       let recursion_enabled = match directive, follow_required with
         | Require _, false -> false
@@ -235,12 +237,12 @@ let%expect_test "reachable_sinks: test 1" =
   G.add_edge g (File "a.saty") (Basename "b");
   G.add_edge g (Basename "b") (File "b.satyh");
   G.add_edge g (File "b.satyh") (Basename "c");
-  G.add_edge g (Basename "c") (File "b.satyg");
+  G.add_edge g (Basename "c") (File "c.satyg");
   G.add_edge g (File "b.satyh") (Package "p");
   G.add_edge g (File "b.saty-md") (Package "q");
   G.add_vertex g (File "d.saty");
   reachable_sinks g [File "a.saty"; File "d.saty"]
   |> List.iter ~f:(printf !"%{sexp:Vertex.t}\n");
   [%expect{|
-    (File b.satyg)
+    (File c.satyg)
     (Package p) |}]
