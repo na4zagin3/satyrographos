@@ -97,7 +97,7 @@ Dump generated files
   >   >
   > >
   diff -Nr empty-dir/satysfi-test-lib-doc.opam test-lib/satysfi-test-lib-doc.opam
-  0a1,33
+  0a1,35
   > opam-version: "2.0"
   > name: "satysfi-test-lib-doc"
   > version: "1.0.0"
@@ -108,9 +108,9 @@ Dump generated files
   > maintainer: "Your name <email@example.com>"
   > authors: "Your name <email@example.com>"
   > license: "MIT" # Choose what you want
-  > homepage: "<product home page>"
-  > bug-reports: "<product issue tracker>"
-  > dev-repo: "<repo url>"
+  > homepage: "https://github.com/<github-username>/satysfi-test-lib"
+  > dev-repo: "git+https://github.com/<github-username>/satysfi-test-lib.git"
+  > bug-reports: "https://github.com/<github-username>/satysfi-test-lib/issues"
   > depends: [
   >   "satysfi" { >= "0.0.5" & < "0.0.6" }
   >   "satyrographos" { >= "0.0.2.6" & < "0.0.3" }
@@ -118,6 +118,8 @@ Dump generated files
   > 
   >   # You may want to include the corresponding library
   >   "satysfi-test-lib" {= "%{version}%"}
+  >   "satysfi-dist"
+  >   "satysfi-base"
   > ]
   > build: [
   >   ["satyrographos" "opam" "build"
@@ -132,7 +134,7 @@ Dump generated files
   >    "--script" "%{build}%/Satyristes"]
   > ]
   diff -Nr empty-dir/satysfi-test-lib.opam test-lib/satysfi-test-lib.opam
-  0a1,26
+  0a1,28
   > opam-version: "2.0"
   > name: "satysfi-test-lib"
   > version: "1.0.0"
@@ -143,14 +145,16 @@ Dump generated files
   > maintainer: "Your name <email@example.com>"
   > authors: "Your name <email@example.com>"
   > license: "MIT"
-  > homepage: "<product home page>"
-  > bug-reports: "<product issue tracker>"
-  > dev-repo: "<repo url>"
+  > homepage: "https://github.com/<github-username>/satysfi-test-lib"
+  > dev-repo: "git+https://github.com/<github-username>/satysfi-test-lib.git"
+  > bug-reports: "https://github.com/<github-username>/satysfi-test-lib/issues"
   > depends: [
   >   "satysfi" { >= "0.0.5" & < "0.0.6" }
   >   "satyrographos" { >= "0.0.2.6" & < "0.0.3" }
   > 
   >   # If your library depends on other libraries, please write down here
+  >   "satysfi-dist"
+  >   "satysfi-base"
   > ]
   > build: [ ]
   > install: [
