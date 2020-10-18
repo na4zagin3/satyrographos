@@ -13,6 +13,10 @@ let of_extension_opt = function
     String.chop_prefix ~prefix:".satyh-" s
     |> Option.map ~f:(fun m -> Text m)
 
+let of_basename_opt basename =
+  "." ^ FilePath.get_extension basename
+  |> of_extension_opt
+
 let to_extension = function
   | Pdf ->
     ".satyh"

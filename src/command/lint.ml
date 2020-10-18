@@ -1,17 +1,22 @@
 open Core
 open Satyrographos
 
+module Location = Satyrographos.Location
+
 type location =
   | SatyristesModLoc of (string * string * (int * int) option)
+  | FileLoc of Location.t
   | OpamLoc of string
 
 let show_location ~outf ~basedir =
-  let concat_with_basedir = FilePath.concat basedir in
+  let concat_with_basedir = FilePath.make_absolute basedir in
   function
   | SatyristesModLoc (buildscript_path, module_name, None) ->
     Format.fprintf outf "%s: (module %s):@." (concat_with_basedir buildscript_path) module_name
   | SatyristesModLoc (buildscript_path, module_name, Some (line, col)) ->
     Format.fprintf outf "%s:%d:%d: (module %s):@." (concat_with_basedir buildscript_path) line col module_name
+  | FileLoc loc ->
+    Format.fprintf outf "%s:@." (Location.display loc)
   | OpamLoc (opam_path) ->
     Format.fprintf outf "%s:@." (concat_with_basedir opam_path)
 
@@ -132,16 +137,222 @@ let lint_module_opam ~loc ~basedir ~buildscript_basename:_ (m : BuildScript.m) o
       lint_opam_file ~opam ~opam_path ~loc;
     ]
 
-let lint_module ~basedir ~buildscript_basename (m : BuildScript.m) =
+let dummy_formatter =
+  Format.make_formatter (fun _ _ _ -> ()) ignore
+
+type hint =
+  | MissingDependency of string
+
+type missing_dependency = {
+  loc : location list;
+  directive : Satyrographos_satysfi.Dependency.directive;
+  hint : hint option;
+  modes : Satyrographos_satysfi.Mode.t list;
+}
+
+let render_missing_dependency level (md : missing_dependency) =
+    let open Satyrographos_satysfi in
+    let hint = match md.hint with
+      | Some (MissingDependency l) ->
+        Some (
+          sprintf "You may need to add dependency on “%s” to Satyristes." l
+        )
+      | _ -> None
+    in
+    (* TODO Add hint to the message line type. *)
+    let hint =
+      Option.map hint ~f:(sprintf "\n\n  Hint: %s\n")
+      |> Option.value ~default:""
+    in
+    md.loc, level, sprintf !"Missing dependency for “%s” (mode %{sexp:Mode.t list})%s"
+      (Dependency.render_directive md.directive)
+      (List.sort ~compare:Mode.compare md.modes)
+      hint
+
+let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~buildscript_basename:_ ~(env : Environment.t) (m : BuildScript.m) =
+  let target_library =
+    BuildScript.read_module ~src_dir:basedir m
+  in
+  let library_name =
+    BuildScript.get_name m
+  in
+  let get_libraries () =
+    let libraries =
+      BuildScript.get_dependencies_opt m
+      |> Option.map ~f:(fun d -> Library.Dependency.elements d)
+      |> Option.value ~default:[]
+    in
+    Result.try_with (fun () ->
+        Install.get_library_map ~outf:dummy_formatter ~system_font_prefix:None ~libraries:(Some libraries) ~env ()
+        |> (fun m -> Map.remove m library_name)
+        |> Map.add_exn ~key:library_name ~data:target_library
+        |> Map.data
+      )
+    |> Result.map_error ~f:(fun exn ->
+        [loc, `Error, (sprintf !"Exception during setting up the env. Install dependent libraries by `opam pin add \"file://$PWD\"`.\n%{sexp:Exn.t}" exn)]
+      )
+  in
+  let verification d libraries : (location list * [> `Error] * string) list Shexp_process.t =
+    let library_names =
+      List.filter_map libraries ~f:(fun l -> l.Library.name)
+      |> StringSet.of_list
+    in
+    let merged =
+      libraries
+      |> List.fold_left ~f:Library.union ~init:Library.empty
+    in
+    let decode_path path =
+      let package_relative_path =
+        FilePath.make_relative d path
+      in
+      let content = Library.LibraryFiles.find
+        merged.files
+        package_relative_path
+      in
+      match content with
+      | Some (`Filename fn) -> fn
+      | Some (`Content _) ->
+        (* TODO Handle this case. *)
+        sprintf "(autogen-file)"
+      | None ->
+        failwithf "BUG: decode_path: File %S is not found." path ()
+    in
+    let module P = Shexp_process in
+    let open Shexp_process.Infix in
+    P.return ()
+    >>| (fun () -> Library.write_dir ~outf ~symlink:true d merged)
+    >>| (fun () ->
+        let open Satyrographos_satysfi in
+        let packages =
+          target_library.files
+          |> Library.LibraryFiles.keys
+          |> List.filter ~f:(String.is_prefix ~prefix:"packages/")
+          |> List.map ~f:(FilePath.concat d)
+        in
+        let dep_graph =
+          Result.try_with (fun () ->
+              DependencyGraph.dependency_graph
+                ~outf:dummy_formatter
+                ~follow_required:true
+                ~package_root_dirs:[FilePath.concat d "packages"]
+                ~satysfi_version
+                packages
+            )
+          |> Result.map_error ~f:(fun exc ->
+              let msg =
+                sprintf "Exception:\n%s\n%s\n"
+                  (Exn.to_string exc)
+                  (Printexc.get_backtrace ())
+              in
+              (* TODO Show errors only caused by this library. *)
+              [loc, `Error, msg])
+        in
+        let check_dependency mode dep_graph =
+          (* TODO Share subgraphs *)
+          let dep_graph = DependencyGraph.subgraph_with_mode ~mode dep_graph in
+          let sources = List.map packages ~f:(fun f -> DependencyGraph.vertex_of_file_path f) in
+          let problematic_sinks =
+            DependencyGraph.reachable_sinks dep_graph sources
+            |> List.filter ~f:(function
+                | DependencyGraph.Vertex.File _ -> false
+                | _ -> true
+              )
+          in
+          List.concat_map problematic_sinks ~f:(fun sink ->
+              DependencyGraph.revese_lookup_directive dep_graph sink
+              |> List.map ~f:(fun ((loc, d), _path) ->
+                  let path = decode_path loc.path in
+                  let loc = {loc with path} in
+                  let hint = match d with
+                    | Dependency.Require r ->
+                      String.split r ~on:'/'
+                      |> List.hd
+                      |> Option.filter ~f:(StringSet.mem library_names |> Fun.negate)
+                      |> Option.map ~f:(fun l -> MissingDependency l)
+                    | _ -> None
+                  in
+                  {
+                    loc = [FileLoc loc];
+                    directive = d;
+                    hint;
+                    modes = [mode];
+                  }
+                )
+            )
+        in
+        let detect_cyclic_dependencies dep_graph mode =
+          (* TODO Share subgraphs *)
+          let dep_graph = DependencyGraph.subgraph_with_mode ~mode dep_graph in
+          let error =
+            DependencyGraph.cyclic_directives dep_graph
+            |> List.map ~f:(fun ds ->
+                let locs =
+                  List.map ds ~f:(fun (loc, _) ->
+                      FileLoc {loc with path = decode_path loc.path;}
+                    )
+                in
+                (locs, `Error, (sprintf !"Cyclic dependency found for mode %{sexp:Mode.t}" mode))
+              )
+          in
+          Result.ok_if_true ~error (List.is_empty error)
+        in
+        let modes =
+          (* TODO Optimize *)
+          target_library.files
+          |> Library.LibraryFiles.keys
+          |> List.filter_map ~f:(fun path ->
+              FilePath.basename path
+              |> Mode.of_basename_opt)
+          |> List.dedup_and_sort ~compare:Mode.compare
+        in
+        Result.bind dep_graph ~f:(fun dep_graph ->
+            List.map modes ~f:(fun mode ->
+                Result.bind
+                  (detect_cyclic_dependencies dep_graph mode)
+                  ~f:(fun () ->
+                     Result.try_with (fun () -> check_dependency mode dep_graph)
+                     |> Result.map_error ~f:(fun exn ->
+                         [loc, `Error, (sprintf !"Something went wrong during working on dependency graphs.\n%{sexp:Exn.t}\n%s" exn (Printexc.get_backtrace ()))]
+                       )
+                  )
+              )
+            |> Result.combine_errors
+            |> Result.map ~f:(List.concat)
+            |> Result.map_error ~f:(List.concat)
+            |> Result.map ~f:(List.map ~f:(render_missing_dependency `Error))
+          )
+      )
+    >>| (function
+        | Ok e -> e
+        | Error e -> e
+      )
+  in
+  let cmd =
+    Shexp_process.with_temp_dir ~prefix:"Satyrographos" ~suffix:"lint" (fun temp_dir ->
+        get_libraries ()
+        |> Result.map ~f:(verification temp_dir)
+        |> (function
+            | Ok e -> e
+            | Error e -> Shexp_process.return e
+          )
+      )
+  in
+  Shexp_process.eval cmd
+
+let lint_module ~outf ~verbose:_ ~satysfi_version ~basedir ~buildscript_basename ~(env: Environment.t) (m : BuildScript.m) =
   let loc = [SatyristesModLoc BuildScript.(buildscript_basename, get_name m, get_position_opt m)] in
   let opam_problems =
     BuildScript.get_opam_opt m
     |> Option.map ~f:(lint_module_opam ~loc ~basedir ~buildscript_basename m)
     |> Option.value ~default:[]
   in
+  let dependency_problems =
+    lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~buildscript_basename ~env m
+  in
   opam_problems
+  @ dependency_problems
 
-let lint ~outf ~verbose:_ ~buildscript_path =
+let lint ~outf ~satysfi_version ~verbose ~buildscript_path ~(env : Environment.t) =
   let buildscript_path = Option.value ~default:"Satyristes" buildscript_path in
   let buildscript_path =
     let cwd = FileUtil.pwd () in
@@ -153,7 +364,7 @@ let lint ~outf ~verbose:_ ~buildscript_path =
   let problems =
     Map.to_alist buildscript
     |> List.concat_map ~f:(fun (_, m) ->
-        lint_module ~basedir ~buildscript_basename m)
+        lint_module ~outf ~verbose ~satysfi_version ~basedir ~buildscript_basename ~env m)
   in
   show_problems ~outf ~basedir problems;
   List.length problems

@@ -15,6 +15,9 @@
    command_install_l__independentTwo
    command_install_l__thirdParties_brokenDependency
    command_install_l__transitive
+   command_lint__acyclic_for_each_mode
+   command_lint__cyclic_dependencies
+   command_lint__insufficient_dependencies
    command_lint__invalid_opam_file
    command_lint__missing_dependencies
    command_lint__missing_opam
