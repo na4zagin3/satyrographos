@@ -9,7 +9,7 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [v0.0.2.7] - 2020-10-19
 ### Added
-- Add `new` subcommand to create a new project from templates ([#152], [#158], [#159]).
+- Add `new` subcommand to create a new project from templates ([#152], [#158], [#159], [#188]).
 - Add `lint` subcommand to detect errors in Satyrographos libraries ([#165], [#185], [#186]).
 - Add `debug` subcommand to run utilities for debugging ([#178]).
 - Add `debug depgraph` subcommand to output dependency graph of SATySFi source files ([#178], [#180], [#183], [#185]).
@@ -193,6 +193,7 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#183]: https://github.com/na4zagin3/satyrographos/pull/183
 [#185]: https://github.com/na4zagin3/satyrographos/pull/185
 [#186]: https://github.com/na4zagin3/satyrographos/pull/186
+[#188]: https://github.com/na4zagin3/satyrographos/pull/188
 
 
 [Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.7...HEAD
