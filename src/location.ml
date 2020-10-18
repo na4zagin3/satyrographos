@@ -1,5 +1,3 @@
-(* TODO Move this to another library *)
-
 open Core
 
 type position = {
@@ -94,27 +92,17 @@ let%expect_test "position_of_offset: empty content" =
 let%expect_test "position_of_offset: empty content" =
   let test off =
     position_of_offset "abc\nd\n" off
-    |> printf !"%d:\n%{sexp: position}\n" off
+    |> printf !"%d: %{sexp: position}\n" off
   in
-  test 0;
-  test 1;
-  test 2;
-  test 3;
-  test 4;
-  test 5;
+  Sequence.init 6 ~f:test
+  |> Sequence.iter ~f:ident;
   [%expect{|
-    0:
-    ((lnum 0) (cnum 0))
-    1:
-    ((lnum 0) (cnum 1))
-    2:
-    ((lnum 0) (cnum 2))
-    3:
-    ((lnum 1) (cnum 0))
-    4:
-    ((lnum 1) (cnum 1))
-    5:
-    ((lnum 2) (cnum 0)) |}]
+    0: ((lnum 0) (cnum 0))
+    1: ((lnum 0) (cnum 1))
+    2: ((lnum 0) (cnum 2))
+    3: ((lnum 1) (cnum 0))
+    4: ((lnum 1) (cnum 1))
+    5: ((lnum 2) (cnum 0)) |}]
 
 let offset_of_position content pos =
   let rec sub off cur =
