@@ -16,7 +16,7 @@ let depgraph_command =
       and _verbose = flag "--verbose" no_arg ~doc:"Make verbose"
       and mode = flag "--mode" (optional string) ~doc:"SATySFi typesetting mode (e.g., .satyh, .satyh-md, .satyg)"
       and follow_required = flag "--follow-required" no_arg ~aliases:["r"] ~doc:"Follow required package files"
-      and satysfi_version = flag "--satysfi-version" (optional (Arg_type.of_alist_exn Version.alist)) ~aliases:["S"] ~doc:"VERSION SATySFi version"
+      and satysfi_version = Version.flag
       and satysfi_files = anon (non_empty_sequence_as_list ("FILE" %: string))
       in
       fun () ->
@@ -30,10 +30,6 @@ let depgraph_command =
         in
         let outf = Format.err_formatter in
         let mode = Option.bind ~f:Mode.of_extension_opt mode in
-        let satysfi_version =
-          (* TODO detect Satysfi version *)
-          Option.value ~default:Version.Satysfi_0_0_5 satysfi_version
-        in
         let package_root_dirs = SatysfiDirs.expand_package_root_dirs ~satysfi_version runtime_dirs in
         let g = DependencyGraph.dependency_graph ~outf ~package_root_dirs ~satysfi_version ~follow_required satysfi_files in
         let g =

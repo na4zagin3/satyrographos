@@ -9,7 +9,7 @@ Prepare SATySFi source
   > EOF
 
 Generate dependency graphs
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph first.saty
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph -S 0.0.5 first.saty
   Compatibility warning: You have opted in to use experimental features.
   digraph G {
     "third.satyh" [shape=box, ];
@@ -29,7 +29,7 @@ Generate dependency graphs
                               label="@import: second", ];
     
     }
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph --follow-required first.saty
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph -S 0.0.5 --follow-required first.saty
   Compatibility warning: You have opted in to use experimental features.
   digraph G {
     "third.satyh" [shape=box, ];
