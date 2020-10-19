@@ -47,12 +47,18 @@ let read_local_packages = function
 let extract_version_string =
   let re =
     let open Re in
+    let version_char =
+      alt [
+        alnum;
+        char '.';
+      ]
+    in
     seq [
       bos;
       rep space;
       str "SATySFi version";
       rep space;
-      rep graph
+      rep version_char
       |> group;
     ]
     |> compile
@@ -79,7 +85,7 @@ let%expect_test "extract_version_string: valid: dev" =
   extract_version_string "  SATySFi version v0.0.5-27-gc841df2\n"
   |> printf !"%{sexp: string option}";
   [%expect{|
-    (v0.0.5-27-gc841df2) |}]
+    (v0.0.5) |}]
 
 let parse_version_output str =
   extract_version_string str
@@ -87,6 +93,12 @@ let parse_version_output str =
 
 let%expect_test "parse_version_output: valid: normal" =
   parse_version_output "  SATySFi version 0.0.5\n"
+  |> printf !"%{sexp: t option}";
+  [%expect{|
+    (Satysfi_0_0_5) |}]
+
+let%expect_test "parse_version_output: valid: dev" =
+  parse_version_output "  SATySFi version v0.0.5-27-gc841df2\n"
   |> printf !"%{sexp: t option}";
   [%expect{|
     (Satysfi_0_0_5) |}]
