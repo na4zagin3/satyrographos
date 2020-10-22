@@ -100,7 +100,7 @@ let section_to_modules ~base_dir (range, (m : Section.t)) =
       [name, Library {name; version; opam; sources; dependencies; compatibility; position; }]
     | LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies;} ->
       if String.suffix name 4 |> String.equal "-doc" |> not
-      then failwithf "libradiDoc must have suffic -doc but got %s" name ();
+      then failwithf "libraryDoc must have suffix -doc but got %s" name ();
       let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
       let position = Some (position_of_range range) in
       [name, LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies; position; }]
