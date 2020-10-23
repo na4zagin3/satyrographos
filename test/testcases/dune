@@ -1,5 +1,7 @@
 (tests
  (names
+   command_build__doc_satysfi
+   command_build__doc_with_libraries
    command_install__distWithBrokenHash
    command_install__distWithNonHashUnderHashDir
    command_install__emptyDist

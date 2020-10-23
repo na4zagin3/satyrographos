@@ -68,7 +68,18 @@ type libraryDoc = {
   position: position option;
 } [@@deriving sexp]
 
-type m = Library of library | LibraryDoc of libraryDoc
+type doc = {
+  name: string;
+  workingDirectory: string;
+  build: string list list [@sexp.omit_nil];
+  dependencies: Library.Dependency.t [@sexp.omit_nil];
+  position: position option;
+} [@@deriving sexp]
+
+type m =
+  | Library of library
+  | LibraryDoc of libraryDoc
+  | Doc of doc
   [@@deriving sexp]
 
 module StringMap = Map.Make(String)
@@ -95,6 +106,8 @@ let export_opam_package = function
     let file = OpamFilename.raw p.opam in
     library_doc_to_opam_file p.name
     |> OpamFile.OPAM.write (OpamFile.make file)
+  | Doc _ ->
+    failwithf "export_opam_package does not support doc modules" ()
 
 let export_opam bs =
   StringMap.iter bs ~f:export_opam_package
@@ -102,22 +115,27 @@ let export_opam bs =
 let get_dependencies_opt = function
   | Library l -> Some l.dependencies
   | LibraryDoc l -> Some l.dependencies
+  | Doc l -> Some l.dependencies
 
 let get_name = function
   | Library l -> l.name
   | LibraryDoc l -> l.name
+  | Doc l -> l.name (* TODO Return None *)
 
 let get_opam_opt = function
   | Library l -> Some l.opam
   | LibraryDoc l -> Some l.opam
+  | Doc _ -> None
 
 let get_position_opt = function
   | Library l -> l.position
   | LibraryDoc l -> l.position
+  | Doc l -> l.position
 
 let get_version_opt = function
   | Library l -> Some l.version
   | LibraryDoc l -> Some l.version
+  | Doc _ -> None
 
 (* Compatibility treatment *)
 let compatibility_treatment (p: library) (l: Library.t) =
@@ -220,3 +238,11 @@ let read_libraryDoc (p: libraryDoc) ~src_dir =
 let read_module = function
   | Library l -> read_library l
   | LibraryDoc l -> read_libraryDoc l
+  | Doc l -> (* TODO Return None *)
+    fun ~src_dir:_ ->
+      Library.{
+        empty with
+        name = Some l.name;
+        version = None;
+        dependencies=l.dependencies;
+      }

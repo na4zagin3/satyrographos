@@ -1,0 +1,51 @@
+Installing packages
+------------------------------------------------------------
+make out> Target: build-doc
+make out> Files under $SATYSFI_RUNTIME
+make out> ==============================
+make out> .
+make out> ./dist
+make out> ./dist/.satyrographos
+make out> ./dist/fonts
+make out> ./dist/fonts/fonts-theano
+make out> ./dist/fonts/fonts-theano/TheanoDidot-Regular.otf
+make out> ./dist/fonts/fonts-theano/TheanoModern-Regular.otf
+make out> ./dist/fonts/fonts-theano/TheanoOldStyle-Regular.otf
+make out> ./dist/hash
+make out> ./dist/hash/fonts.satysfi-hash
+make out> ./dist/metadata
+make out> ./dist/packages
+make out> ./dist/packages/grcnum
+make out> ./dist/packages/grcnum/grcnum.satyh
+make out> ==============================
+Reading runtime dist: @@temp_dir@@/empty_dist
+Read user libraries: ()
+Reading opam libraries: (base class-greek fonts-theano grcnum)
+Not gathering system fonts
+Installing libraries: (dist fonts-theano grcnum)
+Removing destination @@with_env@@/dist
+Installation completed!
+
+[1;33mCompatibility notice[0m for library fonts-theano:
+
+  Fonts have been renamed.
+  
+    TheanoDidot -> fonts-theano:TheanoDidot
+    TheanoModern -> fonts-theano:TheanoModern
+    TheanoOldStyle -> fonts-theano:TheanoOldStyle
+
+[1;33mCompatibility notice[0m for library grcnum:
+
+  Packages have been renamed.
+  
+    grcnum.satyh -> grcnum/grcnum.satyh
+Setting up SATySFi env at @@with_env@@ 
+------------------------------------------------------------
+@@dest_dir@@
+------------------------------------------------------------
+------------------------------------------------------------
+Command invoked:
+satysfi -C @@with_env@@ --version
+Command invoked:
+satysfi -C @@with_env@@ doc-example.saty -o doc-example-ja.pdf
+doc-example.saty -> doc-example-ja.pdf

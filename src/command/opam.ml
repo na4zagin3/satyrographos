@@ -58,4 +58,3 @@ let with_build_script f ~outf ~prefix ~buildscript_path ~name ~verbose ~env () =
         f ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env
       | _ ->
         failwithf "Build file does not contains library %s" name ()
-
