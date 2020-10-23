@@ -64,6 +64,7 @@ let () =
       ~outf
       ~verbose
       ~buildscript_path:(FilePath.concat temp_dir "pkg/Satyristes")
+      ~build_dir:(FilePath.concat temp_dir "pkg/_build" |> Option.some)
       ~env
       ~name
   in

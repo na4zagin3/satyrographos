@@ -1,5 +1,6 @@
 (tests
  (names
+   command_build__doc_make
    command_build__doc_satysfi
    command_build__doc_with_libraries
    command_install__distWithBrokenHash
@@ -38,6 +39,7 @@
    command_opam_install__library_missingHash
    command_opam_install__library_missingPackage
    command_opam_install__library_recursive
+   command_satysfi__with_project_env
    library_write_dir__content
  )
  (preprocess (pps ppx_deriving.std ppx_jane))

@@ -60,6 +60,14 @@ let with_formatter ?(where=Std_io.Stdout) f =
   echo ~where ~n:() (Buffer.contents buf)
   >> return v
 
+let with_formatter_map ?(where=Std_io.Stdout) f =
+  let buf = Buffer.create 100 in
+  let fmt = Format.make_formatter (Buffer.add_substring buf) ignore in
+  f fmt
+  >>= fun v ->
+  echo ~where ~n:() (Buffer.contents buf)
+  >> return v
+
 let echo_line =
   echo "------------------------------------------------------------"
 
@@ -218,3 +226,8 @@ install: [
    "--script" "%%{build}%%/Satyristes"]
 ]
 |} synopsis name version description depends satysfi_name
+
+let with_bin_dir bin_dir cmd =
+  get_env "PATH"
+  >>= fun path ->
+  set_env "PATH" (bin_dir ^ ":" ^ Option.get path) cmd

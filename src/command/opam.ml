@@ -1,9 +1,6 @@
 open Core
 open Satyrographos
 
-module Process = Shexp_process
-module P = Process
-
 module StringMap = Map.Make(String)
 
 let library_dir prefix (buildscript: BuildScript.m) =
@@ -13,7 +10,15 @@ let library_dir prefix (buildscript: BuildScript.m) =
 let build_opam ~outf ~verbose ~prefix:_ ~build_module ~buildscript_path ~env =
   let system_font_prefix = None in
   let autogen_libraries = [] in
-  Build.build ~outf ~verbose ~build_module ~buildscript_path ~system_font_prefix ~autogen_libraries ~env
+  Build.build
+    ~outf
+    ~verbose
+    ~build_module
+    ~buildscript_path
+    ~build_dir:None
+    ~system_font_prefix
+    ~autogen_libraries
+    ~env
 
 let install_opam ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env:_ =
   let _, p = Build.read_module ~outf ~verbose ~build_module ~buildscript_path in

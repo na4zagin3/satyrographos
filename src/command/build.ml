@@ -14,29 +14,60 @@ let read_module ~outf ~verbose ~build_module ~buildscript_path =
   (src_dir, p)
 
 let parse_build_command ~satysfi_runtime = function
-      | "make" :: args ->
-        let command = P.run "make" (["SATYSFI_RUNTIME=" ^ satysfi_runtime] @ args) in
-        ProcessUtil.redirect_to_stdout ~prefix:"make" command
-      | "satysfi" :: args ->
-        RunSatysfi.run_satysfi ~satysfi_runtime args
-      | cmd -> failwithf "command %s is not yet supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
+  | "make" :: args ->
+    let command = P.run "make" (["SATYSFI_RUNTIME=" ^ satysfi_runtime] @ args) in
+    ProcessUtil.redirect_to_stdout ~prefix:"make" command
+  | "satysfi" :: args ->
+    RunSatysfi.run_satysfi ~satysfi_runtime args
+  | cmd -> failwithf "command %s is not yet supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
 
-let run_build_commands ~outf ~verbose ~libraries ~workingDir ~env ~system_font_prefix ~autogen_libraries buildCommands =
-  let setup ~satysfi_dist =
-    Install.install satysfi_dist ~outf ~system_font_prefix ~autogen_libraries ~libraries ~verbose ~safe:true ~copy:false ~env ()
-  in
+let run_build_commands ~workingDir ~project_env buildCommands =
   let commands satysfi_runtime = P.List.iter buildCommands ~f:(parse_build_command ~satysfi_runtime) in
-  P.(chdir workingDir (RunSatysfi.with_env ~outf ~setup commands))
+  Satyrographos.Environment.get_satysfi_runtime_dir project_env
+  |> commands
+  |> Satyrographos.Environment.set_project_env_cmd project_env
+  |> P.chdir workingDir
 
-let build ~outf ~verbose ~build_module ~buildscript_path ~system_font_prefix ~autogen_libraries ~env =
+let setup_project_env ~buildscript_path ~satysfi_runtime_dir ~outf ~verbose ~libraries ~env ~system_font_prefix ~autogen_libraries =
+  let project_env =
+    Satyrographos.Environment.{
+      buildscript_path;
+      satysfi_runtime_dir;
+    }
+  in
+  let satysfi_dist =
+    Satyrographos.Environment.get_satysfi_dist_dir project_env
+  in
+  Library.mark_managed_dir satysfi_dist;
+  Install.install satysfi_dist ~outf ~system_font_prefix ~autogen_libraries ~libraries ~verbose ~safe:true ~copy:false ~env ();
+  project_env
+
+let build ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_font_prefix ~autogen_libraries ~env =
   let src_dir, p = read_module ~outf ~verbose ~build_module ~buildscript_path in
+  let libraries = Library.Dependency.to_list p.dependencies |> Some in
+  let with_build_dir build_dir c =
+    let satysfi_runtime_dir = FilePath.concat build_dir "satysfi" in
+    let project_env =
+      setup_project_env ~satysfi_runtime_dir ~buildscript_path ~outf ~verbose ~libraries ~env ~system_font_prefix ~autogen_libraries
+    in
+    c project_env
+  in
+  let with_project_env c =
+    match build_dir with
+    | None ->
+      Shexp_process.with_temp_dir ~prefix:"Satyrographos" ~suffix:"build" (fun build_dir ->
+          with_build_dir build_dir c
+        )
+    | Some build_dir ->
+      with_build_dir build_dir c
+  in
 
   let build workingDirectory build_commands =
     let context = P.Context.create() in
     let workingDir = Filename.concat src_dir workingDirectory in
-    let libraries = Library.Dependency.to_list p.dependencies |> Some in
     let _, trace =
-      run_build_commands ~outf ~verbose ~workingDir ~libraries ~system_font_prefix ~autogen_libraries ~env build_commands
+      with_project_env (fun project_env ->
+          run_build_commands ~workingDir ~project_env build_commands)
       |> P.Traced.eval_exn ~context in
     if verbose
     then begin Format.fprintf outf "Executed commands:@.";
