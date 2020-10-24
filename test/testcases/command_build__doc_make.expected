@@ -18,7 +18,7 @@ make out> ./dist/packages
 make out> ./dist/packages/grcnum
 make out> ./dist/packages/grcnum/grcnum.satyh
 make out> ==============================
-make out> satyrographos debug project-env | grep -e 'pkg/Satyristes' >/dev/null || (satyrographos debug project-env ; exit 1)
+make out> satyrographos debug project-env | grep -e 'pkg/Satyristes' >/dev/null || (export ; whereis satyrographos satysfi opam)
 Reading runtime dist: @@temp_dir@@/empty_dist
 Read user libraries: ()
 Reading opam libraries: (base class-greek fonts-theano grcnum)
