@@ -66,6 +66,7 @@ let opam log_file =
       {|echo opam "$@" >> "$LOG_FILE"|};
     ]
 
+(* TODO Refactor this so that bin_dir is implicitly shared by the main test function (e.g., test_install) *)
 let prepare_bin bin log_file =
   let path = Unix.getenv "PATH" in
   let gen_bin name content =

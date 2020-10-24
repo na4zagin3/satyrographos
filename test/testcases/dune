@@ -44,6 +44,7 @@
  )
  (preprocess (pps ppx_deriving.std ppx_jane))
  (libraries core re satyrographos_command satyrographos_testlib shexp.process uri)
+ (deps %{bin:satyrographos})
  )
 
 (cram
