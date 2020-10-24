@@ -16,6 +16,7 @@ in
   let test_cmd work_dir reg_dir =
     let open Satyrographos in
     let opam_dir = FilePath.concat reg_dir "opam-satysfi" in
+    let bin_dir = FilePath.concat reg_dir "bin" in
     let dist_library_dir = FilePath.concat reg_dir "satysfi/dist" in
     let create_opam_reg libs =
       mkdir opam_dir
@@ -42,7 +43,9 @@ in
     >> TestLib.prepare_files work_dir files
     >> TestLib.prepare_files reg_dir satysfi_files
     >>| env
-    >>= (fun env -> Shexp_process.chdir work_dir (test_cmd env))
+    >>= (fun env ->
+        Shexp_process.chdir work_dir (test_cmd env)
+        |> TestLib.with_bin_dir bin_dir)
   in
   with_temp_dir ~prefix:"Satyrographos" ~suffix:"test_library" (fun test_dir ->
       with_temp_dir ~prefix:"Satyrographos" ~suffix:"test_library_regs" (test_cmd test_dir)

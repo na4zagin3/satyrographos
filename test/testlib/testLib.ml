@@ -114,6 +114,11 @@ let run_function f =
       else return ()
     in censor_exception c
 
+let with_bin_dir bin_dir cmd =
+  get_env "PATH"
+  >>= fun path ->
+  set_env "PATH" (bin_dir ^ ":" ^ Option.get path) cmd
+
 (* TODO Move to TestCommand module *)
 let test_install ?(replacements=[]) setup f : unit t =
   let test dest_dir temp_dir =
@@ -143,12 +148,16 @@ let test_install ?(replacements=[]) setup f : unit t =
          |- reformat_sexp)
         c
     in
+    let bin_dir =
+      FilePath.concat temp_dir "bin"
+    in
     echo "Installing packages"
     >> echo_line
     >> censor (setup ~dest_dir ~temp_dir)
     >>= (fun setup_result ->
         run_function (fun ~outf -> f setup_result ~dest_dir ~temp_dir ~outf)
         |> censor_user
+        |> with_bin_dir bin_dir
       )
     >> echo_line
     >> censor (dump_dir dest_dir)
@@ -227,7 +236,3 @@ install: [
 ]
 |} synopsis name version description depends satysfi_name
 
-let with_bin_dir bin_dir cmd =
-  get_env "PATH"
-  >>= fun path ->
-  set_env "PATH" (bin_dir ^ ":" ^ Option.get path) cmd
