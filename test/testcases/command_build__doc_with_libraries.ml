@@ -18,20 +18,22 @@ let satyristes =
      ; (file "doc/grcnum.md" "README.md")
     ))
   (opam "satysfi-grcnum.opam")
-  (dependencies ((fonts-theano ())))
-  (compatibility ((satyrographos 0.0.1))))
-(libraryDoc
-  (name "grcnum-doc")
-  (version "0.2")
+  (dependencies ((fonts-theano ()))))
+
+(doc
+  (name "example-doc")
   (build
-    ((satysfi "doc-grcnum.saty" "-o" "doc-grcnum-ja.pdf")
+    ((satysfi "doc-example.saty" "-o" "doc-example-ja.pdf")
      (make "build-doc")))
-  (sources
-    ((doc "doc-grcnum-ja.pdf" "./doc-grcnum-ja.pdf")))
-  (opam "satysfi-grcnum-doc.opam")
   (dependencies ((grcnum ())
                  (fonts-theano ()))))
 |}
+
+let satysfi_grcnum_opam =
+  "satysfi-grcnum.opam", TestLib.opam_file_for_test
+    ~name:"satysfi-grcnum"
+    ~version:"0.1"
+    ()
 
 let fontHash =
 {|{
@@ -49,17 +51,32 @@ build-doc:
 	@echo "=============================="
 |}
 
+let files =
+  [
+    satysfi_grcnum_opam;
+    "Satyristes", satyristes;
+    "README.md", "@@README.md@@";
+    "fonts.satysfi-hash", fontHash;
+    "grcnum.satyh", "@@grcnum.satyh@@";
+    "font.ttf", "@@font.ttf@@";
+    "doc-grcnum.saty", "@@doc-grcnum.saty@@";
+    "doc-example.saty", "@@doc-example.saty@@";
+    "Makefile", makefile;
+  ]
+
 let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
   let open Shexp_process.Infix in
   let pkg_dir = FilePath.concat temp_dir "pkg" in
   let prepare_pkg =
     PrepareDist.empty pkg_dir
+    >> prepare_files pkg_dir files
     >> stdout_to (FilePath.concat pkg_dir "Satyristes") (echo satyristes)
     >> stdout_to (FilePath.concat pkg_dir "README.md") (echo "@@README.md@@")
     >> stdout_to (FilePath.concat pkg_dir "fonts.satysfi-hash") (echo fontHash)
     >> stdout_to (FilePath.concat pkg_dir "grcnum.satyh") (echo "@@grcnum.satyh@@")
     >> stdout_to (FilePath.concat pkg_dir "font.ttf") (echo "@@font.ttf@@")
     >> stdout_to (FilePath.concat pkg_dir "doc-grcnum.saty") (echo "@@doc-grcnum.saty@@")
+    >> stdout_to (FilePath.concat pkg_dir "doc-example.saty") (echo "@@doc-example.saty@@")
     >> stdout_to (FilePath.concat pkg_dir "Makefile") (echo makefile)
   in
   let empty_dist = FilePath.concat temp_dir "empty_dist" in
@@ -81,17 +98,15 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
 
 let () =
   let verbose = false in
-  let main env ~dest_dir ~temp_dir ~outf =
-    let name = Some "grcnum-doc" in
-    let dest_dir = FilePath.concat dest_dir "dest" in
-    let open Satyrographos_command.Opam in
-    with_build_script
-      build_opam
+  let main env ~dest_dir:_ ~temp_dir ~outf =
+    let name = Some "example-doc" in
+    (* let dest_dir = FilePath.concat dest_dir "dest" in *)
+    Satyrographos_command.Build.build_command
       ~outf
       ~verbose
-      ~prefix:dest_dir
       ~buildscript_path:(FilePath.concat temp_dir "pkg/Satyristes")
+      ~build_dir:(FilePath.concat temp_dir "pkg/_build" |> Option.some)
       ~env
       ~name
-      () in
+  in
   eval (test_install env main)

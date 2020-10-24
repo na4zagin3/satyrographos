@@ -1,0 +1,9 @@
+Running SATySFi...
+==================
+------------------------------------------------------------
+Command invoked:
+satysfi -C @@satysfi@@/pkg/_build/satysfi --version
+Command invoked:
+satysfi -C @@satysfi@@/pkg/_build/satysfi @@satysfi@@/pkg/doc-example.saty -o @@satysfi@@/pkg/doc-example.pdf
+@@satysfi@@/pkg/doc-example.saty -> @@satysfi@@/pkg/doc-example.pdf
+------------------------------------------------------------

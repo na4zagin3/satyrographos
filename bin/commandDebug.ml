@@ -38,7 +38,21 @@ let depgraph_command =
         DependencyGraph.Dot.fprint_graph Format.std_formatter g
     ]
 
+let status_project_env =
+  let open Command.Let_syntax in
+  Command.basic
+    ~summary:"Show project envirnment (experimental)"
+    [%map_open
+      let _ = args (* ToDo: Remove this *)
+      in
+      fun () ->
+        let open Satyrographos.Environment in
+        let project_env = get_project_env () in
+        printf !"%{sexp: project_env option}" project_env
+    ]
+
 let debug_command =
   Command.group ~summary:"SATySFi related utilities for debugging Satyrographos (experimental)"
     [ "depgraph", depgraph_command;
+      "project-env", status_project_env;
     ]

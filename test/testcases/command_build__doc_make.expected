@@ -18,12 +18,13 @@ make out> ./dist/packages
 make out> ./dist/packages/grcnum
 make out> ./dist/packages/grcnum/grcnum.satyh
 make out> ==============================
+make out> satyrographos debug project-env | grep -e 'pkg/Satyristes' >/dev/null || (satyrographos debug project-env ; exit 1)
 Reading runtime dist: @@temp_dir@@/empty_dist
 Read user libraries: ()
 Reading opam libraries: (base class-greek fonts-theano grcnum)
 Not gathering system fonts
 Installing libraries: (dist fonts-theano grcnum)
-Removing destination @@build@@/satysfi/dist
+Removing destination @@temp_dir@@/pkg/_build/satysfi/dist
 Installation completed!
 
 [1;33mCompatibility notice[0m for library fonts-theano:
@@ -44,7 +45,6 @@ Installation completed!
 ------------------------------------------------------------
 ------------------------------------------------------------
 Command invoked:
-satysfi -C @@build@@/satysfi --version
+opam var share
 Command invoked:
-satysfi -C @@build@@/satysfi doc-grcnum.saty -o doc-grcnum-ja.pdf
-doc-grcnum.saty -> doc-grcnum-ja.pdf
+opam var share

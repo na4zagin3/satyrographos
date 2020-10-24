@@ -18,6 +18,9 @@ val with_formatter : ?where:Std_io.t -> (Format.formatter -> 'a) -> 'a t
 (** [with_formatter ~where f] returns a Shexp process which executes [f] with a formatter which redirect to
     the given Shexp IO [where], whose default value is [Stdout] *)
 
+val with_formatter_map : ?where:Std_io.t -> (Format.formatter -> 'a t) -> 'a t
+(** [with_formatter_map ~where f] is similar to [with_formatter] but [f] returns a Shexp process *)
+
 val echo_line : unit t
 (** A Shexp process which output a horizontal line to Stdout. *)
 
@@ -45,3 +48,6 @@ val opam_file_for_test :
   ?name:string ->
   ?version:string ->
   ?description:string -> ?depends:string -> ?satysfi_name:string -> unit -> string
+
+val with_bin_dir : string -> 'a t -> 'a t
+(** [with_bin_dir bin_dir cmd] runs [cmd] with adding [bin_dir] to the first of PATH *)

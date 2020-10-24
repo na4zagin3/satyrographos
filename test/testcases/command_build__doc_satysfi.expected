@@ -23,7 +23,7 @@ Read user libraries: ()
 Reading opam libraries: (base class-greek fonts-theano grcnum)
 Not gathering system fonts
 Installing libraries: (dist fonts-theano grcnum)
-Removing destination @@build@@/satysfi/dist
+Removing destination @@temp_dir@@/pkg/_build/satysfi/dist
 Installation completed!
 
 [1;33mCompatibility notice[0m for library fonts-theano:
@@ -44,7 +44,7 @@ Installation completed!
 ------------------------------------------------------------
 ------------------------------------------------------------
 Command invoked:
-satysfi -C @@build@@/satysfi --version
+satysfi -C @@temp_dir@@/pkg/_build/satysfi --version
 Command invoked:
-satysfi -C @@build@@/satysfi doc-grcnum.saty -o doc-grcnum-ja.pdf
-doc-grcnum.saty -> doc-grcnum-ja.pdf
+satysfi -C @@temp_dir@@/pkg/_build/satysfi doc-example.saty -o doc-example-ja.pdf
+doc-example.saty -> doc-example-ja.pdf

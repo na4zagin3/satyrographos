@@ -65,6 +65,13 @@ module Section = struct
     dependencies: (string * unit (* for future extension *)) list
       [@sexp.omit_nil];
   } [@sexpr.list]
+  | Doc of {
+      name: string;
+      workingDirectory: string [@default "."];
+      build: string list list [@sexp.omit_nil];
+      dependencies: (string * unit (* for future extension *)) list
+                    [@sexp.omit_nil];
+    } [@sexpr.list]
   [@@deriving sexp]
 end
 
@@ -100,10 +107,14 @@ let section_to_modules ~base_dir (range, (m : Section.t)) =
       [name, Library {name; version; opam; sources; dependencies; compatibility; position; }]
     | LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies;} ->
       if String.suffix name 4 |> String.equal "-doc" |> not
-      then failwithf "libradiDoc must have suffic -doc but got %s" name ();
+      then failwithf "libraryDoc must have suffix -doc but got %s" name ();
       let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
       let position = Some (position_of_range range) in
       [name, LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies; position; }]
+    | Doc {name; workingDirectory; build; dependencies;} ->
+      let position = Some (position_of_range range) in
+      let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
+      [name, Doc {name; workingDirectory; build; dependencies; position;}]
 
 let sections_to_modules ~base_dir sections =
   let modules = sections |> List.concat_map ~f:(section_to_modules ~base_dir) in

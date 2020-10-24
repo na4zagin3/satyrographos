@@ -38,17 +38,23 @@ let assert_satysfi_option_C dir =
   assert_satysfi_option ~message:"satysfi.0.0.3+dev2019.02.27 and newer is required in order to build library docs."
     ["-C"; dir]
 
-let with_env ~outf ~setup c =
+let with_env ~outf ~(project_env : Satyrographos.Environment.project_env option) ~setup c =
   let open P in
   let open P.Infix in
-  let c satysfi_runtime =
-    return (Format.fprintf outf "Setting up SATySFi env at %s @." satysfi_runtime;) >>
-    let satysfi_dist = Filename.concat satysfi_runtime "dist" in
-    return (Library.mark_managed_dir satysfi_dist;) >>
-    return (setup ~satysfi_dist) >>
-    c satysfi_runtime
-  in
-  with_temp_dir ~prefix:"Satyrographos" ~suffix:"with_env" c
+  match project_env with
+  | None ->
+    let c satysfi_runtime =
+      return (Format.fprintf outf "Setting up SATySFi env at %s @." satysfi_runtime;) >>
+      let satysfi_dist = Filename.concat satysfi_runtime "dist" in
+      return (Library.mark_managed_dir satysfi_dist;) >>
+      return (setup ~satysfi_dist) >>
+      c satysfi_runtime
+    in
+    with_temp_dir ~prefix:"Satyrographos" ~suffix:"with_env" c
+  | Some project_env ->
+    let open Satyrographos.Environment in
+    get_satysfi_runtime_dir project_env
+    |> c
 
 let run_satysfi_command ~satysfi_runtime args =
   let open P.Infix in
@@ -60,3 +66,25 @@ let run_satysfi ~satysfi_runtime args =
     run_satysfi_command ~satysfi_runtime args in
   ProcessUtil.redirect_to_stdout ~prefix:"satysfi" command
 
+let satysfi_command ~outf ~system_font_prefix ~autogen_libraries ~libraries ~verbose ~project_env ~env args =
+  let setup ~satysfi_dist =
+    Install.install
+      satysfi_dist
+      ~outf
+      ~system_font_prefix
+      ~autogen_libraries
+      ~libraries
+      ~verbose
+      ~copy:false
+      ~env
+      ()
+  in
+  let commands satysfi_runtime =
+    let open P in
+    let open P.Infix in
+    echo "Running SATySFi..."
+    >> echo "=================="
+    >> assert_satysfi_option_C satysfi_runtime
+    >> P.run_exit_code "satysfi" (["-C"; satysfi_runtime] @ args)
+  in
+  with_env ~outf ~project_env ~setup commands

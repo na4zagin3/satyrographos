@@ -58,12 +58,26 @@ esac
       "payload \"$@\"";
     ]
 
+let opam log_file =
+  String.concat "\n"
+    [ "#!/bin/sh";
+      "LOG_FILE='" ^ log_file ^"'";
+      {|echo 'Command invoked:' >> "$LOG_FILE"|};
+      {|echo opam "$@" >> "$LOG_FILE"|};
+    ]
+
 let prepare_bin bin log_file =
-  let satysfi_path = FilePath.concat bin "satysfi" in
   let path = Unix.getenv "PATH" in
+  let gen_bin name content =
+    let path = FilePath.concat bin name in
+    let open Shexp_process in
+    let open Infix in
+    mkdir ~p:() bin
+    >> stdout_to path (content |> echo)
+    >> chmod path ~perm:0o755
+  in
   let open Shexp_process in
   let open Infix in
   Unix.putenv "PATH" (bin ^ ":" ^ path);
-  mkdir bin
-  >> stdout_to satysfi_path (satysfi log_file |> echo)
-  >> chmod satysfi_path ~perm:0o755
+  gen_bin "satysfi" (satysfi log_file)
+  >> gen_bin "opam" (opam log_file)
