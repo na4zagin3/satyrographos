@@ -30,10 +30,8 @@ let depgraph_command =
         in
         let outf = Format.err_formatter in
         let mode = Option.bind ~f:Mode.of_extension_opt mode in
-        let package_root_dirs = SatysfiDirs.expand_package_root_dirs ~satysfi_version runtime_dirs in
-        let g = DependencyGraph.dependency_graph ~outf ~package_root_dirs ~satysfi_version ~follow_required satysfi_files in
         let g =
-          Option.value_map mode ~default:g ~f:(fun mode -> DependencyGraph.subgraph_with_mode ~mode g)
+          CommandUtil.dependency_graph ~outf ~runtime_dirs ~mode ~follow_required ~satysfi_version ~satysfi_files
         in
         DependencyGraph.Dot.fprint_graph Format.std_formatter g
     ]

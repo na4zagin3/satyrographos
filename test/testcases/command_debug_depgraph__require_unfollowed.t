@@ -44,3 +44,18 @@ Generate dependency graphs
                             label="@require: lib1", ];
     
     }
+
+Dep files
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos util deps-make --satysfi-root-dirs 'root' -S 0.0.5 --depfile deps.d --output-extension .pdf first.saty
+  Compatibility warning: You have opted in to use experimental features.
+  $ cat deps.d
+  first.pdf: first.saty third.satyh second.satyh
+  
+  deps.d: first.saty third.satyh second.satyh
+  
+  first.saty:
+  
+  second.satyh:
+  
+  third.satyh:
+  

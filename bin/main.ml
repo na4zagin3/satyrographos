@@ -13,6 +13,7 @@ let total_command =
       "lint", CommandLint.lint_command;
       "satysfi", CommandSatysfi.satysfi_command;
       "status", CommandStatus.status_command;
+      "util", CommandUtil.util_command;
       "pin", CommandPin.pin_command;
       "install", CommandInstall.install_command;
     ]

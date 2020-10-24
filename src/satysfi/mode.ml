@@ -26,6 +26,14 @@ let to_extension = function
   | Generic ->
     ".satyg"
 
+let to_output_extension_opt = function
+  | Pdf ->
+    Some ".pdf"
+  | Text mode ->
+    Some (sprintf ".%s" mode)
+  | Generic ->
+    None
+
 let ( <=: ) a b = match a, b with
   | Pdf, Pdf -> true
   | Text a, Text b when String.equal a b -> true

@@ -19,3 +19,14 @@ Generate dependency graphs
     
     
     }
+
+Dep files
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos util deps-make -S 0.0.5 --depfile deps.d --output-extension .pdf --follow-required empty.saty
+  Compatibility warning: You have opted in to use experimental features.
+  $ cat deps.d
+  empty.pdf: empty.saty
+  
+  deps.d: empty.saty
+  
+  empty.saty:
+  

@@ -1,0 +1,82 @@
+open Core
+
+open Satyrographos_satysfi
+
+
+let get_runtime_dirs ~runtime_dirs ~project_env =
+  match runtime_dirs, project_env with
+  | Some runtime_dirs, _ ->
+    String.split ~on:':' runtime_dirs
+  | _, Some project_env ->
+    [Satyrographos.Environment.get_satysfi_runtime_dir project_env]
+  | None, None ->
+    let open SatysfiDirs in
+    Option.to_list (user_dir ()) @ runtime_dirs ()
+
+let dependency_graph ~outf ~runtime_dirs ~mode ~follow_required ~satysfi_version ~satysfi_files =
+  let package_root_dirs = SatysfiDirs.expand_package_root_dirs ~satysfi_version runtime_dirs in
+  let g = DependencyGraph.dependency_graph ~outf ~package_root_dirs ~satysfi_version ~follow_required satysfi_files in
+  Option.value_map mode ~default:g ~f:(fun mode -> DependencyGraph.subgraph_with_mode ~mode g)
+
+let deps_make_command =
+  let open Command.Let_syntax in
+  let readme () =
+    sprintf "Output dependencies of SATySFi files in Makefile format. (EXPERIMENTAL)"
+  in
+  Command.basic
+    ~summary:"Output dependencies"
+    ~readme
+    [%map_open
+      let runtime_dirs = flag "--satysfi-root-dirs" (optional string) ~aliases:["C"] ~doc:"DIRs Colon-separated list of SATySFi root directories"
+      and depfile = flag "--depfile" (required string) ~doc:"FILE Filename of output Makefile depfile"
+      and _verbose = flag "--verbose" no_arg ~doc:"Make verbose"
+      and mode = flag "--mode" (optional string) ~doc:"SATySFi typesetting mode (e.g., .satyh, .satyh-md, .satyg)"
+      and output_extension = flag "--output-extension" (required string) ~aliases:["e"] ~doc:"SATySFi typesetting mode (e.g., .satyh, .satyh-md, .satyg)"
+      and follow_required = flag "--follow-required" no_arg ~aliases:["r"] ~doc:"Follow required package files"
+      and satysfi_version = Version.flag
+      and satysfi_files = anon (non_empty_sequence_as_list ("FILE" %: string))
+      in
+      fun () ->
+        Compatibility.optin ();
+        let project_env = Satyrographos.Environment.get_project_env () in
+        let runtime_dirs =
+          get_runtime_dirs ~runtime_dirs ~project_env
+        in
+        let outf = Format.err_formatter in
+        let mode =
+          Option.bind ~f:Mode.of_extension_opt mode
+          |> Option.value ~default:Mode.Pdf
+        in
+        let g =
+          dependency_graph ~outf ~runtime_dirs ~mode:(Some mode) ~follow_required ~satysfi_version ~satysfi_files
+        in
+        let expand_sources (source, deps) =
+          let saty_extension = Mode.to_extension mode in
+          let basename =
+            Option.first_some
+              (String.chop_suffix source ~suffix:saty_extension)
+              (String.chop_suffix source ~suffix:".saty")
+            |> Option.value_exn ~message:(sprintf "Extention of %s should be either %s or .saty" source saty_extension)
+          in
+          let target =
+            basename
+            ^ output_extension
+          in
+          [
+            target, source :: deps;
+            depfile, source :: deps;
+          ]
+        in
+        let data =
+          DependencyGraph.reachable_files g satysfi_files
+          |> List.concat_map ~f:expand_sources
+          |> DependencyGraph.Makefile.expand_deps
+          |> DependencyGraph.Makefile.to_string
+        in
+        Out_channel.write_all depfile ~data
+    ]
+
+let util_command =
+  Command.group ~summary:"SATySFi related utilities for debugging Satyrographos (experimental)"
+    [ "deps-make", deps_make_command;
+    ]
