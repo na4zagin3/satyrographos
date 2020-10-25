@@ -32,7 +32,7 @@ Generate dependency graphs
     }
 
 Dep files
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos util deps-make -S 0.0.5 --depfile deps.d --output-extension .pdf --follow-required first.saty 2>&1 | sed -e "s!$HOME!@@HOME@@!g"
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos util deps-make -S 0.0.5 --depfile deps.d -o first.pdf --follow-required first.saty 2>&1 | sed -e "s!$HOME!@@HOME@@!g"
   Compatibility warning: You have opted in to use experimental features.
   Cannot read files for “@import: second”
   Candidate basenames:
@@ -51,6 +51,4 @@ Dep files
   first.pdf: first.saty
   
   deps.d: first.saty
-  
-  first.saty:
   
