@@ -29,7 +29,7 @@ let depgraph_command =
             Option.to_list (user_dir ()) @ runtime_dirs ()
         in
         let outf = Format.err_formatter in
-        let mode = Option.bind ~f:Mode.of_extension_opt mode in
+        let mode = Option.map ~f:Mode.of_string_exn mode in
         let g =
           CommandUtil.dependency_graph ~outf ~runtime_dirs ~mode ~follow_required ~satysfi_version ~satysfi_files
         in
