@@ -28,10 +28,11 @@ let deps_make_command =
     ~readme
     [%map_open
       let runtime_dirs = flag "--satysfi-root-dirs" (optional string) ~aliases:["C"] ~doc:"DIRs Colon-separated list of SATySFi root directories"
-      and depfile = flag "--depfile" (required string) ~doc:"FILE Filename of output Makefile depfile"
+      and depfile = flag "--depfile" (optional string) ~aliases:["f"] ~doc:"FILE Filename of output Makefile depfile like gcc -MF.  Additionally, the depfile will also added as an target."
       and _verbose = flag "--verbose" no_arg ~doc:"Make verbose"
       and mode = flag "--mode" (optional string) ~doc:"SATySFi typesetting mode (e.g., .satyh, .satyh-md, .satyg)"
-      and output_extension = flag "--output-extension" (required string) ~aliases:["e"] ~doc:"SATySFi typesetting mode (e.g., .satyh, .satyh-md, .satyg)"
+      and target_filename = flag "--target" (optional string) ~aliases:["o"] ~doc:"SATySFi typesetting output filename"
+      and phony_targets = flag "--phony-targets" no_arg ~aliases:["p"] ~doc:"Add phony targets like gcc -MP"
       and follow_required = flag "--follow-required" no_arg ~aliases:["r"] ~doc:"Follow required package files"
       and satysfi_version = Version.flag
       and satysfi_files = anon (non_empty_sequence_as_list ("FILE" %: string))
@@ -59,21 +60,35 @@ let deps_make_command =
             |> Option.value_exn ~message:(sprintf "Extention of %s should be either %s or .saty" source saty_extension)
           in
           let target =
-            basename
-            ^ output_extension
+            match target_filename, Mode.to_output_extension_opt mode with
+            | Some target_filename, _ -> target_filename
+            | None, Some output_extension ->
+              basename ^ output_extension
+            | None, None ->
+              failwithf "Please specify SATySFi output filename (-o <filename>)" ()
           in
-          [
-            target, source :: deps;
-            depfile, source :: deps;
-          ]
+          (target, source :: deps)
+          :: Option.value_map depfile ~default:[] ~f:(fun depfile ->
+              [depfile, source :: deps;]
+            )
         in
         let data =
           DependencyGraph.reachable_files g satysfi_files
           |> List.concat_map ~f:expand_sources
-          |> DependencyGraph.Makefile.expand_deps
-          |> DependencyGraph.Makefile.to_string
         in
-        Out_channel.write_all depfile ~data
+        let data =
+          if phony_targets
+          then DependencyGraph.Makefile.expand_deps data
+          else data
+        in
+        let data =
+          DependencyGraph.Makefile.to_string data
+        in
+        match depfile with
+        | Some depfile ->
+          Out_channel.write_all depfile ~data
+        | None ->
+          print_string data
     ]
 
 let util_command =
