@@ -7,7 +7,7 @@ open Shexp_process
 
 let satyristes =
 {|
-(version "0.0.2")
+(lang "0.0.3")
 (library
   (name "grcnum")
   (version "0.2")
