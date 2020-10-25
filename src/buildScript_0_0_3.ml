@@ -39,7 +39,7 @@ end
 
 module Section = struct
   type t =
-  | Version of string
+  | Lang of string
   | Library of {
     name: string;
     version: string;
@@ -65,6 +65,13 @@ module Section = struct
     dependencies: (string * unit (* for future extension *)) list
       [@sexp.omit_nil];
   } [@sexpr.list]
+  | Doc of {
+      name: string;
+      workingDirectory: string [@default "."];
+      build: string list list [@sexp.omit_nil];
+      dependencies: (string * unit (* for future extension *)) list
+                    [@sexp.omit_nil];
+    } [@sexpr.list]
   [@@deriving sexp]
 end
 
@@ -79,11 +86,11 @@ let load_sections f =
 
 let section_to_modules ~base_dir (range, (m : Section.t)) =
   match m with
-  | Section.Version "0.0.2" -> []
-    | Version v ->
-      failwithf "This Saytorgraphos only supports build script version 0.0.2, but got %s" v ()
-    | Library {name; version; opam; sources; dependencies; compatibility} ->
-      let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
+  | Section.Lang "0.0.3" -> []
+  | Lang v ->
+    failwithf "BUG: section_to_modules: expects build script version 0.0.3, but got %s" v ()
+  | Library {name; version; opam; sources; dependencies; compatibility} ->
+    let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
         | File (dst, src) -> add_files dst src acc
         | Font (dst, src) -> add_fonts dst src acc
         | Hash (dst, src) -> add_hashes dst src acc
@@ -91,19 +98,23 @@ let section_to_modules ~base_dir (range, (m : Section.t)) =
         | FontDir (src) -> recursively add_fonts base_dir src acc
         | PackageDir (src) -> recursively add_packages base_dir src acc
       end sources in
-      let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
-      let compatibility =
-        List.map ~f:Compatibility.to_internal compatibility
-        |> CompatibilitySet.of_list
-      in
-      let position = Some (position_of_range range) in
-      [name, Library {name; version; opam; sources; dependencies; compatibility; position; }]
-    | LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies;} ->
-      if String.suffix name 4 |> String.equal "-doc" |> not
-      then failwithf "libraryDoc must have suffix -doc but got %s" name ();
-      let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
-      let position = Some (position_of_range range) in
-      [name, LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies; position; }]
+    let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
+    let compatibility =
+      List.map ~f:Compatibility.to_internal compatibility
+      |> CompatibilitySet.of_list
+    in
+    let position = Some (position_of_range range) in
+    [name, Library {name; version; opam; sources; dependencies; compatibility; position; }]
+  | LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies;} ->
+    if String.suffix name 4 |> String.equal "-doc" |> not
+    then failwithf "libraryDoc must have suffix -doc but got %s" name ();
+    let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
+    let position = Some (position_of_range range) in
+    [name, LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies; position; }]
+  | Doc {name; workingDirectory; build; dependencies;} ->
+    let position = Some (position_of_range range) in
+    let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
+    [name, Doc {name; workingDirectory; build; dependencies; position;}]
 
 let sections_to_modules ~base_dir sections =
   let modules = sections |> List.concat_map ~f:(section_to_modules ~base_dir) in

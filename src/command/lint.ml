@@ -382,9 +382,12 @@ let lint ~outf ~satysfi_version ~verbose ~buildscript_path ~(env : Environment.t
   let buildscript_basename = FilePath.basename buildscript_path in
   let buildscript = BuildScript.load buildscript_path in
   let problems =
-    Map.to_alist buildscript
-    |> List.concat_map ~f:(fun (_, m) ->
-        lint_module ~outf ~verbose ~satysfi_version ~basedir ~buildscript_basename ~env m)
+    match buildscript with
+    | BuildScript.Lang_0_0_2 module_map
+    | BuildScript.Lang_0_0_3 module_map ->
+      Map.to_alist module_map
+      |> List.concat_map ~f:(fun (_, m) ->
+          lint_module ~outf ~verbose ~satysfi_version ~basedir ~buildscript_basename ~env m)
   in
   show_problems ~outf ~basedir problems;
   List.length problems

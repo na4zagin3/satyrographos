@@ -92,7 +92,10 @@ let opam_pin_project ~(buildscript: BuildScript.t) ~buildscript_path =
     |> FilePath.dirname
   in
   P.cwd_logical >>= fun cwd ->
-  Map.to_alist buildscript
+  let module_map =
+    BuildScript.get_module_map buildscript
+  in
+  Map.to_alist module_map
   |> P.List.iter ~f:(fun (_, l) ->
       BuildScript.get_opam_opt l
       |> Option.value_map ~default:(P.return ()) ~f:(fun opam_path ->
@@ -119,15 +122,16 @@ let build_command ~outf ~buildscript_path ~name ~verbose ~env =
     build ~outf ~verbose ~build_module ~buildscript_path ~system_font_prefix ~autogen_libraries ~env
   in
   let buildscript = BuildScript.load buildscript_path in
+  let module_map = BuildScript.get_module_map buildscript in
   match name with
   | None -> begin
-      if Map.length buildscript = 1
-      then let build_module = Map.nth_exn buildscript 0 |> snd in
+      if Map.length module_map = 1
+      then let build_module = Map.nth_exn module_map 0 |> snd in
         f ~buildscript ~build_module
       else failwith "Please specify module name"
     end
   | Some name ->
-    match Map.find buildscript name with
+    match Map.find module_map name with
     | Some build_module ->
       f ~buildscript ~build_module
     | _ ->

@@ -37,7 +37,8 @@ let buildfile ~outf ~process f () =
   if process
   then
     let src_dir = Filename.dirname f in
-    Map.iteri s ~f:(fun ~key ~data ->
+    BuildScript.get_module_map s
+    |> Map.iteri  ~f:(fun ~key ~data ->
       Format.fprintf outf "Library %s:@." key;
       BuildScript.read_module ~src_dir data
       |> [%sexp_of: Library.t] |> Sexp.pp_hum outf;
@@ -46,19 +47,21 @@ let buildfile ~outf ~process f () =
 
 let export f () =
   let s = BuildScript.load f in
-  s |> BuildScript.export_opam
+  BuildScript.get_module_map s
+  |> BuildScript.export_opam
 
 let with_build_script f ~outf ~prefix ~buildscript_path ~name ~verbose ~env () =
-  let builsscript = BuildScript.load buildscript_path in
+  let buildscript = BuildScript.load buildscript_path in
+  let module_map = BuildScript.get_module_map buildscript in
   match name with
   | None -> begin
-    if StringMap.length builsscript = 1
-    then let build_module = StringMap.nth_exn builsscript 0 |> snd in
+    if StringMap.length module_map = 1
+    then let build_module = StringMap.nth_exn module_map 0 |> snd in
       f ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env
     else failwith "Please specify module name with -name option"
   end
   | Some name ->
-    match StringMap.find builsscript name with
+    match StringMap.find module_map name with
       | Some build_module ->
         f ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env
       | _ ->

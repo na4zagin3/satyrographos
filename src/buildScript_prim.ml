@@ -85,7 +85,15 @@ type m =
 module StringMap = Map.Make(String)
 module StringSet = Set.Make(String)
 
-type t = m StringMap.t [@@deriving sexp]
+type t =
+  | Lang_0_0_2 of m StringMap.t
+  | Lang_0_0_3 of m StringMap.t
+[@@deriving sexp]
+
+let get_module_map = function
+  | Lang_0_0_2 module_map
+  | Lang_0_0_3 module_map ->
+    module_map
 
 let library_to_opam_file name =
   let name = OpamPackage.Name.of_string ("satysfi-" ^ name) in
