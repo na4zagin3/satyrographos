@@ -11,7 +11,7 @@ Prepare SATySFi source
 
 
 Generate dependency graphs for satyh
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph -S 0.0.5 --mode .satyh first.saty
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph -S 0.0.5 --mode pdf first.saty
   Compatibility warning: You have opted in to use experimental features.
   digraph G {
     "second.satyh-md" [shape=box, ];
@@ -29,7 +29,7 @@ Generate dependency graphs for satyh
     }
 
 Generate dependency graphs for satyh-md
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph -S 0.0.5 --mode .satyh-md first.saty
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph -S 0.0.5 --mode text-md first.saty
   Compatibility warning: You have opted in to use experimental features.
   digraph G {
     "second.satyh-md" [shape=box, ];

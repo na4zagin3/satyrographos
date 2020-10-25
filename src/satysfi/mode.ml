@@ -7,6 +7,36 @@ type t =
   | Generic
 [@@deriving sexp, compare, hash, equal]
 
+let of_string_opt = function
+  | "pdf" -> Some Pdf
+  | "generic" -> Some Generic
+  | s ->
+    String.chop_prefix ~prefix:"text-" s
+    |> Option.map ~f:(fun m -> Text m)
+
+let of_string_exn str =
+  of_string_opt str
+  |> Option.value_exn ~message:(sprintf "Unknown mode: %s" str)
+
+let to_string = function
+  | Pdf -> "pdf"
+  | Generic -> "generic"
+  | Text s ->
+    "text-" ^ s
+
+let%test_unit "of_string: roundtrip" =
+  let test a =
+    match of_string_opt (to_string a) with
+    | Some b when equal a b ->
+      ()
+    | b ->
+      failwithf !"of_string_opt (to_string %{sexp: t}) gets %{sexp: t option}"
+        a b ()
+  in
+  let values = [Pdf; Text "md"; Text "html"; Generic;] in
+  List.iter values ~f:(fun a ->
+      test a)
+
 let of_extension_opt = function
   | ".satyh" -> Some Pdf
   | ".satyg" -> Some Generic

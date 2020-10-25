@@ -45,7 +45,7 @@ let deps_make_command =
         in
         let outf = Format.err_formatter in
         let mode =
-          Option.bind ~f:Mode.of_extension_opt mode
+          Option.map ~f:Mode.of_string_exn mode
           |> Option.value ~default:Mode.Pdf
         in
         let g =
