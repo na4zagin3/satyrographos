@@ -132,6 +132,8 @@ let add_autogen_libraries ~outf ~libraries ~env:(_ : Environment.t) library_map 
   in
   library_map
   |> add_library Autogen.Fonts.name Autogen.Fonts.generate
+  |> add_library Autogen.Today.name Autogen.Today.generate
+    (* %libraries need to come last *)
   |> add_library Autogen.Libraries.name Autogen.Libraries.generate
 
 let get_library_map ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~(env: Environment.t) () =

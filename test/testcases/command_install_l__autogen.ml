@@ -18,7 +18,14 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
 
 let () =
   let system_font_prefix = None in
-  let autogen_libraries = ["%libraries"] in
+  let autogen_libraries = [
+    (* Some libraries are commented out since they are not reproducible. *)
+    (* "%fonts"; *)
+    "%libraries";
+    (* %today will be reproducible after https://github.com/na4zagin3/satyrographos/issues/98
+       "%today";
+    *)
+  ] in
   let libraries = Some ["grcnum"; "base"] in
   let verbose = true in
   let copy = false in
