@@ -24,5 +24,6 @@
    commandPin
    commandSatysfi
    commandStatus
+   commandUtil
    main)
  )

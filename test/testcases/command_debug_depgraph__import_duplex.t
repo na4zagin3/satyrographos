@@ -49,3 +49,18 @@ Generate dependency graphs
                               label="@import: second", ];
     
     }
+
+Dep files
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos util deps-make -S 0.0.5 --depfile deps.d --output-extension .pdf --follow-required first.saty
+  Compatibility warning: You have opted in to use experimental features.
+  $ cat deps.d
+  first.pdf: first.saty third.satyh second.satyh
+  
+  deps.d: first.saty third.satyh second.satyh
+  
+  first.saty:
+  
+  second.satyh:
+  
+  third.satyh:
+  

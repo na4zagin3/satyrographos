@@ -25,7 +25,7 @@ build-doc:
 	@echo "=============================="
 	@cd "$(SATYSFI_RUNTIME)" ; find . | LC_ALL=C sort
 	@echo "=============================="
-	satyrographos debug project-env | grep -e 'pkg/Satyristes' >/dev/null || (export ; whereis satyrographos satysfi opam)
+	@echo "$(SATYROGRAPHOS_PROJECT)" | grep -e 'pkg/Satyristes' >/dev/null ; echo "$$?"
 |}
 
 let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =

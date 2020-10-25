@@ -519,3 +519,75 @@ let cyclic_directives dep_graph =
         (* TODO Should be ordered with the graph structure rather than the lexicographical order. *)
       |> List.sort ~compare:[%compare: Location.t * Dependency.directive]
     )
+
+let reachable_files dep_graph sources =
+  let closure =
+    Oper.transitive_closure dep_graph
+  in
+  let f source =
+    G.succ closure (Vertex.File source)
+    |> List.filter_map ~f:(function
+        | File path -> Some path
+        | _ -> None
+      )
+  in
+  List.map sources ~f:(fun source -> source, f source)
+
+(* TODO Improve this *)
+let escape_makefile_filename name =
+  String.concat_map name ~f:(function
+      | '$' -> "$$"
+      | '\'' -> {|'\''|}
+      | ' ' -> {|\ |}
+      | c -> String.of_char c
+    )
+
+module Makefile = struct
+  let expand_deps deps =
+    let current_targets =
+      List.map deps ~f:fst
+      |> Set.of_list (module String)
+    in
+    let additional_targets =
+      List.concat_map deps ~f:snd
+      |> Set.of_list (module String)
+    in
+    let additional_targets =
+      Set.diff additional_targets current_targets
+      |> Set.to_list
+      |> List.map ~f:(fun target -> target, [])
+    in
+    deps @ additional_targets
+
+  let to_string deps =
+    let buf = Buffer.create 100 in
+    let f = Format.make_formatter (fun str pos len -> Buffer.add_substring buf str ~pos ~len) ignore in
+    List.iter deps ~f:(fun (target, deps) ->
+        Format.fprintf f "%s:" target;
+        List.iter deps ~f:(fun dep ->
+            escape_makefile_filename dep
+            |> Format.fprintf f " %s"
+          );
+        Format.fprintf f "@.@.";
+      );
+    Buffer.contents buf
+end
+
+let%expect_test "Makefile.to_string: empty" =
+  Makefile.to_string []
+  |> print_endline
+
+let%expect_test "Makefile.to_string: simple" =
+  Makefile.to_string [
+    "a.saty", ["b.satyh"];
+    "b.saty", [];
+    "c.saty", ["d.satyh"; "e.satyh"];
+  ]
+  |> print_endline;
+  [%expect {|
+    a.saty: b.satyh
+
+    b.saty:
+
+    c.saty: d.satyh e.satyh |}]
+
