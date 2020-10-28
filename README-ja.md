@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.com/na4zagin3/satyrographos.svg?branch=master)](https://travis-ci.com/na4zagin3/satyrographos)
 
+<img src="./doc/logo.svg" width="100"/>
+
 [SATySFi](https://github.com/gfngfn/SATySFi)用パッケージマネージャー
 
 パッケージ一覧はこちら→[satyrographos-packages](https://satyrographos-packages.netlify.app/) (@matsud224さん作)

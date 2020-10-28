@@ -4,6 +4,8 @@
 
 [日本語版 README はこちら](https://github.com/na4zagin3/satyrographos/blob/master/README-ja.md)
 
+<img src="./doc/logo.svg" width="100"/>
+
 A package manager for [SATySFi](https://github.com/gfngfn/SATySFi).
 Here is the package list: [satyrographos-packages](https://satyrographos-packages.netlify.app/) (thanks to @matsud224).
 
