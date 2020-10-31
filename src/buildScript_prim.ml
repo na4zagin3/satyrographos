@@ -120,6 +120,11 @@ let export_opam_package = function
 let export_opam bs =
   StringMap.iter bs ~f:export_opam_package
 
+let get_compatibility_opt = function
+  | Library l -> Some l.compatibility
+  | LibraryDoc _ -> None
+  | Doc _ -> None
+
 let get_dependencies_opt = function
   | Library l -> Some l.dependencies
   | LibraryDoc l -> Some l.dependencies
@@ -163,15 +168,7 @@ let compatibility_treatment (p: library) (l: Library.t) =
         }
       }
     | Satyrographos "0.0.1" ->
-      let open Library in
-      let rename_packages = List.map (pacages_of_sources p.sources) ~f:(fun {dst=name; _} ->
-        let old_package_name = name in
-        let new_package_name = p.name ^ "/" ^ name in
-        Rename.{ old_name = old_package_name; new_name = new_package_name }
-      ) |> RenameSet.of_list in
-      Compatibility.{ empty with
-        rename_packages
-      }
+      Library.Compatibility.empty
     | unknown_symbol -> begin
       let unknown_symbol =
       unknown_symbol

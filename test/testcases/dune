@@ -19,6 +19,7 @@
    command_install_l__thirdParties_brokenDependency
    command_install_l__transitive
    command_lint__acyclic_for_each_mode
+   command_lint__compatibility_satyrographos_0_0_1
    command_lint__cyclic_dependencies
    command_lint__insufficient_dependencies
    command_lint__insufficient_dependencies_for_some_modes

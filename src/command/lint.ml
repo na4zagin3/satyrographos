@@ -8,6 +8,9 @@ type location =
   | FileLoc of Location.t
   | OpamLoc of string
 
+type message =
+  (location list * [`Error | `Warning] * string) list
+
 let show_location ~outf ~basedir =
   let concat_with_basedir = FilePath.make_absolute basedir in
   function
@@ -359,6 +362,20 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~buildscript_bas
   in
   Shexp_process.eval cmd
 
+let lint_compatibility ~loc (m : BuildScript.m) =
+  let f = function
+    | Satyrographos.BuildScript.Compatibility.Satyrographos "0.0.1" ->
+      [ loc, `Warning, "Compatibility warnings for Satyrographos 0.0.1 libraries are no longer effective."]
+    | _ ->
+      []
+  in
+  match Satyrographos.BuildScript.get_compatibility_opt m with
+  | None -> []
+  | Some compatibility ->
+    compatibility
+    |> Satyrographos.BuildScript.CompatibilitySet.to_list
+    |> List.concat_map ~f
+
 let lint_module ~outf ~verbose:_ ~satysfi_version ~basedir ~buildscript_basename ~(env: Environment.t) (m : BuildScript.m) =
   let loc = [SatyristesModLoc BuildScript.(buildscript_basename, get_name m, get_position_opt m)] in
   let opam_problems =
@@ -371,6 +388,7 @@ let lint_module ~outf ~verbose:_ ~satysfi_version ~basedir ~buildscript_basename
   in
   opam_problems
   @ dependency_problems
+  @ lint_compatibility ~loc m
 
 let lint ~outf ~satysfi_version ~verbose ~buildscript_path ~(env : Environment.t) =
   let buildscript_path = Option.value ~default:"Satyristes" buildscript_path in
