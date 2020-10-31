@@ -13,9 +13,6 @@ Read library:
   ((doc/grcnum.md (Filename @@temp_dir@@/pkg/README.md))
    (fonts/grcnum/grcnum-font.ttf (Filename @@temp_dir@@/pkg/font.ttf))
    (packages/grcnum/grcnum.satyh (Filename @@temp_dir@@/pkg/grcnum.satyh))))
- (compatibility
-  ((rename_packages
-    (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
  (dependencies (fonts-theano)))
 Copying @@temp_dir@@/pkg/README.md to @@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
 Copying @@temp_dir@@/pkg/font.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
@@ -50,11 +47,8 @@ diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash @@dest_
 > {"grcnum:grcnum-font":<"Single":{"src-dist":"grcnum/grcnum-font.ttf"}>}
 \ No newline at end of file
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/metadata @@dest_dir@@/dest/share/satysfi/grcnum/metadata
-0a1,5
-> ((version 1) (libraryName grcnum) (libraryVersion 0.2)
->  (compatibility
->   ((rename_packages
->     (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
+0a1,2
+> ((version 1) (libraryName grcnum) (libraryVersion 0.2) (compatibility ())
 >  (dependencies ((fonts-theano ()))))
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh
 0a1

@@ -32,17 +32,6 @@ Read library:
    (packages/grcnum/a/file.satyh
     (Filename @@temp_dir@@/pkg/src/a/file.satyh))
    (packages/grcnum/grcnum.satyh (Filename @@temp_dir@@/pkg/grcnum.satyh))))
- (compatibility
-  ((rename_packages
-    (((new_name grcnum/a/b-1/c-1/file1.satyh)
-      (old_name a/b-1/c-1/file1.satyh))
-     ((new_name grcnum/a/b-1/c-1/file2.satyh)
-      (old_name a/b-1/c-1/file2.satyh))
-     ((new_name grcnum/a/b-1/c-2/file1.satyh)
-      (old_name a/b-1/c-2/file1.satyh))
-     ((new_name grcnum/a/b-1/file.satyh) (old_name a/b-1/file.satyh))
-     ((new_name grcnum/a/file.satyh) (old_name a/file.satyh))
-     ((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
  (dependencies (fonts-theano)))
 Copying @@temp_dir@@/pkg/README.md to @@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
 Copying @@temp_dir@@/pkg/font/a/b-1/c-1/file1.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/a/b-1/c-1/file1.ttf
@@ -120,19 +109,8 @@ diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash @@dest_
 > {"grcnum:grcnum-font":<"Single":{"src-dist":"grcnum/grcnum-font.ttf"}>}
 \ No newline at end of file
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/metadata @@dest_dir@@/dest/share/satysfi/grcnum/metadata
-0a1,13
-> ((version 1) (libraryName grcnum) (libraryVersion 0.2)
->  (compatibility
->   ((rename_packages
->     (((new_name grcnum/a/b-1/c-1/file1.satyh)
->       (old_name a/b-1/c-1/file1.satyh))
->      ((new_name grcnum/a/b-1/c-1/file2.satyh)
->       (old_name a/b-1/c-1/file2.satyh))
->      ((new_name grcnum/a/b-1/c-2/file1.satyh)
->       (old_name a/b-1/c-2/file1.satyh))
->      ((new_name grcnum/a/b-1/file.satyh) (old_name a/b-1/file.satyh))
->      ((new_name grcnum/a/file.satyh) (old_name a/file.satyh))
->      ((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))))
+0a1,2
+> ((version 1) (libraryName grcnum) (libraryVersion 0.2) (compatibility ())
 >  (dependencies ((fonts-theano ()))))
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-1/file1.satyh @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/a/b-1/c-1/file1.satyh
 0a1
