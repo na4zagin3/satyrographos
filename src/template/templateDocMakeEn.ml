@@ -1,4 +1,4 @@
-let name = "doc-make"
+let name = "doc-make@en"
 
 let local_satyh_template =
 "local.satyh",
@@ -59,7 +59,7 @@ document (|
     \listing{
       * \href(`https://github.com/gfngfn/SATySFi/blob/master/demo/demo.saty`){`demo.saty`} is a brief introduction to \SATySFi;.
       * Please join \href(`https://github.com/gfngfn/SATySFi/wiki/SATySFi-Wiki#satsysfi-slack`){\emph{SATySFi Slack}}!
-    }
+    }%
   }
   +p {
     As you see, `+p { ... }` represents a paragraph.
@@ -82,13 +82,13 @@ document (|
     You can get a displayed equation by applying `\eqn` command to a math object. E.g.,
     \eqn(${
       \int_{M} d\alpha = \int_{\partial M}\alpha.
-    });
+    });%
     Similarly, you can get a code example with `\d-code` command.
     \d-code(```
     \eqn(${
       \int_{M} d\alpha = \int_{\partial M}\alpha
     });
-    ```);
+    ```);%
   }
   +p {
     `\math-list` takes a list of math objects.
@@ -101,7 +101,7 @@ document (|
         \lower{\prod}{1\leq i\leq j\leq n}
           \mathop{\mathrm{sgn}}\paren{a_{j} - a_{i}}
       };
-    ];
+    ];%
     `\align` takes a list of lists of math objects.
     \align[
       [ ${\pi};
@@ -126,7 +126,7 @@ document (|
         }^{ 2 }
         };
       ];
-    ];
+    ];%
   }
   +section{Sections} <
     +p {
