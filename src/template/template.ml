@@ -43,6 +43,6 @@ let create_files ~basedir vars templ =
   List.iter (create_file ~basedir vars) templ
 
 let templates = [
-  "doc-make", ("Document with Makefile", TemplateDocMake.files);
+  TemplateDocMakeEn.name, ("Document with Makefile (en)", TemplateDocMakeEn.files);
   "lib", ("Package library", TemplateLib.files);
 ]

@@ -1,5 +1,5 @@
 Create a new library with --license option
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos new doc-make --license CC-BY-4.0 test-doc
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos new doc-make@en --license CC-BY-4.0 test-doc
   Compatibility warning: You have opted in to use experimental features.
   Name: test-doc
   License: CC-BY-4.0
