@@ -44,5 +44,6 @@ let create_files ~basedir vars templ =
 
 let templates = [
   TemplateDocMakeEn.name, ("Document with Makefile (en)", TemplateDocMakeEn.files);
+  TemplateDocMakeJa.name, ("Document with Makefile (ja)", TemplateDocMakeJa.files);
   "lib", ("Package library", TemplateLib.files);
 ]

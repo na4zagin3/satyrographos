@@ -1,8 +1,8 @@
-let name = "doc-make@en"
+let name = "doc-make@ja"
 
 let local_satyh_template =
 "local.satyh",
-{|% This is a file for local function/command definitions
+{|% プロジェクト用函数・コマンド定義用ファイル
 @require: code
 @require: math
 
@@ -16,74 +16,75 @@ let-block ctx +display-boxes content code =
   read-block (ctx |> set-paragraph-margin 12pt 0pt) '<+frame(content);>
     +++ read-block (ctx |> set-paragraph-margin 0pt 12pt) '<+code(code);>
 
-% Define a math command
+% 数式コマンドの定義
 let-math \factorial x =
   ${#x \mathpunct{\mathrm-token!(`!`)}}
 |}
 
 let main_saty_template =
 "main.saty",
-{|% This is the document file
+{|% 文書ファイル
 
-% Class package
+% 文書クラスパッケージ
 @require: stdjabook
 
-% Standard packages
+% SATySFi標準パッケージ
 @require: annot
 @require: code
 @require: math
 @require: itemize
 
-% Third-party packages
+% Satyrographosパッケージ
 @require: fss/fss
 @require: fss/fonts
 @require: fss/style
 
-% Local package
+% プロジェクト内パッケージ
 @import: local
 
 
 document (|
-  title = {Test Document};
-  author = {Your Name};
+  title = {表題};
+  author = {名前};
   show-title = true;
   show-toc = false;
 |) '<
   +p {
-    This template is for \SATySFi; 0.0.5.
-    As \SATySFi; is not yet murture,
-    please be warned that \font-style[italic]{you may experience some breaking changes}.
+    このテンプレートは\SATySFi; 0.0.5用であり、
+    \SATySFi;はいまだ開発段階にあるので、
+    \font-style[bold]{破壊的変更に注意すべし}。
   }
   +p {
-    There are online resources, so Please check out!
+    オンライン
     \listing{
       * \href(`https://github.com/gfngfn/SATySFi/blob/master/demo/demo.saty`){`demo.saty`} is a brief introduction to \SATySFi;.
       * Please join \href(`https://github.com/gfngfn/SATySFi/wiki/SATySFi-Wiki#satsysfi-slack`){\emph{SATySFi Slack}}!
+      * \SATySFi;本体に付属している\href(`https://github.com/na4zagin3/SATySFi/blob/master/demo/demo.saty`){デモファイル}も参考にすべし。
     }%
   }
   +p {
-    As you see, `+p { ... }` represents a paragraph.
-    Technically speaking, `+p` is a block command applied to an inline text object `{ ... }`.
+    `+p { ... }`は段落を表す。
+    細かく言えば、`+p`は行内テキスト`{ ... }`を引数として取る段落コマンドである。
   }
   +p {
-    An inline equation is represented by a math object `${ ... }`. E.g., ${x^2 - x + 1}.
+    行内数式は数式オブジェクト`${ ... }`で表される。例：${x^2 - x + 1}。
   }
   +p {
-    Basic math commands resemble those in \LaTeX;. E.g., ${f: A \to \mathbb{R}}.
+    基本的な数式コマンドは\LaTeX;のものに似ている。例：${f: A \to \mathbb{R}}。
   }
   +p {
-    Unlike math commands or \LaTeX; commands, a text command needs argument terminator “`;`” if the last argument is neither `{ ... }` (i.e., an inline text) or `< ... >` (i.e., a block text): \emph{emph} vs. \code(`code`);.
+    数式コマンドや\LaTeX;のコマンドとは異なり、行内コマンドや段落コマンドは終端文字`;`を要する。但し、最後の引数が行内テキスト`{ ... }`か段落テキスト`< ... >`である場合を除く。例：\emph{emph}、\code(`code`);。
   }
   +p({
-    Each text command takes parenthesized arguments or block/inline texts.
-    E.g., \emph{abc} vs. \emph({abc});.
+    テキストコマンドの各引数は括弧で囲まれる。
+    例：\emph{abc}、\emph({abc});。
   });
   +p {
-    You can get a displayed equation by applying `\eqn` command to a math object. E.g.,
+    別行立て数式は`\eqn`に数式オブジェクトを適用することで得られる。例：
     \eqn(${
       \int_{M} d\alpha = \int_{\partial M}\alpha.
     });%
-    Similarly, you can get a code example with `\d-code` command.
+    同様に別行立てコード例は`\d-code`で得られる。
     \d-code(```
     \eqn(${
       \int_{M} d\alpha = \int_{\partial M}\alpha
@@ -91,7 +92,7 @@ document (|
     ```);%
   }
   +p {
-    `\math-list` takes a list of math objects.
+    `\math-list`コマンドは数式オブジェクトの排列を一つ引数として取る。
     \math-list[
       ${\delta_{ij} = \cases![
         (${1}, {${i = j}});
@@ -102,7 +103,7 @@ document (|
           \mathop{\mathrm{sgn}}\paren{a_{j} - a_{i}}
       };
     ];%
-    `\align` takes a list of lists of math objects.
+    `\align`コマンドは数式オブジェクトの排列の排列を一つ引数として取る。
     \align[
       [ ${\pi};
         ${=\paren{
@@ -128,29 +129,30 @@ document (|
       ];
     ];%
   }
-  +section{Sections} <
+  +section{節} <
     +p {
-      A new section is created by
-      \code(`+section{Section title} < block commands... >`);.
+      節は
+      \code(`+section{節題} < 段落コマンド... >`);.
+      の形式で表される。
     }
-    +subsection{Subsection} <
+    +subsection{項} <
       +p {
-        There’s `+subsection` command too.
+        `+subsection`コマンドもある。
       }
     >
   >
-  +section{Packages} <
+  +section{パッケージ} <
     +p {
-      You can import standard/third-party packages with `@require` directive:
+      `@require`指令を用いることで、\SATySFi;標準パッケージやSatyrographosパッケージを読み込むことができる。
     }
     +code (`
       @require: math
     `);
     +p {
-      `@import` directive will import a package from the relative path to this file.
+      `@import`指令は現在のファイルからの相対パスに存在するパッケージを読み込む。
     }
     +code (`
-      % This directive imports local.satyh file
+      % この指令は local.satyh ファイルを読み込む
       @import: ./local
     `);
   >
@@ -210,11 +212,11 @@ let readme_template =
 "README.md",
 {|# @@library@@
 
-A great document.
+素敵な文書
 
-## How to compile?
+## 処理方法
 
-Run `satyrographos build`.
+`satyrographos build`コマンドを走らせること。
 |}
 
 let files = [
