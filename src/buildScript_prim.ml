@@ -53,8 +53,9 @@ type library = {
   position: position option;
 } [@@deriving sexp]
 
-type documentSource =
-  | Doc of string * string
+type documentSource = [
+  | `Doc of link
+]
 [@@deriving sexp]
 
 type libraryDoc = {
@@ -229,7 +230,7 @@ let read_libraryDoc (p: libraryDoc) ~src_dir =
   let map_file dst_dir = List.map ~f:(fun (dst, src) -> (Filename.concat dst_dir dst, Filename.concat src_dir src)) in
   let docs =
   p.sources
-  |> List.map ~f:(function Doc (dst, src) -> (dst, src))
+  |> List.map ~f:(function `Doc {dst; src} -> (dst, src))
   |> map_file (Filename.concat "docs" p.name)
   |> List.map ~f:(function (dst, src) -> (dst, `Filename src))
   in
