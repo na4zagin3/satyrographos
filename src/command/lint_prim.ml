@@ -11,7 +11,10 @@ type hint =
   | MissingDependency of string
 
 type diagnosis =
-  (location list * [`Error | `Warning] * string)
+  { locs : location list;
+    level : [`Error | `Warning];
+    msg : string
+  }
 
 let show_location ~outf ~basedir =
   let concat_with_basedir = FilePath.make_absolute basedir in
@@ -29,7 +32,7 @@ let show_locations ~outf ~basedir locs =
   List.rev locs
   |> List.iter ~f:(show_location ~outf ~basedir)
 
-let show_problem ~outf ~basedir (locs, level, msg) =
+let show_problem ~outf ~basedir {locs; level; msg;} =
   show_locations ~outf ~basedir locs;
   match level with
   | `Error->

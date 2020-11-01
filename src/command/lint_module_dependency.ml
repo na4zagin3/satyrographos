@@ -12,7 +12,7 @@ type hint =
   | MissingDependency of string
 
 type missing_dependency = {
-  loc : location list;
+  locs : location list;
   directive : Satyrographos_satysfi.Dependency.directive;
   hint : hint option;
   modes : Satyrographos_satysfi.Mode.t list;
@@ -32,12 +32,14 @@ let render_missing_dependency level (md : missing_dependency) =
       Option.map hint ~f:(sprintf "\n\n  Hint: %s\n")
       |> Option.value ~default:""
     in
-    md.loc, level, sprintf !"Missing dependency for “%s” (mode %{sexp:Mode.t list})%s"
-      (Dependency.render_directive md.directive)
-      (List.sort ~compare:Mode.compare md.modes)
-      hint
+    let msg = sprintf !"Missing dependency for “%s” (mode %{sexp:Mode.t list})%s"
+        (Dependency.render_directive md.directive)
+        (List.sort ~compare:Mode.compare md.modes)
+        hint
+    in
+    {locs = md.locs; level; msg}
 
-let get_libraries ~loc ~env ~library_override m =
+let get_libraries ~locs ~env ~library_override m =
   let libraries =
     BuildScript.get_dependencies_opt m
     |> Option.map ~f:(fun d -> Library.Dependency.elements d)
@@ -50,7 +52,8 @@ let get_libraries ~loc ~env ~library_override m =
       |> Map.data
     )
   |> Result.map_error ~f:(fun exn ->
-      [loc, `Error, (sprintf !"Exception during setting up the env. Install dependent libraries by `opam pin add \"file://$PWD\"`.\n%{sexp:Exn.t}" exn)]
+      let msg = sprintf !"Exception during setting up the env. Install dependent libraries by `opam pin add \"file://$PWD\"`.\n%{sexp:Exn.t}" exn in
+      [{locs; level = `Error; msg}]
     )
 
 let detect_cyclic_dependencies ~dep_graph_mode ~mode =
@@ -63,7 +66,8 @@ let detect_cyclic_dependencies ~dep_graph_mode ~mode =
               FileLoc loc
             )
         in
-        (locs, `Error, (sprintf !"Cyclic dependency found for mode %{sexp:Mode.t}" mode))
+        let msg = sprintf !"Cyclic dependency found for mode %{sexp:Mode.t}" mode in
+        {locs; level = `Error; msg}
       )
   in
   Result.ok_if_true ~error (List.is_empty error)
@@ -101,7 +105,7 @@ let check_dependency ~loaded_library_names ~mode ~dep_graph_mode ~packages =
       DependencyGraph.revese_lookup_directive dep_graph_mode sink
       |> List.map ~f:(fun ((loc, directive), _path) ->
           {
-            loc = [FileLoc loc];
+            locs = [FileLoc loc];
             directive;
             hint = get_hint directive;
             modes = [mode];
@@ -109,7 +113,7 @@ let check_dependency ~loaded_library_names ~mode ~dep_graph_mode ~packages =
         )
     )
 
-let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~(env : Environment.t) (m : BuildScript.m) =
+let lint_module_dependency ~outf ~locs ~satysfi_version ~basedir ~(env : Environment.t) (m : BuildScript.m) =
   let target_library =
     BuildScript.read_module ~src_dir:basedir m
   in
@@ -119,7 +123,7 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~(env : Environm
   let library_override =
     Map.singleton (module StringSet.Elt) library_name target_library
   in
-  let verification d libraries : (location list * [> `Error] * string) list Shexp_process.t =
+  let verification d libraries : diagnosis list Shexp_process.t =
     let library_names =
       List.filter_map libraries ~f:(fun l -> l.Library.name)
       |> StringSet.of_list
@@ -166,7 +170,7 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~(env : Environm
           List.filter packages ~f:FileUtil.(test (Not Is_file))
           |> List.map ~f:(function path ->
               let floc = Location.{path; range=None;} in
-              FileLoc floc :: loc, `Error, "Missing file"
+              {locs = FileLoc floc :: locs; level =  `Error; msg = "Missing file"}
             )
         in
         let dep_graph =
@@ -185,7 +189,7 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~(env : Environm
                   (Printexc.get_backtrace ())
               in
               (* TODO Show errors only caused by this library. *)
-              [loc, `Error, msg])
+              [{locs; level = `Error; msg}])
         in
         let modes =
           (* TODO Optimize *)
@@ -208,7 +212,7 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~(env : Environm
                       ~packages
                   )
                 |> Result.map_error ~f:(fun exn ->
-                    [loc, `Error, (sprintf !"Something went wrong during working on dependency graphs.\n%{sexp:Exn.t}\n%s" exn (Printexc.get_backtrace ()))]
+                    [{locs; level = `Error; msg = (sprintf !"Something went wrong during working on dependency graphs.\n%{sexp:Exn.t}\n%s" exn (Printexc.get_backtrace ()))}]
                   )
               )
             |> Result.combine_errors
@@ -222,14 +226,14 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~(env : Environm
           )
         |> List.append missing_file_errors
       )
-    >>| List.map ~f:(fun (locs, level, msg) ->
+    >>| List.map ~f:(fun {locs; level; msg} ->
         let locs = List.map ~f:decode_loc locs in
-        locs, level, msg
+        {locs; level; msg}
       )
   in
   let cmd =
     Shexp_process.with_temp_dir ~prefix:"Satyrographos" ~suffix:"lint" (fun temp_dir ->
-        get_libraries ~loc ~env ~library_override m
+        get_libraries ~locs ~env ~library_override m
         |> Result.map ~f:(verification temp_dir)
         |> (function
             | Ok e -> e

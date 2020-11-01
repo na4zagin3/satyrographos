@@ -3,7 +3,7 @@ open Lint_prim
 
 val lint_module_dependency :
   outf:Format.formatter ->
-  loc:location list ->
+  locs:location list ->
   satysfi_version:Satyrographos_satysfi.Version.t ->
   basedir:string ->
   env:Environment.t ->

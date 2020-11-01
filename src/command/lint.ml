@@ -5,10 +5,14 @@ open Lint_prim
 
 let get_opam_name = get_opam_name
 
-let lint_compatibility ~loc (m : BuildScript.m) =
+let lint_compatibility ~locs (m : BuildScript.m) =
   let f = function
     | Satyrographos.BuildScript.Compatibility.Satyrographos "0.0.1" ->
-      [ loc, `Warning, "Compatibility warnings for Satyrographos 0.0.1 libraries are no longer effective."]
+      [{
+        locs;
+        level = `Warning;
+        msg = "Compatibility warnings for Satyrographos 0.0.1 libraries are no longer effective.";
+      }]
     | _ ->
       []
   in
@@ -20,18 +24,18 @@ let lint_compatibility ~loc (m : BuildScript.m) =
     |> List.concat_map ~f
 
 let lint_module ~outf ~verbose:_ ~satysfi_version ~basedir ~buildscript_basename ~(env: Environment.t) (m : BuildScript.m) =
-  let loc = [SatyristesModLoc BuildScript.(buildscript_basename, get_name m, get_position_opt m)] in
+  let locs = [SatyristesModLoc BuildScript.(buildscript_basename, get_name m, get_position_opt m)] in
   let opam_problems =
     BuildScript.get_opam_opt m
-    |> Option.map ~f:(Lint_module_opam.lint_module_opam ~loc ~basedir m)
+    |> Option.map ~f:(Lint_module_opam.lint_module_opam ~locs ~basedir m)
     |> Option.value ~default:[]
   in
   let dependency_problems =
-    Lint_module_dependency.lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~env m
+    Lint_module_dependency.lint_module_dependency ~outf ~locs ~satysfi_version ~basedir ~env m
   in
   opam_problems
   @ dependency_problems
-  @ lint_compatibility ~loc m
+  @ lint_compatibility ~locs m
 
 let lint ~outf ~satysfi_version ~verbose ~buildscript_path ~(env : Environment.t) =
   let buildscript_path = Option.value ~default:"Satyristes" buildscript_path in
@@ -53,5 +57,5 @@ let lint ~outf ~satysfi_version ~verbose ~buildscript_path ~(env : Environment.t
   show_problems ~outf ~basedir problems;
   List.length problems
   |> Format.fprintf outf "%d problem(s) found.@.";
-  List.find problems ~f:(function _, `Error, _ -> true | _ -> false)
+  List.find problems ~f:(function {level=`Error; _} -> true | _ -> false)
   |> Option.value_map ~default:0 ~f:(const 1)

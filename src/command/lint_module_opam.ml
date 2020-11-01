@@ -3,10 +3,10 @@ open Satyrographos
 open Lint_prim
 
 
-let lint_opam_file ~opam ~opam_path:_ ~loc =
+let lint_opam_file ~opam ~opam_path:_ ~locs =
   OpamFileTools.lint opam
   |> List.map ~f:(fun (error_no, level, msg) ->
-      loc, level, sprintf "(%d) %s" error_no msg)
+      {locs; level; msg = sprintf "(%d) %s" error_no msg})
 
 module StringSet = Set.Make(String)
 
@@ -32,14 +32,14 @@ let read_opam ~basedir opam_path =
   let open OpamFile in
   OPAM.read opam_file
 
-let test_name ~loc ~opam ~opam_path m =
+let test_name ~locs ~opam ~opam_path m =
   let module_name = BuildScript.get_name m in
   let opam_name = get_opam_name ~opam ~opam_path in
   if String.equal ("satysfi-" ^ module_name) opam_name |> not
-  then [loc, `Error, (sprintf "OPAM package name “%s” should be “satysfi-%s”." opam_name module_name)]
+  then [{locs; level = `Error; msg = (sprintf "OPAM package name “%s” should be “satysfi-%s”." opam_name module_name)}]
   else []
 
-let test_version ~loc ~opam m =
+let test_version ~locs ~opam m =
   let open OpamFile in
   let module_name = BuildScript.get_name m in
   let module_version =
@@ -50,7 +50,7 @@ let test_version ~loc ~opam m =
   let opam_version = OPAM.version_opt opam |> Option.map ~f:OpamPackage.Version.to_string in
   match opam_version with
   | _ when String.is_empty module_version ->
-    [loc, `Error, (sprintf "Version should not be empty.")]
+    [{locs; level = `Error; msg = (sprintf "Version should not be empty.")}]
   | Some opam_version when String.equal module_version opam_version ->
     []
   | Some opam_version when String.is_prefix ~prefix:module_version opam_version ->
@@ -64,19 +64,19 @@ let test_version ~loc ~opam m =
         Char.is_alpha first_opam_version_char
       with
       | false, false, _, _ ->
-        [loc, `Error, (sprintf "Library version “%s” should end with an alphabet or a digit." module_version)]
+        [{locs; level = `Error; msg = (sprintf "Library version “%s” should end with an alphabet or a digit." module_version)}]
       | _, true, _, true
       | true, _, true, _ ->
-        [loc, `Error, (sprintf "OPAM package version “%s” should be prefixed with “%s”." opam_version module_version)]
+        [{locs; level = `Error; msg = (sprintf "OPAM package version “%s” should be prefixed with “%s”." opam_version module_version)}]
       | _, _, _, _ -> []
     end
   | Some opam_version ->
-    [loc, `Error, (sprintf "OPAM package version “%s” should be prefixed with “%s”." opam_version module_version)]
+    [{locs; level = `Error; msg = (sprintf "OPAM package version “%s” should be prefixed with “%s”." opam_version module_version)}]
   | None ->
-    [loc, `Error, (sprintf "OPAM file lacks the version field")]
+    [{locs; level = `Error; msg = (sprintf "OPAM file lacks the version field")}]
 
-let lint_module_opam ~loc ~basedir (m : BuildScript.m) opam_path =
-  let loc = OpamLoc opam_path :: loc in
+let lint_module_opam ~locs ~basedir (m : BuildScript.m) opam_path =
+  let locs = OpamLoc opam_path :: locs in
   let opam = read_opam ~basedir opam_path in
   let module_name = BuildScript.get_name m in
   let test_dependencies =
@@ -96,12 +96,12 @@ let lint_module_opam ~loc ~basedir (m : BuildScript.m) opam_path =
     in
     if StringSet.is_empty missing_dependencies |> not
     then
-      [loc, `Warning, (sprintf !"The OPAM file lacks dependencies on specified SATySFi libraries: %{sexp:StringSet.t}." missing_dependencies)]
+      [{locs; level = `Warning; msg = (sprintf !"The OPAM file lacks dependencies on specified SATySFi libraries: %{sexp:StringSet.t}." missing_dependencies)}]
     else []
   in
   List.concat
-    [ test_name ~loc ~opam ~opam_path m;
-      test_version ~loc ~opam m;
+    [ test_name ~locs ~opam ~opam_path m;
+      test_version ~locs ~opam m;
       test_dependencies;
-      lint_opam_file ~opam ~opam_path ~loc;
+      lint_opam_file ~opam ~opam_path ~locs;
     ]
