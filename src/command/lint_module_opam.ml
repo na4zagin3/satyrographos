@@ -77,7 +77,7 @@ let test_version ~locs ~opam m =
   | Some opam_version ->
     [{locs; level = `Error; problem = OpamPackageVersionShouldBePrefixedWithLibraryVersion {opam_version; module_version;}}]
   | None ->
-    [{locs; level = `Error; problem = OpamFileShouldHaveVersion; }]
+    [{locs; level = `Error; problem = OpamPackageShouldHaveVersion; }]
 
 let lint_module_opam ~locs ~basedir (m : BuildScript.m) opam_path =
   let locs = OpamLoc opam_path :: locs in

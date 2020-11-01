@@ -37,10 +37,11 @@ let show_problem ~outf ~basedir {locs; level; problem;} =
   Format.fprintf outf "@[<2>";
   begin match level with
   | `Error->
-    Format.fprintf outf "Error:@ "
+    Format.fprintf outf "Error: "
   | `Warning ->
-    Format.fprintf outf "Warning:@ "
+    Format.fprintf outf "Warning: "
   end;
+  Format.fprintf outf "%s@\n" (problem_class problem);
   show_problem ~outf problem;
   Format.fprintf outf "@]@.@."
 

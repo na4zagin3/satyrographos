@@ -7,8 +7,8 @@ type problem =
   | LibraryMissingFile
   | LibraryVersionShouldNotBeEmpty
   | LibraryVersionShouldEndWithAnAlphanum of string
-  | OpamFileShouldHaveVersion
   | OpamPackageShouldHaveSatysfiDependencies of string list
+  | OpamPackageShouldHaveVersion
   | OpamPackageVersionShouldBePrefixedWithLibraryVersion of {
       opam_version: string;
       module_version: string;
@@ -27,6 +27,36 @@ type problem =
       modes: Satyrographos_satysfi.Mode.t list;
     }
 [@@deriving sexp_of]
+
+let problem_class = function
+  | ExceptionDuringSettingUpEnv _ ->
+    "lib/dep/exception-during-setup"
+  | InternalBug _ ->
+    "internal/bug"
+  | InternalException _ ->
+    "internal/exception"
+  | LibraryMissingFile ->
+    "lib/missing-file"
+  | LibraryVersionShouldNotBeEmpty
+  | LibraryVersionShouldEndWithAnAlphanum _ ->
+    "lib/version"
+  | OpamPackageShouldHaveSatysfiDependencies _ ->
+    "opam-file/dependency"
+  | OpamPackageShouldHaveVersion
+  | OpamPackageVersionShouldBePrefixedWithLibraryVersion _ ->
+    "opam-file/version"
+  | OpamProblem (error_no, _) ->
+    sprintf "opam-file/lint/%d" error_no
+  | OpamPackageNamePrefix _ ->
+    "opam-file/name"
+  | SatyrographosCompatibliltyNoticeIneffective version ->
+    sprintf
+      "lib/compat/%s"
+      version
+  | SatysfiFileCyclicDependency _ ->
+    "lib/dep/cyclic"
+  | SatysfiFileMissingDependency _ ->
+    "lib/dep/missing"
 
 let show_problem ~outf = function
   | ExceptionDuringSettingUpEnv exn ->
@@ -52,13 +82,13 @@ let show_problem ~outf = function
   | LibraryVersionShouldEndWithAnAlphanum version ->
     Format.fprintf outf
       "Library version “%s” should end with an alphabet or a digit." version
-  | OpamFileShouldHaveVersion ->
-    Format.fprintf outf
-      "OPAM file lacks the version field"
   | OpamPackageShouldHaveSatysfiDependencies libraries ->
     Format.fprintf outf
       !"The OPAM file lacks dependencies on specified SATySFi libraries: %{sexp:string list}."
       libraries
+  | OpamPackageShouldHaveVersion ->
+    Format.fprintf outf
+      "OPAM file lacks the version field"
   | OpamPackageVersionShouldBePrefixedWithLibraryVersion {opam_version; module_version;} ->
     Format.fprintf outf
       "OPAM package version “%s” should be prefixed with “%s”." opam_version module_version
@@ -86,5 +116,5 @@ let show_problem ~outf = function
     | None -> ()
     | Some l ->
       Format.fprintf outf
-        "\n@;Hint: You may need to add dependency on “%s” to Satyristes."
+        "@\n@;Hint: You may need to add dependency on “%s” to Satyristes."
         l
