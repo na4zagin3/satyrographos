@@ -53,6 +53,62 @@ let get_libraries ~loc ~env ~library_override m =
       [loc, `Error, (sprintf !"Exception during setting up the env. Install dependent libraries by `opam pin add \"file://$PWD\"`.\n%{sexp:Exn.t}" exn)]
     )
 
+let detect_cyclic_dependencies ~dep_graph_mode ~mode =
+  let open Satyrographos_satysfi in
+  let error =
+    DependencyGraph.cyclic_directives dep_graph_mode
+    |> List.map ~f:(fun ds ->
+        let locs =
+          List.map ds ~f:(fun (loc, _) ->
+              FileLoc loc
+            )
+        in
+        (locs, `Error, (sprintf !"Cyclic dependency found for mode %{sexp:Mode.t}" mode))
+      )
+  in
+  Result.ok_if_true ~error (List.is_empty error)
+
+let check_dependency ~loaded_library_names ~mode ~dep_graph_mode ~packages =
+  let open Satyrographos_satysfi in
+  let sources =
+    List.map packages ~f:(fun f -> DependencyGraph.vertex_of_file_path f)
+    |> List.filter ~f:(function
+        | DependencyGraph.Vertex.File p
+        | DependencyGraph.Vertex.MissingFile p
+          ->
+          Mode.of_basename_opt p
+          |> [%equal: Mode.t option] (Some mode)
+        | _ -> true
+      )
+  in
+  let problematic_sinks =
+    DependencyGraph.reachable_sinks dep_graph_mode sources
+    |> List.filter ~f:(function
+        | DependencyGraph.Vertex.File _ -> false
+        | _ -> true
+      )
+  in
+  let get_hint = function
+    | Dependency.Require r ->
+      begin match String.split r ~on:'/' with
+        | l :: _ :: _ when StringSet.mem loaded_library_names l |> not ->
+          Some (MissingDependency l)
+        | _ -> None
+      end
+    | _ -> None
+  in
+  List.concat_map problematic_sinks ~f:(fun sink ->
+      DependencyGraph.revese_lookup_directive dep_graph_mode sink
+      |> List.map ~f:(fun ((loc, directive), _path) ->
+          {
+            loc = [FileLoc loc];
+            directive;
+            hint = get_hint directive;
+            modes = [mode];
+          }
+        )
+    )
+
 let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~(env : Environment.t) (m : BuildScript.m) =
   let target_library =
     BuildScript.read_module ~src_dir:basedir m
@@ -86,7 +142,13 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~(env : Environm
         (* TODO Handle this case. *)
         sprintf "(autogen-file)"
       | None ->
-        failwithf "BUG: decode_path: File %S is not found." path ()
+        path
+    in
+    let decode_loc = function
+      | FileLoc loc ->
+        let path = decode_path loc.path in
+        FileLoc {loc with path}
+      | loc -> loc
     in
     let module P = Shexp_process in
     let open Shexp_process.Infix in
@@ -103,7 +165,6 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~(env : Environm
         let missing_file_errors =
           List.filter packages ~f:FileUtil.(test (Not Is_file))
           |> List.map ~f:(function path ->
-              let path = decode_path path in
               let floc = Location.{path; range=None;} in
               FileLoc floc :: loc, `Error, "Missing file"
             )
@@ -126,63 +187,6 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~(env : Environm
               (* TODO Show errors only caused by this library. *)
               [loc, `Error, msg])
         in
-        let check_dependency ~mode ~dep_graph_mode =
-          (* TODO Share subgraphs *)
-          let sources =
-            List.map packages ~f:(fun f -> DependencyGraph.vertex_of_file_path f)
-            |> List.filter ~f:(function
-                | DependencyGraph.Vertex.File p
-                | DependencyGraph.Vertex.MissingFile p
-                  ->
-                  Mode.of_basename_opt p
-                  |> [%equal: Mode.t option] (Some mode)
-                | _ -> true
-              )
-          in
-          let problematic_sinks =
-            DependencyGraph.reachable_sinks dep_graph_mode sources
-            |> List.filter ~f:(function
-                | DependencyGraph.Vertex.File _ -> false
-                | _ -> true
-              )
-          in
-          List.concat_map problematic_sinks ~f:(fun sink ->
-              DependencyGraph.revese_lookup_directive dep_graph_mode sink
-              |> List.map ~f:(fun ((loc, d), _path) ->
-                  let path = decode_path loc.path in
-                  let loc = {loc with path} in
-                  let hint = match d with
-                    | Dependency.Require r ->
-                      begin match String.split r ~on:'/' with
-                      | l :: _ :: _ when StringSet.mem library_names l |> not ->
-                        Some (MissingDependency l)
-                      | _ -> None
-                      end
-                    | _ -> None
-                  in
-                  {
-                    loc = [FileLoc loc];
-                    directive = d;
-                    hint;
-                    modes = [mode];
-                  }
-                )
-            )
-        in
-        let detect_cyclic_dependencies ~dep_graph_mode ~mode =
-          let error =
-            DependencyGraph.cyclic_directives dep_graph_mode
-            |> List.map ~f:(fun ds ->
-                let locs =
-                  List.map ds ~f:(fun (loc, _) ->
-                      FileLoc {loc with path = decode_path loc.path;}
-                    )
-                in
-                (locs, `Error, (sprintf !"Cyclic dependency found for mode %{sexp:Mode.t}" mode))
-              )
-          in
-          Result.ok_if_true ~error (List.is_empty error)
-        in
         let modes =
           (* TODO Optimize *)
           target_library.files
@@ -195,13 +199,16 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~(env : Environm
         Result.bind dep_graph ~f:(fun dep_graph ->
             List.map modes ~f:(fun mode ->
                 let dep_graph_mode = DependencyGraph.subgraph_with_mode ~mode dep_graph in
-                Result.bind
-                  (detect_cyclic_dependencies ~mode ~dep_graph_mode)
-                  ~f:(fun () ->
-                     Result.try_with (fun () -> check_dependency ~mode ~dep_graph_mode)
-                     |> Result.map_error ~f:(fun exn ->
-                         [loc, `Error, (sprintf !"Something went wrong during working on dependency graphs.\n%{sexp:Exn.t}\n%s" exn (Printexc.get_backtrace ()))]
-                       )
+                let%bind.Result () = (detect_cyclic_dependencies ~mode ~dep_graph_mode) in
+                Result.try_with (fun () ->
+                    check_dependency
+                      ~mode
+                      ~dep_graph_mode
+                      ~loaded_library_names:library_names
+                      ~packages
+                  )
+                |> Result.map_error ~f:(fun exn ->
+                    [loc, `Error, (sprintf !"Something went wrong during working on dependency graphs.\n%{sexp:Exn.t}\n%s" exn (Printexc.get_backtrace ()))]
                   )
               )
             |> Result.combine_errors
@@ -214,6 +221,10 @@ let lint_module_dependency ~outf ~loc ~satysfi_version ~basedir ~(env : Environm
             | Error e -> e
           )
         |> List.append missing_file_errors
+      )
+    >>| List.map ~f:(fun (locs, level, msg) ->
+        let locs = List.map ~f:decode_loc locs in
+        locs, level, msg
       )
   in
   let cmd =
