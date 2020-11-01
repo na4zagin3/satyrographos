@@ -14,6 +14,7 @@ let add_files dst src acc = `File {dst; src} :: acc
 let add_fonts dst src acc = `Font {dst; src} :: acc
 let add_hashes dst src acc = `Hash {dst; src} :: acc
 let add_packages dst src acc = `Package {dst; src} :: acc
+let add_doc dst src acc = `Doc {dst; src} :: acc
 
 type source =
   | File of string * string
@@ -22,6 +23,10 @@ type source =
   | Hash of string * string
   | Package of string * string
   | PackageDir of string
+[@@deriving sexp]
+
+type documentSource =
+  | Doc of string * string
 [@@deriving sexp]
 
 module Compatibility = struct
@@ -102,6 +107,9 @@ let section_to_modules ~base_dir (range, (m : Section.t)) =
       if String.suffix name 4 |> String.equal "-doc" |> not
       then failwithf "libraryDoc must have suffix -doc but got %s" name ();
       let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
+      let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
+          | Doc (dst, src) -> add_doc dst src acc
+        end sources in
       let position = Some (position_of_range range) in
       [name, LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies; position; }]
 

@@ -14,6 +14,7 @@ type link = {
 [@@deriving sexp]
 
 type source = [
+  | `Doc of link
   | `File of link
   | `Font of link
   | `Hash of link
@@ -53,8 +54,9 @@ type library = {
   position: position option;
 } [@@deriving sexp]
 
-type documentSource =
-  | Doc of string * string
+type documentSource = [
+  | `Doc of link
+]
 [@@deriving sexp]
 
 type libraryDoc = {
@@ -145,13 +147,18 @@ let get_position_opt = function
   | LibraryDoc l -> l.position
   | Doc l -> l.position
 
+let get_sources_opt : m -> source list option = function
+  | Library l -> Some l.sources
+  | LibraryDoc l -> Some (l.sources :> source list)
+  | Doc _ -> None
+
 let get_version_opt = function
   | Library l -> Some l.version
   | LibraryDoc l -> Some l.version
   | Doc _ -> None
 
 (* Compatibility treatment *)
-let compatibility_treatment (p: library) (l: Library.t) =
+let compatibility_treatment (m: m) (l: Library.t) =
   let f = function
     | Compatibility.RenamePackage (n, o) ->
       Library.Compatibility.{ empty with
@@ -179,14 +186,15 @@ let compatibility_treatment (p: library) (l: Library.t) =
   end
   in
   let compatibility =
-    CompatibilitySet.to_list p.compatibility
+    get_compatibility_opt m
+    |> Option.value_map ~default:[] ~f:CompatibilitySet.to_list
     |> List.map ~f
     |> Library.Compatibility.union_list
   in
   Library.(union l { empty with compatibility})
 
 (* Read *)
-let read_library (p: library) ~src_dir =
+let rebase_file ~src_dir ~library_name =
   let append_prefix dst_dir {dst; src} =
     let dst_prefix =
       if String.is_empty dst_dir
@@ -194,15 +202,28 @@ let read_library (p: library) ~src_dir =
       else Filename.concat dst_dir in
     {dst=dst_prefix dst; src=Filename.concat src_dir src}
   in
-  let rebase_file = function
-    | `File l ->
-      `Filename (append_prefix "" l)
-    | `Hash l ->
-      `Hash (append_prefix "hash" l)
-    | `Font l ->
-      `Filename (append_prefix (Filename.concat "fonts" p.name) l)
-    | `Package l ->
-      `Filename (append_prefix (Filename.concat "packages" p.name) l)
+  function
+  | `File l ->
+    `Filename (append_prefix "" l)
+  | `Hash l ->
+    `Hash (append_prefix "hash" l)
+  | `Font l ->
+    `Filename (append_prefix (Filename.concat "fonts" library_name) l)
+  | `Package l ->
+    `Filename (append_prefix (Filename.concat "packages" library_name) l)
+  | `Doc l ->
+    `Filename (append_prefix (Filename.concat "docs" library_name) l)
+
+let read_module (m: m) ~src_dir =
+  let name = get_name m in
+  let version = get_version_opt m in
+  let dependencies =
+    get_dependencies_opt m
+    |> Option.value ~default:(Library.Dependency.empty)
+  in
+  let sources =
+    get_sources_opt m
+    |> Option.value ~default:[]
   in
   let to_update_library_function = function
     | `Hash {dst; src} ->
@@ -212,42 +233,15 @@ let read_library (p: library) ~src_dir =
   in
   let initial_library =
     Library.{ empty with
-              name = Some p.name;
-              version = Some p.version;
-              dependencies=p.dependencies;
+              name = Some name;
+              version;
+              dependencies;
             }
   in
   let libraries =
-    List.fold p.sources ~init:initial_library ~f:(fun l s ->
-        (rebase_file s |> to_update_library_function) l
+    List.fold sources ~init:initial_library ~f:(fun l s ->
+        (rebase_file ~src_dir ~library_name:name s |> to_update_library_function) l
       )
   in
   Library.union initial_library libraries
-  |> compatibility_treatment p
-
-let read_libraryDoc (p: libraryDoc) ~src_dir =
-  let map_file dst_dir = List.map ~f:(fun (dst, src) -> (Filename.concat dst_dir dst, Filename.concat src_dir src)) in
-  let docs =
-  p.sources
-  |> List.map ~f:(function Doc (dst, src) -> (dst, src))
-  |> map_file (Filename.concat "docs" p.name)
-  |> List.map ~f:(function (dst, src) -> (dst, `Filename src))
-  in
-  Library.{ empty with
-   name = Some p.name;
-   version = Some p.version;
-   files=Library.LibraryFiles.of_alist_exn docs;
-   dependencies=p.dependencies;
-  }
-
-let read_module = function
-  | Library l -> read_library l
-  | LibraryDoc l -> read_libraryDoc l
-  | Doc l -> (* TODO Return None *)
-    fun ~src_dir:_ ->
-      Library.{
-        empty with
-        name = Some l.name;
-        version = None;
-        dependencies=l.dependencies;
-      }
+  |> compatibility_treatment m
