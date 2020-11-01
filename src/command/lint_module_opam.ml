@@ -6,7 +6,7 @@ open Lint_prim
 let lint_opam_file ~opam ~opam_path:_ ~locs =
   OpamFileTools.lint opam
   |> List.map ~f:(fun (error_no, level, msg) ->
-      {locs; level; msg = sprintf "(%d) %s" error_no msg})
+      {locs; level; problem = OpamProblem (error_no, msg);})
 
 module StringSet = Set.Make(String)
 
@@ -36,7 +36,7 @@ let test_name ~locs ~opam ~opam_path m =
   let module_name = BuildScript.get_name m in
   let opam_name = get_opam_name ~opam ~opam_path in
   if String.equal ("satysfi-" ^ module_name) opam_name |> not
-  then [{locs; level = `Error; msg = (sprintf "OPAM package name “%s” should be “satysfi-%s”." opam_name module_name)}]
+  then [{locs; level = `Error; problem = OpamPackageNamePrefix {opam_name; module_name}}]
   else []
 
 let test_version ~locs ~opam m =
@@ -50,7 +50,11 @@ let test_version ~locs ~opam m =
   let opam_version = OPAM.version_opt opam |> Option.map ~f:OpamPackage.Version.to_string in
   match opam_version with
   | _ when String.is_empty module_version ->
-    [{locs; level = `Error; msg = (sprintf "Version should not be empty.")}]
+    [{
+      locs;
+      level = `Error;
+      problem = LibraryVersionShouldNotBeEmpty;
+    }]
   | Some opam_version when String.equal module_version opam_version ->
     []
   | Some opam_version when String.is_prefix ~prefix:module_version opam_version ->
@@ -64,16 +68,16 @@ let test_version ~locs ~opam m =
         Char.is_alpha first_opam_version_char
       with
       | false, false, _, _ ->
-        [{locs; level = `Error; msg = (sprintf "Library version “%s” should end with an alphabet or a digit." module_version)}]
+        [{locs; level = `Error; problem = LibraryVersionShouldEndWithAnAlphanum module_version;}]
       | _, true, _, true
       | true, _, true, _ ->
-        [{locs; level = `Error; msg = (sprintf "OPAM package version “%s” should be prefixed with “%s”." opam_version module_version)}]
+        [{locs; level = `Error; problem = OpamPackageVersionShouldBePrefixedWithLibraryVersion {opam_version; module_version;}}]
       | _, _, _, _ -> []
     end
   | Some opam_version ->
-    [{locs; level = `Error; msg = (sprintf "OPAM package version “%s” should be prefixed with “%s”." opam_version module_version)}]
+    [{locs; level = `Error; problem = OpamPackageVersionShouldBePrefixedWithLibraryVersion {opam_version; module_version;}}]
   | None ->
-    [{locs; level = `Error; msg = (sprintf "OPAM file lacks the version field")}]
+    [{locs; level = `Error; problem = OpamFileShouldHaveVersion; }]
 
 let lint_module_opam ~locs ~basedir (m : BuildScript.m) opam_path =
   let locs = OpamLoc opam_path :: locs in
@@ -96,7 +100,11 @@ let lint_module_opam ~locs ~basedir (m : BuildScript.m) opam_path =
     in
     if StringSet.is_empty missing_dependencies |> not
     then
-      [{locs; level = `Warning; msg = (sprintf !"The OPAM file lacks dependencies on specified SATySFi libraries: %{sexp:StringSet.t}." missing_dependencies)}]
+      [{
+        locs;
+        level = `Warning;
+        problem = OpamPackageShouldHaveSatysfiDependencies (StringSet.to_list missing_dependencies);
+      }]
     else []
   in
   List.concat

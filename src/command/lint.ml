@@ -11,7 +11,7 @@ let lint_compatibility ~locs (m : BuildScript.m) =
       [{
         locs;
         level = `Warning;
-        msg = "Compatibility warnings for Satyrographos 0.0.1 libraries are no longer effective.";
+        problem = SatyrographosCompatibliltyNoticeIneffective "0.0.1"
       }]
     | _ ->
       []

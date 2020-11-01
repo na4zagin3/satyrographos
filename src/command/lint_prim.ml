@@ -1,5 +1,7 @@
 open Core
 
+include Lint_problem
+
 module Location = Satyrographos.Location
 
 type location =
@@ -7,14 +9,12 @@ type location =
   | FileLoc of Location.t
   | OpamLoc of string
 
-type hint =
-  | MissingDependency of string
-
 type diagnosis =
   { locs : location list;
     level : [`Error | `Warning];
-    msg : string
+    problem : problem;
   }
+
 
 let show_location ~outf ~basedir =
   let concat_with_basedir = FilePath.make_absolute basedir in
@@ -32,13 +32,17 @@ let show_locations ~outf ~basedir locs =
   List.rev locs
   |> List.iter ~f:(show_location ~outf ~basedir)
 
-let show_problem ~outf ~basedir {locs; level; msg;} =
+let show_problem ~outf ~basedir {locs; level; problem;} =
   show_locations ~outf ~basedir locs;
-  match level with
+  Format.fprintf outf "@[<2>";
+  begin match level with
   | `Error->
-    Format.fprintf outf "@[<2>Error:@ %s@]@.@." msg
+    Format.fprintf outf "Error:@ "
   | `Warning ->
-    Format.fprintf outf "@[<2>Warning:@ %s@]@.@." msg
+    Format.fprintf outf "Warning:@ "
+  end;
+  show_problem ~outf problem;
+  Format.fprintf outf "@]@.@."
 
 let show_problems ~outf ~basedir =
   List.iter ~f:(show_problem ~outf ~basedir)
