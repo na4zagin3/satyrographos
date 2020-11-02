@@ -45,5 +45,7 @@ let create_files ~basedir vars templ =
 let templates = [
   Template_docMake_en.template;
   Template_docMake_ja.template;
+  Template_docOmake_en.template;
+  Template_docOmake_ja.template;
   Template_lib.template;
 ]
