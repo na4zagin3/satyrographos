@@ -174,40 +174,6 @@ let satyristes_template =
     )))
 |}
 
-let gitignore_template =
-".gitignore",
-{|# OMake
-*.omc
-.omakedb.lock
-
-# Satyristes
-*.deps
-
-# SATySFi
-*.satysfi-aux
-
-# Generated files
-main.pdf
-|}
-
-let makefile_template =
-  "Makefile",
-  {|.PHONY: all
-
-all: doc
-
-# SATySFi/Satyrographos rules
-%.pdf: %.saty
-	satyrographos satysfi -- -o $@ $<
-%.pdf.deps: %.saty
-	satyrographos util deps -r -p --depfile $@ --mode pdf -o "$(basename $@)" $<
-
-
-# User rules
-doc: main.pdf
--include main.pdf.deps
-|}
-
 let readme_template =
 "README.md",
 {|# @@library@@
@@ -223,7 +189,7 @@ let files = [
     main_saty_template;
     local_satyh_template;
     satyristes_template;
-    gitignore_template;
-    makefile_template;
+    TemplateDocMakeEn.gitignore_template;
+    TemplateDocMakeEn.makefile_template;
     readme_template;
   ]
