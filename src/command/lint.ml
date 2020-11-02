@@ -23,7 +23,29 @@ let lint_compatibility ~locs (m : BuildScript.m) =
     |> Satyrographos.BuildScript.CompatibilitySet.to_list
     |> List.concat_map ~f
 
-let lint_module ~outf ~verbose:_ ~satysfi_version ~basedir ~buildscript_basename ~(env: Environment.t) (m : BuildScript.m) =
+let lint_build ~locs ~(buildscript_version : BuildScript.version) (m : BuildScript.m) =
+  let contains_deprecated_make =
+    BuildScript.get_build_opt m
+    |> Option.value ~default:[]
+    |> List.exists ~f:(function
+        | BuildScript.Make _
+          when
+            [%equal: BuildScript.version] buildscript_version BuildScript.Lang_0_0_2
+            |> not -> true
+        | _ -> false
+      )
+  in
+  if contains_deprecated_make
+  then [{
+      locs;
+      level = `Warning;
+      problem = LibraryBuildDeprecatedMakeCommand;
+    }]
+  else []
+
+let lint_module ~outf ~verbose:_ ~satysfi_version ~basedir
+    ~buildscript_basename ~buildscript_version
+    ~(env: Environment.t) (m : BuildScript.m) =
   let locs = [SatyristesModLoc BuildScript.(buildscript_basename, get_name m, get_position_opt m)] in
   let opam_problems =
     BuildScript.get_opam_opt m
@@ -36,6 +58,7 @@ let lint_module ~outf ~verbose:_ ~satysfi_version ~basedir ~buildscript_basename
   opam_problems
   @ dependency_problems
   @ lint_compatibility ~locs m
+  @ lint_build ~locs ~buildscript_version m
 
 let lint ~outf ~satysfi_version ~warning_expr ~verbose ~buildscript_path ~(env : Environment.t) =
   let warning_expr =
@@ -49,13 +72,22 @@ let lint ~outf ~satysfi_version ~warning_expr ~verbose ~buildscript_path ~(env :
   let basedir = FilePath.dirname buildscript_path in
   let buildscript_basename = FilePath.basename buildscript_path in
   let buildscript = BuildScript.load buildscript_path in
+  let buildscript_version = BuildScript.buildscript_version buildscript in
   let problems =
     match buildscript with
     | BuildScript.Script_0_0_2 module_map
     | BuildScript.Script_0_0_3 module_map ->
       Map.to_alist module_map
       |> List.concat_map ~f:(fun (_, m) ->
-          lint_module ~outf ~verbose ~satysfi_version ~basedir ~buildscript_basename ~env m)
+          lint_module
+            ~outf
+            ~verbose
+            ~satysfi_version
+            ~basedir
+            ~buildscript_basename
+            ~buildscript_version
+            ~env
+            m)
   in
   let is_matched_warning diag =
     Lint_problem.problem_class diag.problem

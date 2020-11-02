@@ -4,6 +4,7 @@ type problem =
   | ExceptionDuringSettingUpEnv of Exn.t
   | InternalBug of string
   | InternalException of Exn.t * string
+  | LibraryBuildDeprecatedMakeCommand
   | LibraryMissingFile
   | LibraryVersionShouldNotBeEmpty
   | LibraryVersionShouldEndWithAnAlphanum of string
@@ -35,6 +36,8 @@ let problem_class = function
     "internal/bug"
   | InternalException _ ->
     "internal/exception"
+  | LibraryBuildDeprecatedMakeCommand ->
+    "lib/build/deprecated/make"
   | LibraryMissingFile ->
     "lib/missing-file"
   | LibraryVersionShouldNotBeEmpty
@@ -73,6 +76,9 @@ let show_problem ~outf = function
       exn;
     Format.fprintf outf
       "@;%s" stacktrace
+  | LibraryBuildDeprecatedMakeCommand ->
+    Format.fprintf outf
+      "(make <args>...) build command has been deprecated.@ Please use (run make <args>...) instead and then `satyrographos satysfi ...` command instead of `satysfi -C $SATYSFI_RUNTIME ...`."
   | LibraryMissingFile ->
     Format.fprintf outf
       "Missing file"

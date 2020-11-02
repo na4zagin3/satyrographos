@@ -102,6 +102,15 @@ type t =
   | Script_0_0_3 of m StringMap.t
 [@@deriving sexp]
 
+type version =
+  | Lang_0_0_2
+  | Lang_0_0_3
+[@@deriving sexp, equal]
+
+let buildscript_version : t -> version = function
+  | Script_0_0_2 _ -> Lang_0_0_2
+  | Script_0_0_3 _ -> Lang_0_0_3
+
 let get_module_map = function
   | Script_0_0_2 module_map
   | Script_0_0_3 module_map ->
@@ -131,6 +140,11 @@ let export_opam_package = function
 
 let export_opam bs =
   StringMap.iter bs ~f:export_opam_package
+
+let get_build_opt = function
+  | Library _ -> None
+  | LibraryDoc l -> Some l.build
+  | Doc l -> Some l.build
 
 let get_compatibility_opt = function
   | Library l -> Some l.compatibility
