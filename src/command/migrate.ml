@@ -25,8 +25,8 @@ let migrate ~outf ~buildscript_path =
   in
   let buildscript = BuildScript.load buildscript_path in
   match buildscript with
-  | BuildScript.Lang_0_0_3 _ ->
+  | BuildScript.Script_0_0_3 _ ->
     Format.fprintf outf "Nothing to migrate.@."
-  | BuildScript.Lang_0_0_2 _ ->
+  | BuildScript.Script_0_0_2 _ ->
     migrate_0_0_2 ~outf ~buildscript_path;
     Format.fprintf outf "Done.@."
