@@ -89,6 +89,13 @@ let load_sections f =
   Sexp.Annotated.load_sexps f
   |> List.map ~f:(fun e -> Sexp.Annotated.get_range e, Sexp.Annotated.get_sexp e |> [%of_sexp: Section.t])
 
+let parse_build_command = function
+  | "make" :: args ->
+    Make args
+  | "satysfi" :: args ->
+    Satysfi args
+  | cmd -> failwithf "command %s is not yet supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
+
 let section_to_modules ~base_dir (range, (m : Section.t)) =
   match m with
   | Section.Lang "0.0.3" -> []
@@ -117,10 +124,16 @@ let section_to_modules ~base_dir (range, (m : Section.t)) =
     let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
         | Doc (dst, src) -> add_doc dst src acc
       end sources in
+    let build =
+      List.map ~f:parse_build_command build
+    in
     let position = Some (position_of_range range) in
     [name, LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies; position; }]
   | Doc {name; workingDirectory; build; dependencies;} ->
     let position = Some (position_of_range range) in
+    let build =
+      List.map ~f:parse_build_command build
+    in
     let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
     [name, Doc {name; workingDirectory; build; dependencies; position;}]
 
