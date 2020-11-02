@@ -59,12 +59,21 @@ type documentSource = [
 ]
 [@@deriving sexp]
 
+type build_command =
+  | Satysfi of string list
+  | Make of string list
+[@@deriving sexp]
+
+type build =
+  build_command list
+[@@deriving sexp]
+
 type libraryDoc = {
   name: string;
   version: string;
   opam: string;
   workingDirectory: string;
-  build: string list list [@sexp.omit_nil];
+  build: build [@sexp.omit_nil];
   sources: documentSource list [@sexp.omit_nil];
   dependencies: Library.Dependency.t [@sexp.omit_nil];
   position: position option;
@@ -73,7 +82,7 @@ type libraryDoc = {
 type doc = {
   name: string;
   workingDirectory: string;
-  build: string list list [@sexp.omit_nil];
+  build: build [@sexp.omit_nil];
   dependencies: Library.Dependency.t [@sexp.omit_nil];
   position: position option;
 } [@@deriving sexp]

@@ -14,11 +14,10 @@ let read_module ~outf ~verbose ~build_module ~buildscript_path =
   (src_dir, p)
 
 let parse_build_command ~satysfi_runtime = function
-  | "make" :: args ->
+  | BuildScript.Make args ->
     P.run "make" (["SATYSFI_RUNTIME=" ^ satysfi_runtime] @ args)
-  | "satysfi" :: args ->
+  | BuildScript.Satysfi args ->
     RunSatysfi.run_satysfi_command ~satysfi_runtime args
-  | cmd -> failwithf "command %s is not yet supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
 
 let run_build_commands ~workingDir ~project_env buildCommands =
   let commands satysfi_runtime = P.List.iter buildCommands ~f:(parse_build_command ~satysfi_runtime) in

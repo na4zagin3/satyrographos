@@ -17,6 +17,7 @@
    commandBuild
    commandDebug
    commandLint
+   commandMigrate
    commandNew
    commandInstall
    commandLibrary
