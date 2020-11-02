@@ -43,7 +43,7 @@ let create_files ~basedir vars templ =
   List.iter (create_file ~basedir vars) templ
 
 let templates = [
-  TemplateDocMakeEn.template;
-  TemplateDocMakeJa.template;
-  TemplateLib.template;
+  Template_docMake_en.template;
+  Template_docMake_ja.template;
+  Template_lib.template;
 ]
