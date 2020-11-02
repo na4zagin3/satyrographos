@@ -146,3 +146,64 @@ let load f =
   let base_dir = FilePath.dirname f in
   load_sections f
   |> sections_to_modules ~base_dir
+
+let migrate_from_0_0_2 =
+  let module BS2 = BuildScript_0_0_2 in
+  let module Section2 = BuildScript_0_0_2.Section in
+  let conv_source = function
+    | BS2.File (dst, src) ->
+      File (dst, src)
+    | BS2.Font (dst, src) ->
+      Font (dst, src)
+    | BS2.Hash (dst, src) ->
+      Hash (dst, src)
+    | BS2.Package (dst, src) ->
+      Package (dst, src)
+    | BS2.FontDir (src) ->
+      FontDir (src)
+    | BS2.PackageDir (src) ->
+      PackageDir (src)
+  in
+  let conv_document_source = function
+    | BS2.Doc (dst, src) ->
+      Doc (dst, src)
+  in
+  let conv_compatibility = function
+    | BS2.Compatibility.Satyrographos _ ->
+      None
+    | RenamePackage (n, o) ->
+      Some (Compatibility.RenamePackage (n, o))
+    | RenameFont (n, o) ->
+      Some (RenameFont (n, o))
+  in
+  let conv_section = function
+    | Section2.Version _ ->
+      Section.Lang "0.0.3"
+    | Section2.Library l ->
+      Section.Library {
+        name = l.name;
+        version = l.version;
+        opam = l.opam;
+        sources = List.map ~f:conv_source l.sources;
+        dependencies = l.dependencies;
+        compatibility =
+          l.compatibility
+          |> List.filter_map ~f:conv_compatibility ;
+      }
+    | Section2.LibraryDoc l ->
+      Section.LibraryDoc {
+        name = l.name;
+        version = l.version;
+        opam = l.opam;
+        sources = List.map ~f:conv_document_source l.sources;
+        workingDirectory = l.workingDirectory;
+        build = l.build;
+        dependencies = l.dependencies;
+      }
+  in
+  conv_section
+
+let save_sections f ss =
+  ss
+  |> List.map ~f:[%sexp_of: Section.t]
+  |> Sexp.save_sexps_hum f

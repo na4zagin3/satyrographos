@@ -7,7 +7,8 @@ let load f =
   match sexp with
   | Sexp.List Sexp.[Atom "version"; Atom "0.0.2"] ->
     Lang_0_0_2 (BuildScript_0_0_2.load f)
-  | Sexp.List Sexp.[Atom "lang"; Atom "0.0.3"] ->
+  | Sexp.List Sexp.[Atom "lang"; Atom "0.0.3"]
+  | Sexp.List Sexp.[Atom "Lang"; Atom "0.0.3"] ->
     Format.fprintf Format.err_formatter "WARNING: Script lang 0.0.3 is under development.@.";
     Lang_0_0_3 (BuildScript_0_0_3.load f)
   | _ ->
