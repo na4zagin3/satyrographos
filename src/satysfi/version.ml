@@ -111,7 +111,8 @@ let get_current_version_cmd =
   >>| parse_version_output
 
 let get_current_version () =
-  Shexp_process.eval get_current_version_cmd
+  Option.try_with_join (fun () ->
+      Shexp_process.eval get_current_version_cmd)
 
 let flag =
   let open Command.Let_syntax in
