@@ -4,3 +4,16 @@
  (inline_tests)
  (preprocess (staged_pps ppx_deriving.std ppx_jane))
  (libraries core fileutils json-derivers opam-format shexp.process uri uri-sexp yojson))
+
+(ocamllex
+ (modules glob_lexer)
+)
+(menhir
+ (modules glob_tokens)
+ (flags --only-tokens)
+)
+(menhir
+ (modules glob_tokens glob_parser)
+ (merge_into glob_parser)
+ (flags --external-tokens Glob_tokens)
+)
