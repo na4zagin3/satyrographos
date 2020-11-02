@@ -15,4 +15,5 @@ matrix:
 cache:
   directories:
     - $HOME/ocaml
-    - $HOME/.opam
+    - $HOME/.opam/archives
+    - $HOME/.opam/download-cache
