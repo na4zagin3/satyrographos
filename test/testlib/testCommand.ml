@@ -1,4 +1,4 @@
-let test_lint_command ?(f=fun cwd -> cwd, None) ?(satysfi_files=[]) ?(satysfi_version=Satyrographos_satysfi.Version.Satysfi_0_0_5) ?opam_libs files =
+let test_lint_command ?(f=fun cwd -> cwd, None) ?(satysfi_files=[]) ?(satysfi_version=Satyrographos_satysfi.Version.Satysfi_0_0_5) ?warning_expr ?opam_libs files =
   let outf = Format.std_formatter in
   let open Shexp_process in
   let open Shexp_process.Infix in
@@ -9,7 +9,7 @@ let test_lint_command ?(f=fun cwd -> cwd, None) ?(satysfi_files=[]) ?(satysfi_ve
         let cwd, path = f cwd in
         Unix.chdir cwd;
         let (_: int) =
-          Satyrographos_command.Lint.lint ~env ~outf ~satysfi_version ~verbose:false ~buildscript_path:path
+          Satyrographos_command.Lint.lint ~env ~outf ~warning_expr ~satysfi_version ~verbose:false ~buildscript_path:path
         in ()
       )
 in

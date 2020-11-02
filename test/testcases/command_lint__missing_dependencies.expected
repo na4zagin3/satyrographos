@@ -1,11 +1,11 @@
 @@test_library@@/Satyristes:3:1: (module package):
 @@test_library@@/satysfi-package.opam:
-Warning:
+Warning: opam-file/dependency
   The OPAM file lacks dependencies on specified SATySFi libraries: (unspecified-package).
 
 @@test_library@@/Satyristes:10:1: (module package-doc):
 @@test_library@@/satysfi-package-doc.opam:
-Warning:
+Warning: opam-file/dependency
   The OPAM file lacks dependencies on specified SATySFi libraries: (package).
 
 2 problem(s) found.

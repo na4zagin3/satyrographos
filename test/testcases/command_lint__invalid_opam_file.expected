@@ -1,6 +1,6 @@
 @@test_library@@/Satyristes:3:1: (module package):
 @@test_library@@/satysfi-package.opam:
-Warning:
+Warning: opam-file/lint/47
   (47) Synopsis (or description first line) should start with a capital and not end with a dot
 
 1 problem(s) found.
