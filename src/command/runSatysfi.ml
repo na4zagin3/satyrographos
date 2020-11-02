@@ -61,11 +61,6 @@ let run_satysfi_command ~satysfi_runtime args =
   assert_satysfi_option_C satysfi_runtime
   >> P.run "satysfi" (["-C"; satysfi_runtime] @ args)
 
-let run_satysfi ~satysfi_runtime args =
-  let command =
-    run_satysfi_command ~satysfi_runtime args in
-  ProcessUtil.redirect_to_stdout ~prefix:"satysfi" command
-
 let satysfi_command ~outf ~system_font_prefix ~autogen_libraries ~libraries ~verbose ~project_env ~env args =
   let setup ~satysfi_dist =
     Install.install

@@ -15,10 +15,9 @@ let read_module ~outf ~verbose ~build_module ~buildscript_path =
 
 let parse_build_command ~satysfi_runtime = function
   | "make" :: args ->
-    let command = P.run "make" (["SATYSFI_RUNTIME=" ^ satysfi_runtime] @ args) in
-    ProcessUtil.redirect_to_stdout ~prefix:"make" command
+    P.run "make" (["SATYSFI_RUNTIME=" ^ satysfi_runtime] @ args)
   | "satysfi" :: args ->
-    RunSatysfi.run_satysfi ~satysfi_runtime args
+    RunSatysfi.run_satysfi_command ~satysfi_runtime args
   | cmd -> failwithf "command %s is not yet supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
 
 let run_build_commands ~workingDir ~project_env buildCommands =
@@ -114,12 +113,14 @@ let opam_pin_project ~(buildscript: BuildScript.t) ~buildscript_path =
 
 
 let build_command ~outf ~buildscript_path ~name ~verbose ~env =
-  let f ~buildscript~build_module =
+  let f ~buildscript ~build_module ~build_dir =
     let system_font_prefix = None in
     let autogen_libraries = [] in
     opam_pin_project ~buildscript ~buildscript_path
     |> P.eval ;
-    build ~outf ~verbose ~build_module ~buildscript_path ~system_font_prefix ~autogen_libraries ~env
+    Format.fprintf outf "@.================@.";
+    build ~outf ~verbose ~build_module ~buildscript_path ~system_font_prefix ~autogen_libraries ~env ~build_dir;
+    Format.fprintf outf "@.================@."
   in
   let buildscript = BuildScript.load buildscript_path in
   let module_map = BuildScript.get_module_map buildscript in
