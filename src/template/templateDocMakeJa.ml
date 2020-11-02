@@ -193,3 +193,6 @@ let files = [
     TemplateDocMakeEn.makefile_template;
     readme_template;
   ]
+
+let template =
+  name, ("Document with Makefile (ja)", files)

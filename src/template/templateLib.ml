@@ -215,3 +215,6 @@ let files = [
     gitignore_template;
     readme_template;
   ]
+
+let template =
+  "lib", ("Package library", files)
