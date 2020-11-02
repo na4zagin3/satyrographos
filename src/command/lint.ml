@@ -37,7 +37,10 @@ let lint_module ~outf ~verbose:_ ~satysfi_version ~basedir ~buildscript_basename
   @ dependency_problems
   @ lint_compatibility ~locs m
 
-let lint ~outf ~satysfi_version ~verbose ~buildscript_path ~(env : Environment.t) =
+let lint ~outf ~satysfi_version ~warning_expr ~verbose ~buildscript_path ~(env : Environment.t) =
+  let warning_expr =
+    Option.value ~default:Glob.TokenMatcher.empty warning_expr
+  in
   let buildscript_path = Option.value ~default:"Satyristes" buildscript_path in
   let buildscript_path =
     let cwd = FileUtil.pwd () in
@@ -53,6 +56,21 @@ let lint ~outf ~satysfi_version ~verbose ~buildscript_path ~(env : Environment.t
       Map.to_alist module_map
       |> List.concat_map ~f:(fun (_, m) ->
           lint_module ~outf ~verbose ~satysfi_version ~basedir ~buildscript_basename ~env m)
+  in
+  let is_matched_warning diag =
+    Lint_problem.problem_class diag.problem
+    |> Glob.split_on_slash
+    |> Glob.TokenMatcher.exec warning_expr
+    |> Option.value ~default:true
+  in
+  let problems =
+    problems
+    |> List.filter ~f:(fun diag ->
+        (* TODO Error should not be ignored once lint subcommand gets stable enough.
+           [%equal: level] diag.level `Error ||
+        *)
+        is_matched_warning diag
+      )
   in
   show_problems ~outf ~basedir problems;
   List.length problems

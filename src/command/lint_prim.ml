@@ -9,9 +9,13 @@ type location =
   | FileLoc of Location.t
   | OpamLoc of string
 
+type level =
+  [`Error | `Warning]
+[@@deriving equal]
+
 type diagnosis =
   { locs : location list;
-    level : [`Error | `Warning];
+    level : level;
     problem : problem;
   }
 

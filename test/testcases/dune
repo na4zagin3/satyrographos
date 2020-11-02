@@ -34,6 +34,7 @@
    command_lint__valid
    command_lint__valid_in_specified_location
    command_lint__valid_versions
+   command_lint__warning_expr
    command_opam_build__doc_satysfi
    command_opam_install__doc
    command_opam_install__library
@@ -44,7 +45,13 @@
    library_write_dir__content
  )
  (preprocess (pps ppx_deriving.std ppx_jane))
- (libraries core re satyrographos_command satyrographos_testlib shexp.process uri)
+ (libraries
+   core
+   re
+   satyrographos_command
+   satyrographos_testlib
+   shexp.process
+   uri)
  )
 
 (cram
