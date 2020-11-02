@@ -90,11 +90,15 @@ let load_sections f =
   |> List.map ~f:(fun e -> Sexp.Annotated.get_range e, Sexp.Annotated.get_sexp e |> [%of_sexp: Section.t])
 
 let parse_build_command = function
+  | "run" :: cmd :: args ->
+    Run (cmd, args)
+  | "run" :: _ ->
+    failwithf "run command requires a executable name like (run <cmd> <args>...)" ()
   | "make" :: args ->
     Make args
   | "satysfi" :: args ->
     Satysfi args
-  | cmd -> failwithf "command %s is not yet supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
+  | cmd -> failwithf "command %s is not supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
 
 let section_to_modules ~base_dir (range, (m : Section.t)) =
   match m with

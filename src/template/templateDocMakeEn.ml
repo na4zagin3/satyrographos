@@ -163,7 +163,7 @@ let satyristes_template =
 
 (doc
   (name  "main")
-  (build ((make)))
+  (build ((run make)))
   (dependencies
    (;; Standard library
     (dist ())
