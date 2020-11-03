@@ -31,7 +31,7 @@ let add_doc dst src acc = `Doc {dst; src} :: acc
 
 type source =
   | File of string * string
-  | Font of string * string * font list [@sexp.omit_nil]
+  | Font of string * string * font list
   | FontDir of string
   | Hash of string * string
   | Package of string * string
