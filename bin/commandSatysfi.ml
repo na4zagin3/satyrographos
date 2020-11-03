@@ -31,7 +31,7 @@ let satysfi_command =
             Satyrographos_command.RunSatysfi.satysfi_command
               ~outf
               ~project_env
-              ~system_font_prefix:(Option.some_if use_system_fonts Satyrographos.SystemFontLibrary.system_font_prefix)
+              ~system_font_prefix:(Option.some_if use_system_fonts Satyrographos_autogen.FontsSystem.system_font_prefix)
               ~autogen_libraries:autogen_library_list
               ~libraries
               ~verbose

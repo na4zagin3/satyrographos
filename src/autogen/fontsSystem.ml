@@ -1,5 +1,7 @@
 open Core
 
+open Satyrographos
+
 module StringSet = Set.Make(String)
 
 let name = "%fonts-system"

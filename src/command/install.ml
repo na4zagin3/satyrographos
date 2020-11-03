@@ -144,7 +144,7 @@ let get_library_map ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries
     | None -> Format.fprintf outf "Not gathering system fonts\n"; library_map
     | Some(prefix) ->
       Format.fprintf outf "Gathering system fonts with prefix %s\n" prefix;
-      let systemFontLibrary = SystemFontLibrary.get_library prefix ~outf () in
+      let systemFontLibrary = Autogen.FontsSystem.get_library prefix ~outf () in
       Map.add_exn ~key:"%fonts-system" ~data:systemFontLibrary library_map
   in
   let autogen_libraries =
