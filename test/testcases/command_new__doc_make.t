@@ -10,6 +10,7 @@ Try to build when there is satysfi command
   >   cd test-doc-en
   >   SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos build >build.log 2>&1
   >   [ -f main.pdf ] || cat build.log
+  >   cd ..
   > fi
 
 Create a new document with doc-make@ja template
@@ -24,4 +25,15 @@ Try to build when there is satysfi command
   >   cd test-doc-ja
   >   SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos build >build.log 2>&1
   >   [ -f main.pdf ] || cat build.log
+  >   cd ..
   > fi
+
+Ensure there are no warnings
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos lint -W '-lib/dep/exception-during-setup' --script test-doc-en/Satyristes --satysfi-version 0.0.5
+  Compatibility warning: You have opted in to use experimental features.
+  WARNING: Script lang 0.0.3 is under development.
+  0 problem(s) found.
+  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos lint -W '-lib/dep/exception-during-setup' --script test-doc-ja/Satyristes --satysfi-version 0.0.5
+  Compatibility warning: You have opted in to use experimental features.
+  WARNING: Script lang 0.0.3 is under development.
+  0 problem(s) found.

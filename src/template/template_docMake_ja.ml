@@ -165,7 +165,7 @@ let satyristes_template =
 
 (doc
   (name  "main")
-  (build ((make)))
+  (build ((run make)))
   (dependencies
    (;; Standard library
     (dist ())
@@ -189,7 +189,10 @@ let files = [
     main_saty_template;
     local_satyh_template;
     satyristes_template;
-    TemplateDocMakeEn.gitignore_template;
-    TemplateDocMakeEn.makefile_template;
+    Template_docMake_en.gitignore_template;
+    Template_docMake_en.makefile_template;
     readme_template;
   ]
+
+let template =
+  name, ("Document with Makefile (ja)", files)
