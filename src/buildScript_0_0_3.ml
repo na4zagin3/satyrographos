@@ -10,15 +10,28 @@ let recursively f base_dir src acc =
     f dst src_path acc
   )) acc
 
+type font =
+  | Single of string
+  | Collection of string * int
+[@@deriving sexp]
+
 let add_files dst src acc = `File {dst; src} :: acc
 let add_fonts dst src acc = `Font {dst; src} :: acc
+let add_font_with_hash dst src names acc =
+  let conv_name = function
+    | Single name ->
+      `Single name
+    | Collection (name, index) ->
+     `Collection (name, index)
+  in
+  `FontWithHash ({dst; src}, List.map ~f:conv_name names) :: acc
 let add_hashes dst src acc = `Hash {dst; src} :: acc
 let add_packages dst src acc = `Package {dst; src} :: acc
 let add_doc dst src acc = `Doc {dst; src} :: acc
 
 type source =
   | File of string * string
-  | Font of string * string
+  | Font of string * string * font list [@sexp.omit_nil]
   | FontDir of string
   | Hash of string * string
   | Package of string * string
@@ -108,7 +121,7 @@ let section_to_modules ~base_dir (range, (m : Section.t)) =
   | Library {name; version; opam; sources; dependencies; compatibility} ->
     let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
         | File (dst, src) -> add_files dst src acc
-        | Font (dst, src) -> add_fonts dst src acc
+        | Font (dst, src, names) -> add_font_with_hash dst src names acc
         | Hash (dst, src) -> add_hashes dst src acc
         | Package (dst, src) -> add_packages dst src acc
         | FontDir (src) -> recursively add_fonts base_dir src acc
@@ -158,7 +171,7 @@ let migrate_from_0_0_2 =
     | BS2.File (dst, src) ->
       File (dst, src)
     | BS2.Font (dst, src) ->
-      Font (dst, src)
+      Font (dst, src, [])
     | BS2.Hash (dst, src) ->
       Hash (dst, src)
     | BS2.Package (dst, src) ->

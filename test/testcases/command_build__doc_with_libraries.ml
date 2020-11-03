@@ -13,7 +13,7 @@ let satyristes =
   (version "0.2")
   (sources
     ((package "grcnum.satyh" "./grcnum.satyh")
-     (font "grcnum-font.ttf" "./font.ttf")
+     (font "grcnum-font.ttf" "./font.ttf" ())
      (hash "fonts.satysfi-hash" "./fonts.satysfi-hash")
      ; (file "doc/grcnum.md" "README.md")
     ))
