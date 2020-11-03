@@ -1,0 +1,13 @@
+(library
+ (name satyrographos_lockdown)
+ (inline_tests)
+ (preprocess (staged_pps ppx_deriving.std ppx_deriving_yojson ppx_jane))
+ (libraries
+   core
+   fileutils
+   ocamlgraph
+   re
+   satyrographos
+   shexp.process
+   yaml
+))

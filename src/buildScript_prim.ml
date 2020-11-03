@@ -188,6 +188,21 @@ let get_version_opt = function
   | LibraryDoc l -> Some l.version
   | Doc _ -> None
 
+let get_opam_dependencies_of_module m =
+  get_dependencies_opt m
+  |> Option.value ~default:Library.Dependency.empty
+  |> Library.Dependency.to_list
+  |> List.map ~f:(fun name -> "satysfi-" ^ name)
+
+let get_opam_dependencies l =
+  get_module_map l
+  |> StringMap.to_sequence
+  |> Sequence.map ~f:(snd)
+  |> Sequence.map ~f:(get_opam_dependencies_of_module)
+  |> Sequence.map ~f:(StringSet.of_list)
+  |> Sequence.fold ~init:StringSet.empty ~f:StringSet.union
+  |> StringSet.to_list
+
 (* Compatibility treatment *)
 let compatibility_treatment (m: m) (l: Library.t) =
   let f = function

@@ -10,5 +10,6 @@
    opam-state
    satyrographos
    satyrographos_autogen
+   satyrographos_lockdown
    satyrographos_template
    shexp.process))

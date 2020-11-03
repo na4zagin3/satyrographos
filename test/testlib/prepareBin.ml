@@ -58,16 +58,32 @@ esac
       "payload \"$@\"";
     ]
 
-let opam log_file =
+type opam_response = {
+  list_result: string;
+}
+
+let opam log_file ~opam_response =
   String.concat "\n"
     [ "#!/bin/sh";
       "LOG_FILE='" ^ log_file ^"'";
-      {|echo 'Command invoked:' >> "$LOG_FILE"|};
-      {|echo opam "$@" >> "$LOG_FILE"|};
+      {|echo 'Command invoked:' >> "$LOG_FILE"
+echo opam "$@" >> "$LOG_FILE"
+
+case "$1" in
+  list)
+    cat <<EOF|};
+      opam_response
+      |> Option.map (fun o -> o.list_result)
+      |> Option.value ~default:"";
+      {|EOF
+    ;;
+  *)
+esac
+|};
     ]
 
 (* TODO Refactor this so that bin_dir is implicitly shared by the main test function (e.g., test_install) *)
-let prepare_bin bin log_file =
+let prepare_bin ?opam_response bin log_file =
   let path = Unix.getenv "PATH" in
   let gen_bin name content =
     let path = FilePath.concat bin name in
@@ -81,4 +97,4 @@ let prepare_bin bin log_file =
   let open Infix in
   Unix.putenv "PATH" (bin ^ ":" ^ path);
   gen_bin "satysfi" (satysfi log_file)
-  >> gen_bin "opam" (opam log_file)
+  >> gen_bin "opam" (opam ~opam_response log_file)
