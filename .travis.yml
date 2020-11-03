@@ -6,8 +6,11 @@ matrix:
     - os: linux
       dist: bionic
       env: OCAML_VERSION=4.10
-    - os: osx
-      osx_image: xcode11.3
+#   - os: osx
+#     osx_image: xcode11.3
+    - os: linux
+      dist: focal
+      arch: arm64
       env: OCAML_VERSION=4.11
     - os: freebsd
       dist: bionic
