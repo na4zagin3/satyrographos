@@ -13,9 +13,16 @@ type link = {
 }
 [@@deriving sexp]
 
+type font = [
+  | `Single of string
+  | `Collection of string * int
+]
+[@@deriving sexp]
+
 type source = [
   | `Doc of link
   | `File of link
+  | `FontWithHash of link * font list
   | `Font of link
   | `Hash of link
   | `Package of link
@@ -217,6 +224,28 @@ let compatibility_treatment (m: m) (l: Library.t) =
   in
   Library.(union l { empty with compatibility})
 
+let font_hash path names =
+  let from_name = function
+    | `Single name ->
+      name,
+      `Variant (
+        "Single",
+        `Assoc [
+          "src", `String (FilePath.concat "dist" path);
+        ] |> Option.some
+      )
+    | `Collection (name, index) ->
+      name,
+      `Variant (
+        "Collection",
+        `Assoc [
+          "src", `String (FilePath.concat "dist" path);
+          "index", `Int index;
+        ] |> Option.some
+      )
+  in
+  `Assoc (List.map ~f:from_name names)
+
 (* Read *)
 let rebase_file ~src_dir ~library_name =
   let append_prefix dst_dir {dst; src} =
@@ -228,15 +257,21 @@ let rebase_file ~src_dir ~library_name =
   in
   function
   | `File l ->
-    `Filename (append_prefix "" l)
+    [`Filename (append_prefix "" l)]
   | `Hash l ->
-    `Hash (append_prefix "hash" l)
+    [`Hash (append_prefix "hash" l)]
   | `Font l ->
-    `Filename (append_prefix (Filename.concat "fonts" library_name) l)
+    [`Filename (append_prefix (Filename.concat "fonts" library_name) l)]
+  | `FontWithHash (l, names) ->
+    let l = append_prefix (Filename.concat "fonts" library_name) l in
+    [
+      `Filename l;
+      `HashContent ("hash/fonts.satysfi-hash", font_hash l.dst names)
+    ]
   | `Package l ->
-    `Filename (append_prefix (Filename.concat "packages" library_name) l)
+    [`Filename (append_prefix (Filename.concat "packages" library_name) l)]
   | `Doc l ->
-    `Filename (append_prefix (Filename.concat "docs" library_name) l)
+    [`Filename (append_prefix (Filename.concat "docs" library_name) l)]
 
 let read_module (m: m) ~src_dir =
   let name = get_name m in
@@ -252,6 +287,11 @@ let read_module (m: m) ~src_dir =
   let to_update_library_function = function
     | `Hash {dst; src} ->
       Library.add_hash dst src
+    | `HashContent (dst, json) ->
+      let context =
+        sprintf "(module %s)" name
+      in
+      Library.add_hash_json dst context json
     | `Filename {dst; src} ->
       Library.add_file dst src
   in
@@ -263,8 +303,10 @@ let read_module (m: m) ~src_dir =
             }
   in
   let libraries =
-    List.fold sources ~init:initial_library ~f:(fun l s ->
-        (rebase_file ~src_dir ~library_name:name s |> to_update_library_function) l
+    sources
+    |> List.concat_map ~f:(rebase_file ~src_dir ~library_name:name)
+    |> List.fold ~init:initial_library ~f:(fun l s ->
+        to_update_library_function s l
       )
   in
   Library.union initial_library libraries

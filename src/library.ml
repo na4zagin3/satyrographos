@@ -154,6 +154,9 @@ let add_hash f abs_f p =
   | Yojson.Json_error msg ->
     failwithf "JSON Error in file %s: %s" abs_f msg ()
 
+let add_hash_json f context json p =
+  { p with hashes = LibraryFiles.add_exn ~key:f ~data:([context], json) p.hashes }
+
 let union p1 p2 =
   let handle_file_conflict f f1 f2= match f1, f2 with
     | `Content fc1, `Content fc2 -> begin

@@ -37,6 +37,8 @@
    command_lint__warning_expr
    command_opam_build__doc_satysfi
    command_opam_install__doc
+   command_opam_install__duplicated_font_hash
+   command_opam_install__font_hash
    command_opam_install__library
    command_opam_install__library_missingHash
    command_opam_install__library_missingPackage

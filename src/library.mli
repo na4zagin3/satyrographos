@@ -87,6 +87,9 @@ val add_file : string -> FilePath.filename -> t -> t
 (** [add_hash f absolute_path l] adds hash file [f] whose content is at [absolute_path] to library [l] *)
 val add_hash : string -> FilePath.filename -> t -> t
 
+(** [add_hash f context json l] adds hash file [f] whose content is [json] to library [l] *)
+val add_hash_json : string -> string -> Json.t -> t -> t
+
 (** [union l1 l2] returns union of [l1] and [l2]. File or hash conflict raises an error. *)
 val union : t -> t -> t
 

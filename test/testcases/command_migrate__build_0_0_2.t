@@ -56,9 +56,9 @@ Dump generated files
   > (Lang 0.0.3)
   > (Library (name package) (version 0.1) (opam satysfi-package.opam)
   >  (sources
-  >   ((Package test.satyh test.satyh) (Font test.satyh test.satyh)
+  >   ((Package test.satyh test.satyh) (Font test.satyh test.satyh ())
   >    (Hash fonts.satysfi-hash fonts.satysfi-hash)
-  >    (Font TheanoDidot-Regular.otf theano/TheanoDidot-Regular.otf)
+  >    (Font TheanoDidot-Regular.otf theano/TheanoDidot-Regular.otf ())
   >    (File md/mdja2.satysfi-md mdja2.satysfi-md)))
   >  (dependencies ((fss ())))
   >  (compatibility ((RenameFont fonts-theano:TheanoDidot TheanoDidot))))
