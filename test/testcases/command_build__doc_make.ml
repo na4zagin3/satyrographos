@@ -12,8 +12,7 @@ let satyristes =
   (name "example-doc")
   (build
     ((make "build-doc")))
-  (dependencies ((grcnum ())
-                 (fonts-theano ()))))
+  (dependencies (grcnum fonts-theano)))
 |}
 
 let makefile =

@@ -29,7 +29,7 @@ diff -Nr @@empty_dir@@/README.md @@temp_dir@@/pkg/README.md
 0a1
 > @@README.md@@
 diff -Nr @@empty_dir@@/Satyristes @@temp_dir@@/pkg/Satyristes
-0a1,22
+0a1,21
 > 
 > (lang "0.0.3")
 > (library
@@ -42,15 +42,14 @@ diff -Nr @@empty_dir@@/Satyristes @@temp_dir@@/pkg/Satyristes
 >      ; (file "doc/grcnum.md" "README.md")
 >     ))
 >   (opam "satysfi-grcnum.opam")
->   (dependencies ((fonts-theano ()))))
+>   (dependencies (fonts-theano)))
 > 
 > (doc
 >   (name "example-doc")
 >   (build
 >     ((satysfi "doc-example.saty" "-o" "doc-example-ja.pdf")
 >      (make "build-doc")))
->   (dependencies ((grcnum ())
->                  (fonts-theano ()))))
+>   (dependencies (grcnum fonts-theano)))
 > 
 diff -Nr @@empty_dir@@/doc-example.saty @@temp_dir@@/pkg/doc-example.saty
 0a1
@@ -150,7 +149,7 @@ diff -Nr @@empty_dir@@/README.md @@temp_dir@@/pkg/README.md
 0a1
 > @@README.md@@
 diff -Nr @@empty_dir@@/Satyristes @@temp_dir@@/pkg/Satyristes
-0a1,22
+0a1,21
 > 
 > (lang "0.0.3")
 > (library
@@ -163,15 +162,14 @@ diff -Nr @@empty_dir@@/Satyristes @@temp_dir@@/pkg/Satyristes
 >      ; (file "doc/grcnum.md" "README.md")
 >     ))
 >   (opam "satysfi-grcnum.opam")
->   (dependencies ((fonts-theano ()))))
+>   (dependencies (fonts-theano)))
 > 
 > (doc
 >   (name "example-doc")
 >   (build
 >     ((satysfi "doc-example.saty" "-o" "doc-example-ja.pdf")
 >      (make "build-doc")))
->   (dependencies ((grcnum ())
->                  (fonts-theano ()))))
+>   (dependencies (grcnum fonts-theano)))
 > 
 diff -Nr @@empty_dir@@/doc-example.saty @@temp_dir@@/pkg/doc-example.saty
 0a1

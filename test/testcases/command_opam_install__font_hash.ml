@@ -19,7 +19,7 @@ let satyristes =
      (file "doc/grcnum.md" "README.md")
     ))
   (opam "satysfi-grcnum.opam")
-  (dependencies ((fonts-theano ()))))
+  (dependencies (fonts-theano)))
 |}
 
 let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =

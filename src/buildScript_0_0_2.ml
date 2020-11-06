@@ -109,7 +109,8 @@ let section_to_modules ~base_dir (range, (m : Section.t)) =
         |> CompatibilitySet.of_list
       in
       let position = Some (position_of_range range) in
-      [name, Library {name; version; opam; sources; dependencies; compatibility; position; }]
+      let autogen = Library.Dependency.empty in
+      [name, Library {name; version; opam; sources; dependencies; compatibility; position; autogen; }]
     | LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies;} ->
       if String.suffix name 4 |> String.equal "-doc" |> not
       then failwithf "libraryDoc must have suffix -doc but got %s" name ();
@@ -121,7 +122,8 @@ let section_to_modules ~base_dir (range, (m : Section.t)) =
       let build =
         List.map ~f:parse_build_command build
       in
-      [name, LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies; position; }]
+      let autogen = Library.Dependency.empty in
+      [name, LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies; position; autogen; }]
 
 let sections_to_modules ~base_dir sections =
   let modules = sections |> List.concat_map ~f:(section_to_modules ~base_dir) in

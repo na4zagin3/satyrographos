@@ -57,6 +57,7 @@ type library = {
   opam: string;
   sources: sources [@sexp.omit_nil];
   dependencies: Library.Dependency.t [@sexp.omit_nil];
+  autogen: Library.Dependency.t [@sexp.omit_nil];
   compatibility: CompatibilitySet.t [@sexp.omit_nil];
   position: position option;
 } [@@deriving sexp]
@@ -86,6 +87,7 @@ type libraryDoc = {
   build: build [@sexp.omit_nil];
   sources: documentSource list [@sexp.omit_nil];
   dependencies: Library.Dependency.t [@sexp.omit_nil];
+  autogen: Library.Dependency.t [@sexp.omit_nil];
   position: position option;
 } [@@deriving sexp]
 
@@ -94,6 +96,7 @@ type doc = {
   workingDirectory: string;
   build: build [@sexp.omit_nil];
   dependencies: Library.Dependency.t [@sexp.omit_nil];
+  autogen: Library.Dependency.t [@sexp.omit_nil];
   position: position option;
 } [@@deriving sexp]
 
@@ -149,6 +152,11 @@ let export_opam_package = function
 
 let export_opam bs =
   StringMap.iter bs ~f:export_opam_package
+
+let get_autogen_opt = function
+  | Library l -> Some l.autogen
+  | LibraryDoc l -> Some l.autogen
+  | Doc l -> Some l.autogen
 
 let get_build_opt = function
   | Library _ -> None

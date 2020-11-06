@@ -18,15 +18,14 @@ let satyristes =
      ; (file "doc/grcnum.md" "README.md")
     ))
   (opam "satysfi-grcnum.opam")
-  (dependencies ((fonts-theano ()))))
+  (dependencies (fonts-theano)))
 
 (doc
   (name "example-doc")
   (build
     ((satysfi "doc-example.saty" "-o" "doc-example-ja.pdf")
      (make "build-doc")))
-  (dependencies ((grcnum ())
-                 (fonts-theano ()))))
+  (dependencies (grcnum fonts-theano)))
 |}
 
 let satysfi_grcnum_opam =
