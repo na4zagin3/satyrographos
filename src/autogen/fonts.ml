@@ -227,7 +227,7 @@ let font_to_value f =
     "font-info", Satysfi.value_of_option font_info_to_value f.font_info;
   ]
 
-let generate ~outf library_map =
+let generate ~outf ~persistent_yojson:_ library_map =
   let fonts =
     Map.to_alist library_map
     |> List.map ~f:(fun (_, library) -> font_list ~outf library)

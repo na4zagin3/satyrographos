@@ -34,7 +34,7 @@ let get_libraries ~locs ~env ~library_override m =
   in
   let combine ~key:_ _v1 v2 = v2 in
   Result.try_with (fun () ->
-      Install.get_library_map ~outf:dummy_formatter ~system_font_prefix:None ~libraries:(Some libraries) ~env ()
+      Install.get_library_map ~outf:dummy_formatter ~system_font_prefix:None ~libraries:(Some libraries) ~persistent_autogen:[] ~env ()
       |> (fun m -> Map.merge_skewed ~combine m library_override)
       |> Map.data
     )

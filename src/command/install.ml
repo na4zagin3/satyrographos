@@ -7,6 +7,8 @@ module StringSet = Set.Make(String)
 (* TODO Abstract this *)
 module StringMap = Map.Make(String)
 
+type persistent_autogen = Satyrographos_lockdown.LockdownFile.autogen
+
 (** Returns transitively-required libraries from the given OPAM registry, Satyrographos registry, and SATySFi dist directory.
 
 Registry has the following priority:
@@ -118,25 +120,35 @@ let install_libraries d ~outf ~library_map  ~verbose ~copy () =
   end
 
 
-let add_autogen_libraries ~outf ~libraries ~env:(_ : Environment.t) library_map =
+let add_autogen_libraries ~outf ~libraries ~env:(_ : Environment.t) ~(persistent_autogen: persistent_autogen) library_map =
   Format.fprintf outf "Generating autogen libraries@.";
   let add_library name f m =
     if Set.mem libraries name
     then begin
       Format.fprintf outf "Generating autogen library %s@." name;
-      let l : Library.t = f ~outf m in
+      let persistent_yojson =
+        List.find ~f:(fun (l, _) -> String.equal l name) persistent_autogen
+        |> Option.map ~f:snd
+      in
+      let l : Library.t = f ~outf ~persistent_yojson m in
       match Map.add m ~key:(Option.value ~default:"" l.name) ~data:l with
       | `Ok m -> m
       | `Duplicate -> failwithf "Autogen Library %s is duplicated:@." (Option.value ~default:"(no name)" l.name) ()
     end else m
   in
+  let add_normal_libraries m =
+    Autogen.Autogen.normal_libraries
+    |> List.fold ~init:m ~f:(fun m (al: Autogen.Autogen.t) ->
+        add_library al.name (fun ~outf ~persistent_yojson _library_map -> al.generate ~outf ~persistent_yojson) m)
+  in
   library_map
+  |> add_normal_libraries
+  (* %fonts uses only the current data *)
   |> add_library Autogen.Fonts.name Autogen.Fonts.generate
-  |> add_library Autogen.Today.name Autogen.Today.generate
-    (* %libraries need to come last *)
+  (* %libraries need to come last *)
   |> add_library Autogen.Libraries.name Autogen.Libraries.generate
 
-let get_library_map ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~(env: Environment.t) () =
+let get_library_map ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~(env: Environment.t) ~persistent_autogen () =
   let maybe_depot = env.depot in
   let maybe_reg = Option.map maybe_depot ~f:(fun p -> p.reg) in
   let library_map = get_libraries ~outf ~maybe_reg ~env ~libraries in
@@ -153,9 +165,9 @@ let get_library_map ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries
   in
   if Set.is_empty autogen_libraries
   then library_map
-  else add_autogen_libraries ~outf ~libraries:autogen_libraries ~env library_map
+  else add_autogen_libraries ~outf ~libraries:autogen_libraries ~env ~persistent_autogen library_map
 
-let install d ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~verbose ?(safe=false) ~copy ~(env: Environment.t) () =
+let install d ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~verbose ?(safe=false) ~copy ~(env: Environment.t) ~persistent_autogen () =
   (* TODO build all *)
   Format.open_vbox 0;
   let maybe_depot = env.depot in
@@ -181,7 +193,7 @@ let install d ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~verb
       end)
   end;
   let library_map =
-    get_library_map ~outf ~system_font_prefix ~autogen_libraries ~libraries ~env ()
+    get_library_map ~outf ~system_font_prefix ~autogen_libraries ~libraries ~env ~persistent_autogen ()
   in
   install_libraries d ~verbose ~outf ~library_map ~copy ();
   Format.close_box ()

@@ -61,7 +61,17 @@ let run_satysfi_command ~satysfi_runtime args =
   assert_satysfi_option_C satysfi_runtime
   >> P.run "satysfi" (["-C"; satysfi_runtime] @ args)
 
-let satysfi_command ~outf ~system_font_prefix ~autogen_libraries ~libraries ~verbose ~project_env ~env args =
+let satysfi_command ~outf ~system_font_prefix ~autogen_libraries ~libraries ~verbose ~(project_env : Satyrographos.Environment.project_env option) ~env args =
+  let persistent_autogen =
+    (* TODO Enable lockdown for freestanding satysfi subcommand invocations *)
+    project_env
+    |> Option.bind ~f:(fun project_env ->
+        Lockdown.load_lockdown_file ~buildscript_path:project_env.buildscript_path
+      )
+    |> Option.value_map ~default:[] ~f:(fun (lockdown : Satyrographos_lockdown.LockdownFile.t) ->
+        lockdown.autogen
+      )
+  in
   let setup ~satysfi_dist =
     Install.install
       satysfi_dist
@@ -71,6 +81,7 @@ let satysfi_command ~outf ~system_font_prefix ~autogen_libraries ~libraries ~ver
       ~libraries
       ~verbose
       ~copy:false
+      ~persistent_autogen
       ~env
       ()
   in

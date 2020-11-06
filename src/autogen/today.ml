@@ -20,26 +20,59 @@ let module_sig =
           `TConst "string");
   ]
 
-let module_struct time zone =
+type persistent = {
+  time: string;
+  zone: string;
+}
+[@@deriving equal, yojson]
+
+let module_struct data =
   [`Let (datetime_field_name,
-         time
-         |> Time.to_string_iso8601_basic ~zone
+         data.time
          |> Satysfi.value_of_string);
    `Let (tzname_field_name,
-         zone
-         |> Time.Zone.name
+         data.zone
          |> Satysfi.value_of_string);
   ]
 
-let generate ~outf:_ _library_map =
+let generate_persistent () =
   (* TODO (gh-98) get the values from the lockfile *)
   let time = Time.now () in
   let zone =
     Time.Zone.local
     |> Lazy.force
   in
+  { time =
+      time
+      |> Time.to_string_iso8601_basic ~zone;
+    zone =
+      zone
+      |> Time.Zone.name;
+  }
 
-  let f = `Module ("Fonts", module_sig, module_struct time zone) in
+let generate_persistent_opt () =
+  generate_persistent ()
+  |> persistent_to_yojson
+  |> Option.some
+
+let generate ~outf ~persistent_yojson =
+  let data =
+    let persistent =
+      Option.map ~f:persistent_of_yojson persistent_yojson
+    in
+    let module Rresult = Ppx_deriving_yojson_runtime.Result in
+    match persistent with
+    | Some (Rresult.Ok p) ->
+      Format.fprintf  outf"autogen:%s: Using lockdowned values@." name;
+      p
+    | Some (Rresult.Error _) ->
+      Format.fprintf outf "autogen:%s: Lockdown file is broken@." name;
+      generate_persistent ()
+    | None ->
+      generate_persistent ()
+  in
+
+  let f = `Module ("Fonts", module_sig, module_struct data) in
   let decls =
     Satysfi.expr_experimental_message package_name
     @ [f] in

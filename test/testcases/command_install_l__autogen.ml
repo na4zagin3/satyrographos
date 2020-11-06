@@ -18,18 +18,23 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
 
 let () =
   let system_font_prefix = None in
+  let persistent_autogen = [
+    "%today", `Assoc [
+      "time", `String "2020-11-05T23:52:11.000000Z";
+      "zone", `String "Asia/Tokyo";
+    ]
+  ]
+  in
   let autogen_libraries = [
     (* Some libraries are commented out since they are not reproducible. *)
     (* "%fonts"; *)
     "%libraries";
-    (* %today will be reproducible after https://github.com/na4zagin3/satyrographos/issues/98
-       "%today";
-    *)
+    "%today";
   ] in
   let libraries = Some ["grcnum"; "base"] in
   let verbose = true in
   let copy = false in
   let main env ~dest_dir ~temp_dir:_ =
     let dest_dir = FilePath.concat dest_dir "dest" in
-    Satyrographos_command.Install.install dest_dir ~system_font_prefix ~autogen_libraries ~libraries ~verbose ~copy ~env () in
+    Satyrographos_command.Install.install dest_dir ~system_font_prefix ~persistent_autogen ~autogen_libraries ~libraries ~verbose ~copy ~env () in
   eval (test_install env main)

@@ -19,7 +19,8 @@ let () =
   let libraries = None in
   let verbose = true in
   let copy = false in
+  let persistent_autogen = [] in
   let main env ~dest_dir ~temp_dir:_ =
     let dest_dir = FilePath.concat dest_dir "dest" in
-    Satyrographos_command.Install.install dest_dir ~system_font_prefix ~libraries ~verbose ~copy ~env () in
+    Satyrographos_command.Install.install dest_dir ~system_font_prefix ~persistent_autogen ~libraries ~verbose ~copy ~env () in
   eval (test_install env main)

@@ -52,6 +52,7 @@ let install_command =
           ~outf:Format.std_formatter
           ~system_font_prefix
           ~autogen_libraries:autogen_library_list
+          ~persistent_autogen:[] (* TODO Respect lockdown files *)
           ~libraries
           ~verbose
           ~copy

@@ -16,6 +16,10 @@ dependencies:
     version: 0.0.2.7
   - name: satysfi
     version: 0.0.5+dev2020.09.05
+autogen:
+  '%today':
+    time: 2020-11-06T00:46:35.000000+09:00
+    zone: Asia/Tokyo
 |}
 
 
@@ -57,8 +61,5 @@ let () =
       ~verbose
       ~buildscript_path:(FilePath.concat temp_dir "pkg/Satyristes")
   in
-  let post_dump_dirs ~dest_dir:_ ~temp_dir =
-    let pkg_dir = FilePath.concat temp_dir "pkg" in
-    [pkg_dir]
-  in
+  let post_dump_dirs ~dest_dir:_ ~temp_dir:_ = [] in
   eval (test_install ~post_dump_dirs env main)
