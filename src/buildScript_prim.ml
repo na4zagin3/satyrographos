@@ -70,6 +70,7 @@ type build_command =
   | Satysfi of string list
   | Make of string list
   | MakeWithEnvVar of string list
+  | OMake of string list
   | Run of string * string list
 [@@deriving sexp]
 

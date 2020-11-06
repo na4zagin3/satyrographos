@@ -22,6 +22,8 @@ let parse_build_command ~satysfi_runtime = function
     P.run "make" (["SATYSFI_RUNTIME=" ^ satysfi_runtime] @ args)
   | BuildScript.Satysfi args ->
     RunSatysfi.run_satysfi_command ~satysfi_runtime args
+  | BuildScript.OMake args ->
+    P.run "omake" args
 
 let run_build_commands ~workingDir ~project_env buildCommands =
   let commands satysfi_runtime = P.List.iter buildCommands ~f:(parse_build_command ~satysfi_runtime) in

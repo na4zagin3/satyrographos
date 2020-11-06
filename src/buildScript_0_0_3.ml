@@ -113,6 +113,8 @@ let parse_build_command = function
     MakeWithEnvVar args
   | "satysfi" :: args ->
     Satysfi args
+  | "omake" :: args ->
+    OMake args
   | cmd -> failwithf "command %s is not supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
 
 let section_to_modules ~base_dir (range, (m : Section.t)) =
