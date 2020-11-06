@@ -1,22 +1,6 @@
 Installing packages
 ------------------------------------------------------------
 Target: build-doc
-Files under $SATYSFI_RUNTIME
-==============================
-.
-./dist
-./dist/.satyrographos
-./dist/fonts
-./dist/fonts/fonts-theano
-./dist/fonts/fonts-theano/TheanoDidot-Regular.otf
-./dist/fonts/fonts-theano/TheanoModern-Regular.otf
-./dist/fonts/fonts-theano/TheanoOldStyle-Regular.otf
-./dist/hash
-./dist/hash/fonts.satysfi-hash
-./dist/metadata
-./dist/packages
-./dist/packages/grcnum
-./dist/packages/grcnum/grcnum.satyh
 ==============================
 0
 
