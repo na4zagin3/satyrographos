@@ -107,8 +107,8 @@ let parse_build_command = function
     Run (cmd, args)
   | "run" :: _ ->
     failwithf "run command requires a executable name like (run <cmd> <args>...)" ()
-  | "make" :: args ->
-    Make args
+  | "make-with-env-var" :: args ->
+    MakeWithEnvVar args
   | "satysfi" :: args ->
     Satysfi args
   | cmd -> failwithf "command %s is not supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()

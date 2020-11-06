@@ -16,7 +16,7 @@ let read_module ~outf ~verbose ~build_module ~buildscript_path =
 let parse_build_command ~satysfi_runtime = function
   | BuildScript.Run (cmd, args) ->
     P.run cmd args
-  | BuildScript.Make args ->
+  | BuildScript.MakeWithEnvVar args ->
     P.run "make" (["SATYSFI_RUNTIME=" ^ satysfi_runtime] @ args)
   | BuildScript.Satysfi args ->
     RunSatysfi.run_satysfi_command ~satysfi_runtime args
