@@ -66,6 +66,7 @@ type t = {
   files: file LibraryFiles.t [@sexp.omit_nil];
   compatibility: Compatibility.t [@sexp.omit_nil];
   dependencies: Dependency.t [@sexp.omit_nil];
+  autogen: Dependency.t [@sexp.omit_nil];
 }
 [@@deriving sexp, compare]
 

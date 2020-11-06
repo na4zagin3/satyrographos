@@ -2,6 +2,7 @@
  (names
    command_build__doc_make
    command_build__doc_satysfi
+   command_build__doc_with_autogen
    command_build__doc_with_libraries
    command_install__distWithBrokenHash
    command_install__distWithNonHashUnderHashDir
@@ -19,6 +20,7 @@
    command_install_l__thirdParties_brokenDependency
    command_install_l__transitive
    command_lint__acyclic_for_each_mode
+   command_lint__autogen
    command_lint__compatibility_satyrographos_0_0_1
    command_lint__cyclic_dependencies
    command_lint__insufficient_dependencies
@@ -43,6 +45,7 @@
    command_opam_install__duplicated_font_hash
    command_opam_install__font_hash
    command_opam_install__library
+   command_opam_install__library_depending_autogen
    command_opam_install__library_missingHash
    command_opam_install__library_missingPackage
    command_opam_install__library_recursive

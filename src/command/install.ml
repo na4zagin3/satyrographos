@@ -148,7 +148,7 @@ let add_autogen_libraries ~outf ~libraries ~env:(_ : Environment.t) ~(persistent
   (* %libraries need to come last *)
   |> add_library Autogen.Libraries.name Autogen.Libraries.generate
 
-let get_library_map ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~(env: Environment.t) ~persistent_autogen () =
+let get_library_map ~outf ~system_font_prefix ~autogen_libraries ~libraries ~(env: Environment.t) ~persistent_autogen () =
   let maybe_depot = env.depot in
   let maybe_reg = Option.map maybe_depot ~f:(fun p -> p.reg) in
   let library_map = get_libraries ~outf ~maybe_reg ~env ~libraries in
@@ -160,8 +160,10 @@ let get_library_map ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries
       Map.add_exn ~key:"%fonts-system" ~data:systemFontLibrary library_map
   in
   let autogen_libraries =
-    autogen_libraries
-    |> Set.of_list (module String)
+    Map.data library_map
+    |> List.map ~f:(fun l -> l.Library.autogen)
+    |> List.cons (Library.Dependency.of_list autogen_libraries)
+    |> Library.Dependency.union_list
   in
   if Set.is_empty autogen_libraries
   then library_map

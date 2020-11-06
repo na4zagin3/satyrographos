@@ -1,0 +1,175 @@
+Installing packages
+------------------------------------------------------------
+Target: build-doc
+
+================
+Reading runtime dist: @@temp_dir@@/empty_dist
+Read user libraries: ()
+Reading opam libraries: (base class-greek fonts-theano grcnum)
+Not gathering system fonts
+Generating autogen libraries
+Generating autogen library %libraries
+Installing libraries: (%libraries dist fonts-theano grcnum)
+Removing destination @@temp_dir@@/pkg/_build/satysfi/dist
+Installation completed!
+
+[1;33mCompatibility notice[0m for library fonts-theano:
+
+  Fonts have been renamed.
+  
+    TheanoDidot -> fonts-theano:TheanoDidot
+    TheanoModern -> fonts-theano:TheanoModern
+    TheanoOldStyle -> fonts-theano:TheanoOldStyle
+
+[1;33mCompatibility notice[0m for library grcnum:
+
+  Packages have been renamed.
+  
+    grcnum.satyh -> grcnum/grcnum.satyh
+
+================
+------------------------------------------------------------
+@@temp_dir@@/pkg
+@@temp_dir@@/pkg/Makefile
+@@temp_dir@@/pkg/README.md
+@@temp_dir@@/pkg/Satyristes
+@@temp_dir@@/pkg/_build
+@@temp_dir@@/pkg/_build/satysfi
+@@temp_dir@@/pkg/_build/satysfi/dist
+@@temp_dir@@/pkg/_build/satysfi/dist/.satyrographos
+@@temp_dir@@/pkg/_build/satysfi/dist/fonts
+@@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano
+@@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano/TheanoDidot-Regular.otf
+@@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano/TheanoModern-Regular.otf
+@@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano/TheanoOldStyle-Regular.otf
+@@temp_dir@@/pkg/_build/satysfi/dist/hash
+@@temp_dir@@/pkg/_build/satysfi/dist/hash/fonts.satysfi-hash
+@@temp_dir@@/pkg/_build/satysfi/dist/metadata
+@@temp_dir@@/pkg/_build/satysfi/dist/packages
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/grcnum
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/grcnum/grcnum.satyh
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg
+@@temp_dir@@/pkg/doc-example-ja.pdf
+@@temp_dir@@/pkg/doc-example.saty
+@@temp_dir@@/pkg/doc-grcnum.saty
+@@temp_dir@@/pkg/satysfi-grcnum.opam
+------------------------------------------------------------
+diff -Nr @@empty_dir@@/Makefile @@temp_dir@@/pkg/Makefile
+0a1,5
+> 
+> PHONY: build-doc
+> build-doc:
+> 	@echo "Target: build-doc"
+> 
+diff -Nr @@empty_dir@@/README.md @@temp_dir@@/pkg/README.md
+0a1
+> @@README.md@@
+diff -Nr @@empty_dir@@/Satyristes @@temp_dir@@/pkg/Satyristes
+0a1,11
+> 
+> (lang "0.0.3")
+> 
+> (doc
+>   (name "example-doc")
+>   (build
+>     ((satysfi "doc-example.saty" "-o" "doc-example-ja.pdf")
+>      (make "build-doc")))
+>   (dependencies (grcnum fonts-theano))
+>   (autogen (%libraries)))
+> 
+diff -Nr @@empty_dir@@/_build/satysfi/dist/fonts/fonts-theano/TheanoDidot-Regular.otf @@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano/TheanoDidot-Regular.otf
+0a1
+> @@TheanoDidot-Regular.otf@@
+diff -Nr @@empty_dir@@/_build/satysfi/dist/fonts/fonts-theano/TheanoModern-Regular.otf @@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano/TheanoModern-Regular.otf
+0a1
+> @@TheanoModern-Regular.otf@@
+diff -Nr @@empty_dir@@/_build/satysfi/dist/fonts/fonts-theano/TheanoOldStyle-Regular.otf @@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano/TheanoOldStyle-Regular.otf
+0a1
+> @@TheanoOldStyle-Regular.otf@@
+diff -Nr @@empty_dir@@/_build/satysfi/dist/hash/fonts.satysfi-hash @@temp_dir@@/pkg/_build/satysfi/dist/hash/fonts.satysfi-hash
+0a1
+> {"fonts-theano:TheanoDidot":<"Single":{"src-dist":"fonts-theano/TheanoDidot-Regular.otf"}>,"fonts-theano:TheanoModern":<"Single":{"src-dist":"fonts-theano/TheanoModern-Regular.otf"}>,"fonts-theano:TheanoOldStyle":<"Single":{"src-dist":"fonts-theano/TheanoOldStyle-Regular.otf"}>}
+\ No newline at end of file
+diff -Nr @@empty_dir@@/_build/satysfi/dist/metadata @@temp_dir@@/pkg/_build/satysfi/dist/metadata
+0a1,9
+> ((version 1) (libraryName %libraries) (libraryVersion 0.1)
+>  (compatibility
+>   ((rename_packages
+>     (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))
+>    (rename_fonts
+>     (((new_name fonts-theano:TheanoDidot) (old_name TheanoDidot))
+>      ((new_name fonts-theano:TheanoModern) (old_name TheanoModern))
+>      ((new_name fonts-theano:TheanoOldStyle) (old_name TheanoOldStyle))))))
+>  (dependencies ((fonts-theano ()))))
+diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/grcnum/grcnum.satyh @@temp_dir@@/pkg/_build/satysfi/dist/packages/grcnum/grcnum.satyh
+0a1
+> @@grcnum.satyh@@
+diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg
+0a1,18
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/libraries is an experimental autogen package.`)
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
+> type library =
+> (| name : string; version : string; |)
+> module Libraries : sig
+> val list :
+> library list
+> end = struct
+> let list =
+> [ (| name = `dist`; version = ` `; |);
+>   (| name = `fonts-theano`; version = `2.0`; |);
+>   (| name = `grcnum`; version = `0.2`; |); ]
+> 
+> end
+diff -Nr @@empty_dir@@/doc-example-ja.pdf @@temp_dir@@/pkg/doc-example-ja.pdf
+0a1
+> @@doc-example.saty@@
+diff -Nr @@empty_dir@@/doc-example.saty @@temp_dir@@/pkg/doc-example.saty
+0a1
+> @@doc-example.saty@@
+diff -Nr @@empty_dir@@/doc-grcnum.saty @@temp_dir@@/pkg/doc-grcnum.saty
+0a1
+> @@doc-grcnum.saty@@
+diff -Nr @@empty_dir@@/satysfi-grcnum.opam @@temp_dir@@/pkg/satysfi-grcnum.opam
+0a1,30
+> opam-version: "2.0"
+> synopsis: "Test Package"
+> name: "satysfi-grcnum"
+> version: "0.1"
+> description: """
+> Test package for SATySFi
+> """
+> maintainer: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
+> authors: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
+> license: "LGPL-3.0-or-later"
+> homepage: "https://github.com/na4zagin3/satysfi-fss"
+> dev-repo: "git+https://github.com/na4zagin3/satysfi-fss.git"
+> bug-reports: "https://github.com/na4zagin3/satysfi-fss/issues"
+> depends: [
+> 
+>   "satysfi" {>= "0.0.5" & < "0.0.6"}
+>   "satyrographos" {>= "0.0.2.6" & < "0.0.3"}
+> 
+>   "satysfi-base" {>= "1.3.0" & < "2"}
+>   "satysfi-fonts-junicode" {>= "1" & < "2"}
+> 
+> ]
+> build: [ ]
+> install: [
+>   ["satyrographos" "opam" "install"
+>    "--name" "test-package"
+>    "--prefix" "%{prefix}%"
+>    "--script" "%{build}%/Satyristes"]
+> ]
+> 
+------------------------------------------------------------
+Command invoked:
+satysfi -C @@temp_dir@@/pkg/_build/satysfi --version
+Command invoked:
+satysfi -C @@temp_dir@@/pkg/_build/satysfi doc-example.saty -o doc-example-ja.pdf
+doc-example.saty -> doc-example-ja.pdf

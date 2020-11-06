@@ -305,6 +305,10 @@ let read_module (m: m) ~src_dir =
     get_dependencies_opt m
     |> Option.value ~default:(Library.Dependency.empty)
   in
+  let autogen =
+    get_autogen_opt m
+    |> Option.value ~default:(Library.Dependency.empty)
+  in
   let sources =
     get_sources_opt m
     |> Option.value ~default:[]
@@ -325,6 +329,7 @@ let read_module (m: m) ~src_dir =
               name = Some name;
               version;
               dependencies;
+              autogen;
             }
   in
   let libraries =

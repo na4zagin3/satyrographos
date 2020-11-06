@@ -32,9 +32,21 @@ let get_libraries ~locs ~env ~library_override m =
     |> Option.map ~f:(fun d -> Library.Dependency.elements d)
     |> Option.value ~default:[]
   in
+  let autogen_libraries =
+    BuildScript.get_autogen_opt m
+    |> Option.map ~f:Library.Dependency.elements
+    |> Option.value ~default:[]
+  in
   let combine ~key:_ _v1 v2 = v2 in
   Result.try_with (fun () ->
-      Install.get_library_map ~outf:dummy_formatter ~system_font_prefix:None ~libraries:(Some libraries) ~persistent_autogen:[] ~env ()
+      Install.get_library_map
+        ~outf:dummy_formatter
+        ~system_font_prefix:None
+        ~libraries:(Some libraries)
+        ~autogen_libraries
+        ~persistent_autogen:[] 
+        ~env
+        ()
       |> (fun m -> Map.merge_skewed ~combine m library_override)
       |> Map.data
     )

@@ -50,9 +50,10 @@ let setup_project_env ~buildscript_path ~satysfi_runtime_dir ~outf ~verbose ~lib
   Install.install satysfi_dist ~outf ~system_font_prefix ~persistent_autogen ~autogen_libraries ~libraries ~verbose ~safe:true ~copy:false ~env ();
   project_env
 
-let build ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_font_prefix ~autogen_libraries ~env =
+let build ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_font_prefix ~env =
   let src_dir, p = read_module ~outf ~verbose ~build_module ~buildscript_path in
   let libraries = Library.Dependency.to_list p.dependencies |> Some in
+  let autogen_libraries = Library.Dependency.to_list p.autogen in
   let with_build_dir build_dir c =
     let satysfi_runtime_dir = FilePath.concat build_dir "satysfi" in
     let project_env =
@@ -124,12 +125,10 @@ let opam_pin_project ~(buildscript: BuildScript.t) ~buildscript_path =
 let build_command ~outf ~buildscript_path ~name ~verbose ~env =
   let f ~buildscript ~build_module ~build_dir =
     let system_font_prefix = None in
-    (* TODO Read autogen section from the build module *)
-    let autogen_libraries = [] in
     opam_pin_project ~buildscript ~buildscript_path
     |> P.eval ;
     Format.fprintf outf "@.================@.";
-    build ~outf ~verbose ~build_module ~buildscript_path ~system_font_prefix ~autogen_libraries ~env ~build_dir;
+    build ~outf ~verbose ~build_module ~buildscript_path ~system_font_prefix ~env ~build_dir;
     Format.fprintf outf "@.================@."
   in
   let buildscript = BuildScript.load buildscript_path in

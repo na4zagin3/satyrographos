@@ -66,6 +66,7 @@ type t = {
   files: file LibraryFiles.t [@sexp.omit_nil];
   compatibility: Compatibility.t [@sexp.omit_nil];
   dependencies: Dependency.t [@sexp.omit_nil];
+  autogen: Dependency.t [@sexp.omit_nil];
 }
 [@@deriving sexp, compare]
 
@@ -76,6 +77,7 @@ let empty = {
   files = LibraryFiles.empty;
   compatibility = Compatibility.empty;
   dependencies = Dependency.empty;
+  autogen = Dependency.empty;
 }
 
 
@@ -137,6 +139,7 @@ let normalize ~outf p = {
   files = p.files;
   compatibility = p.compatibility;
   dependencies = p.dependencies;
+  autogen = p.autogen;
   name = p.name;
   version = p.version;
 }
@@ -185,6 +188,7 @@ let union p1 p2 =
     files = LibraryFiles.union handle_file_conflict p1.files p2.files;
     compatibility = Compatibility.union p1.compatibility p2.compatibility;
     dependencies = Dependency.union p1.dependencies p2.dependencies;
+    autogen = Dependency.union p1.autogen p2.autogen;
     name = Core.Option.first_some p1.name p2.name;
     version = Core.Option.first_some p1.version p2.version;
   }
