@@ -119,9 +119,14 @@ let with_bin_dir bin_dir cmd =
   >>= fun path ->
   set_env "PATH" (bin_dir ^ ":" ^ Option.get path) cmd
 
+let default_post_dump_dirs ~dest_dir ~temp_dir:_ = [dest_dir]
+
 (* TODO Move to TestCommand module *)
-let test_install ?(replacements=[]) setup f : unit t =
+let test_install ?(replacements=[]) ?(post_dump_dirs=default_post_dump_dirs) setup f : unit t =
   let test dest_dir temp_dir =
+    let post_dump_dirs =
+      post_dump_dirs ~dest_dir ~temp_dir
+    in
     let opam_prefix = Unix.open_process_in "opam var prefix" |> input_line (* Assume a path does not contain line breaks*) in
     let replacements =
       [ opam_prefix, "@@opam_prefix@@";
@@ -160,7 +165,9 @@ let test_install ?(replacements=[]) setup f : unit t =
         |> with_bin_dir bin_dir
       )
     >> echo_line
-    >> censor (dump_dir dest_dir)
+    >> List.iter post_dump_dirs ~f:(fun dir ->
+        censor (dump_dir dir)
+      )
     >>= (fun () ->
         let log_file = exec_log_file_path temp_dir in
         if FileUtil.(test Is_file log_file)

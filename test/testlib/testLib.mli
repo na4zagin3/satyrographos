@@ -33,6 +33,7 @@ val run_function : (outf:Format.formatter -> unit) -> unit t
 
 val test_install :
   ?replacements:(string * string) list ->
+  ?post_dump_dirs:(dest_dir:string -> temp_dir:string -> string list) ->
   (dest_dir:string -> temp_dir:string -> 'a t) ->
   ('a -> dest_dir:string -> temp_dir:string -> outf:Format.formatter -> unit) ->
   unit t

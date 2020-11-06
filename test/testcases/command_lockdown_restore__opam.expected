@@ -1,0 +1,236 @@
+Installing packages
+------------------------------------------------------------
+Gathering OPAM package information...
+------------------------------------------------------------
+@@temp_dir@@/pkg
+@@temp_dir@@/pkg/Makefile
+@@temp_dir@@/pkg/README.md
+@@temp_dir@@/pkg/Satyristes
+@@temp_dir@@/pkg/doc-example.saty
+@@temp_dir@@/pkg/doc-grcnum.saty
+@@temp_dir@@/pkg/font.ttf
+@@temp_dir@@/pkg/fonts.satysfi-hash
+@@temp_dir@@/pkg/grcnum.satyh
+@@temp_dir@@/pkg/lockdown.yaml
+@@temp_dir@@/pkg/satysfi-grcnum.opam
+------------------------------------------------------------
+diff -Nr @@empty_dir@@/Makefile @@temp_dir@@/pkg/Makefile
+0a1,9
+> 
+> PHONY: build-doc
+> build-doc:
+> 	@echo "Target: build-doc"
+> 	@echo 'Files under $$SATYSFI_RUNTIME'
+> 	@echo "=============================="
+> 	@cd "$(SATYSFI_RUNTIME)" ; find . | LC_ALL=C sort
+> 	@echo "=============================="
+> 
+diff -Nr @@empty_dir@@/README.md @@temp_dir@@/pkg/README.md
+0a1
+> @@README.md@@
+diff -Nr @@empty_dir@@/Satyristes @@temp_dir@@/pkg/Satyristes
+0a1,22
+> 
+> (lang "0.0.3")
+> (library
+>   (name "grcnum")
+>   (version "0.2")
+>   (sources
+>     ((package "grcnum.satyh" "./grcnum.satyh")
+>      (font "grcnum-font.ttf" "./font.ttf" ())
+>      (hash "fonts.satysfi-hash" "./fonts.satysfi-hash")
+>      ; (file "doc/grcnum.md" "README.md")
+>     ))
+>   (opam "satysfi-grcnum.opam")
+>   (dependencies ((fonts-theano ()))))
+> 
+> (doc
+>   (name "example-doc")
+>   (build
+>     ((satysfi "doc-example.saty" "-o" "doc-example-ja.pdf")
+>      (make "build-doc")))
+>   (dependencies ((grcnum ())
+>                  (fonts-theano ()))))
+> 
+diff -Nr @@empty_dir@@/doc-example.saty @@temp_dir@@/pkg/doc-example.saty
+0a1
+> @@doc-example.saty@@
+diff -Nr @@empty_dir@@/doc-grcnum.saty @@temp_dir@@/pkg/doc-grcnum.saty
+0a1
+> @@doc-grcnum.saty@@
+diff -Nr @@empty_dir@@/font.ttf @@temp_dir@@/pkg/font.ttf
+0a1
+> @@font.ttf@@
+diff -Nr @@empty_dir@@/fonts.satysfi-hash @@temp_dir@@/pkg/fonts.satysfi-hash
+0a1,3
+> {
+>   "grcnum:grcnum-font":<"Single":{"src-dist":"grcnum/grcnum-font.ttf"}>
+> }
+diff -Nr @@empty_dir@@/grcnum.satyh @@temp_dir@@/pkg/grcnum.satyh
+0a1
+> @@grcnum.satyh@@
+diff -Nr @@empty_dir@@/lockdown.yaml @@temp_dir@@/pkg/lockdown.yaml
+0a1,10
+> satyrographos: 0.0.3
+> dependencies:
+> - Opam
+> - packages:
+>   - name: ocaml
+>     version: 4.09.0
+>   - name: satyrographos
+>     version: 0.0.2.7
+>   - name: satysfi
+>     version: 0.0.5+dev2020.09.05
+diff -Nr @@empty_dir@@/satysfi-grcnum.opam @@temp_dir@@/pkg/satysfi-grcnum.opam
+0a1,30
+> opam-version: "2.0"
+> synopsis: "Test Package"
+> name: "satysfi-grcnum"
+> version: "0.1"
+> description: """
+> Test package for SATySFi
+> """
+> maintainer: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
+> authors: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
+> license: "LGPL-3.0-or-later"
+> homepage: "https://github.com/na4zagin3/satysfi-fss"
+> dev-repo: "git+https://github.com/na4zagin3/satysfi-fss.git"
+> bug-reports: "https://github.com/na4zagin3/satysfi-fss/issues"
+> depends: [
+> 
+>   "satysfi" {>= "0.0.5" & < "0.0.6"}
+>   "satyrographos" {>= "0.0.2.6" & < "0.0.3"}
+> 
+>   "satysfi-base" {>= "1.3.0" & < "2"}
+>   "satysfi-fonts-junicode" {>= "1" & < "2"}
+> 
+> ]
+> build: [ ]
+> install: [
+>   ["satyrographos" "opam" "install"
+>    "--name" "test-package"
+>    "--prefix" "%{prefix}%"
+>    "--script" "%{build}%/Satyristes"]
+> ]
+> 
+------------------------------------------------------------
+Command invoked:
+opam list -i --color=never --columns name,installed-version --separator=, --recursive --required-by satysfi-fonts-theano,satysfi-grcnum
+Installing packages
+------------------------------------------------------------
+------------------------------------------------------------
+@@temp_dir@@/pkg
+@@temp_dir@@/pkg/Makefile
+@@temp_dir@@/pkg/README.md
+@@temp_dir@@/pkg/Satyristes
+@@temp_dir@@/pkg/doc-example.saty
+@@temp_dir@@/pkg/doc-grcnum.saty
+@@temp_dir@@/pkg/font.ttf
+@@temp_dir@@/pkg/fonts.satysfi-hash
+@@temp_dir@@/pkg/grcnum.satyh
+@@temp_dir@@/pkg/lockdown.yaml
+@@temp_dir@@/pkg/satysfi-grcnum.opam
+------------------------------------------------------------
+diff -Nr @@empty_dir@@/Makefile @@temp_dir@@/pkg/Makefile
+0a1,9
+> 
+> PHONY: build-doc
+> build-doc:
+> 	@echo "Target: build-doc"
+> 	@echo 'Files under $$SATYSFI_RUNTIME'
+> 	@echo "=============================="
+> 	@cd "$(SATYSFI_RUNTIME)" ; find . | LC_ALL=C sort
+> 	@echo "=============================="
+> 
+diff -Nr @@empty_dir@@/README.md @@temp_dir@@/pkg/README.md
+0a1
+> @@README.md@@
+diff -Nr @@empty_dir@@/Satyristes @@temp_dir@@/pkg/Satyristes
+0a1,22
+> 
+> (lang "0.0.3")
+> (library
+>   (name "grcnum")
+>   (version "0.2")
+>   (sources
+>     ((package "grcnum.satyh" "./grcnum.satyh")
+>      (font "grcnum-font.ttf" "./font.ttf" ())
+>      (hash "fonts.satysfi-hash" "./fonts.satysfi-hash")
+>      ; (file "doc/grcnum.md" "README.md")
+>     ))
+>   (opam "satysfi-grcnum.opam")
+>   (dependencies ((fonts-theano ()))))
+> 
+> (doc
+>   (name "example-doc")
+>   (build
+>     ((satysfi "doc-example.saty" "-o" "doc-example-ja.pdf")
+>      (make "build-doc")))
+>   (dependencies ((grcnum ())
+>                  (fonts-theano ()))))
+> 
+diff -Nr @@empty_dir@@/doc-example.saty @@temp_dir@@/pkg/doc-example.saty
+0a1
+> @@doc-example.saty@@
+diff -Nr @@empty_dir@@/doc-grcnum.saty @@temp_dir@@/pkg/doc-grcnum.saty
+0a1
+> @@doc-grcnum.saty@@
+diff -Nr @@empty_dir@@/font.ttf @@temp_dir@@/pkg/font.ttf
+0a1
+> @@font.ttf@@
+diff -Nr @@empty_dir@@/fonts.satysfi-hash @@temp_dir@@/pkg/fonts.satysfi-hash
+0a1,3
+> {
+>   "grcnum:grcnum-font":<"Single":{"src-dist":"grcnum/grcnum-font.ttf"}>
+> }
+diff -Nr @@empty_dir@@/grcnum.satyh @@temp_dir@@/pkg/grcnum.satyh
+0a1
+> @@grcnum.satyh@@
+diff -Nr @@empty_dir@@/lockdown.yaml @@temp_dir@@/pkg/lockdown.yaml
+0a1,11
+> satyrographos: 0.0.3
+> dependencies:
+> - Opam
+> - packages:
+>   - name: ocaml
+>     version: 4.09.0
+>   - name: satyrographos
+>     version: 0.0.2.7
+>   - name: satysfi
+>     version: 0.0.5+dev2020.09.05
+> 
+diff -Nr @@empty_dir@@/satysfi-grcnum.opam @@temp_dir@@/pkg/satysfi-grcnum.opam
+0a1,30
+> opam-version: "2.0"
+> synopsis: "Test Package"
+> name: "satysfi-grcnum"
+> version: "0.1"
+> description: """
+> Test package for SATySFi
+> """
+> maintainer: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
+> authors: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
+> license: "LGPL-3.0-or-later"
+> homepage: "https://github.com/na4zagin3/satysfi-fss"
+> dev-repo: "git+https://github.com/na4zagin3/satysfi-fss.git"
+> bug-reports: "https://github.com/na4zagin3/satysfi-fss/issues"
+> depends: [
+> 
+>   "satysfi" {>= "0.0.5" & < "0.0.6"}
+>   "satyrographos" {>= "0.0.2.6" & < "0.0.3"}
+> 
+>   "satysfi-base" {>= "1.3.0" & < "2"}
+>   "satysfi-fonts-junicode" {>= "1" & < "2"}
+> 
+> ]
+> build: [ ]
+> install: [
+>   ["satyrographos" "opam" "install"
+>    "--name" "test-package"
+>    "--prefix" "%{prefix}%"
+>    "--script" "%{build}%/Satyristes"]
+> ]
+> 
+------------------------------------------------------------
+Command invoked:
+opam install --yes ocaml.4.09.0 satyrographos.0.0.2.7 satysfi.0.0.5+dev2020.09.05

@@ -11,6 +11,7 @@ let total_command =
       "library", CommandLibrary.library_command;
       "library-opam", CommandLibrary.library_opam_command;
       "lint", CommandLint.lint_command;
+      "lockdown", CommandLockdown.lockdown_command;
       "migrate", CommandMigrate.migrate_command;
       "satysfi", CommandSatysfi.satysfi_command;
       "status", CommandStatus.status_command;

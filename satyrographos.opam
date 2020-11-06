@@ -25,6 +25,7 @@ depends: [
   "json-derivers"
   "menhir"
   "ppx_deriving"
+  "ppx_deriving_yojson"
   "ocamlgraph"
   "opam-format" {>= "2.0" & < "2.1"}
   "opam-state" {>= "2.0" & < "2.1"}
@@ -32,6 +33,7 @@ depends: [
   "stringext" {with-test}
   "uri" {>= "3.0.0"}
   "uri-sexp" {>= "3.0.0"}
+  "yaml" {>= "2.0" & < "3.0"}
   "yojson"
 
   # Janestreet Libs

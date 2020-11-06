@@ -6,6 +6,7 @@
    core
    satyrographos_template
    satyrographos_command
+   satyrographos_lockdown
    satyrographos_satysfi
    shexp.process
    uri
@@ -17,6 +18,7 @@
    commandBuild
    commandDebug
    commandLint
+   commandLockdown
    commandMigrate
    commandNew
    commandInstall
