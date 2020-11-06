@@ -8,6 +8,7 @@
    ocamlgraph
    re
    satyrographos
+   satyrographos_autogen
    shexp.process
    yaml
 ))

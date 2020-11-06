@@ -42,8 +42,12 @@ let setup_project_env ~buildscript_path ~satysfi_runtime_dir ~outf ~verbose ~lib
   let satysfi_dist =
     Satyrographos.Environment.get_satysfi_dist_dir project_env
   in
+  let persistent_autogen =
+    Lockdown.load_lockdown_file ~buildscript_path
+    |> Option.value_map ~default:[] ~f:(fun lockdown -> lockdown.Satyrographos_lockdown.LockdownFile.autogen)
+  in
   Library.mark_managed_dir satysfi_dist;
-  Install.install satysfi_dist ~outf ~system_font_prefix ~autogen_libraries ~libraries ~verbose ~safe:true ~copy:false ~env ();
+  Install.install satysfi_dist ~outf ~system_font_prefix ~persistent_autogen ~autogen_libraries ~libraries ~verbose ~safe:true ~copy:false ~env ();
   project_env
 
 let build ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_font_prefix ~autogen_libraries ~env =
@@ -120,6 +124,7 @@ let opam_pin_project ~(buildscript: BuildScript.t) ~buildscript_path =
 let build_command ~outf ~buildscript_path ~name ~verbose ~env =
   let f ~buildscript ~build_module ~build_dir =
     let system_font_prefix = None in
+    (* TODO Read autogen section from the build module *)
     let autogen_libraries = [] in
     opam_pin_project ~buildscript ~buildscript_path
     |> P.eval ;

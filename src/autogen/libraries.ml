@@ -35,7 +35,7 @@ let library_list_entry (name, (lib: Library.t)) =
 let package_name = "satyrographos/experimental/libraries"
 let package_path = "packages/" ^ package_name ^ ".satyg"
 
-let generate ~outf:_ library_map =
+let generate ~outf:_ ~persistent_yojson:_ library_map =
   let records =
     Map.to_alist library_map
     |> List.map ~f:library_list_entry in

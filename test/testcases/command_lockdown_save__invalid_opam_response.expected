@@ -70,7 +70,7 @@ diff -Nr @@empty_dir@@/grcnum.satyh @@temp_dir@@/pkg/grcnum.satyh
 0a1
 > @@grcnum.satyh@@
 diff -Nr @@empty_dir@@/lockdown.yaml @@temp_dir@@/pkg/lockdown.yaml
-0a1,10
+0a1,11
 > satyrographos: 0.0.3
 > dependencies:
 > - Opam
@@ -81,6 +81,7 @@ diff -Nr @@empty_dir@@/lockdown.yaml @@temp_dir@@/pkg/lockdown.yaml
 >     version: 0.0.2.7
 >   - name: satysfi
 >     version: 0.0.5+dev2020.09.05
+> autogen: {}
 diff -Nr @@empty_dir@@/satysfi-grcnum.opam @@temp_dir@@/pkg/satysfi-grcnum.opam
 0a1,30
 > opam-version: "2.0"
