@@ -78,7 +78,7 @@ let show_problem ~outf = function
       "@;%s" stacktrace
   | LibraryBuildDeprecatedMakeCommand ->
     Format.fprintf outf
-      "(make <args>...) build command has been deprecated.@ Please use (run make <args>...) instead and then `satyrographos satysfi ...` command instead of `satysfi -C $SATYSFI_RUNTIME ...`."
+      "(make <args>...) build command has been deprecated.@ Please use (make <args>...) instead and then `satyrographos satysfi ...` command instead of `satysfi -C $SATYSFI_RUNTIME ...`."
   | LibraryMissingFile ->
     Format.fprintf outf
       "Missing file"

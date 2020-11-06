@@ -28,7 +28,7 @@ let lint_build ~locs ~(buildscript_version : BuildScript.version) (m : BuildScri
     BuildScript.get_build_opt m
     |> Option.value ~default:[]
     |> List.exists ~f:(function
-        | BuildScript.Make _
+        | BuildScript.MakeWithEnvVar _
           when
             [%equal: BuildScript.version] buildscript_version BuildScript.Lang_0_0_2
             |> not -> true

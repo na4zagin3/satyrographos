@@ -109,8 +109,12 @@ let parse_build_command = function
     failwithf "run command requires a executable name like (run <cmd> <args>...)" ()
   | "make" :: args ->
     Make args
+  | "make-with-env-var" :: args ->
+    MakeWithEnvVar args
   | "satysfi" :: args ->
     Satysfi args
+  | "omake" :: args ->
+    OMake args
   | cmd -> failwithf "command %s is not supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()
 
 let section_to_modules ~base_dir (range, (m : Section.t)) =

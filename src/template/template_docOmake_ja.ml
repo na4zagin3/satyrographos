@@ -4,7 +4,7 @@ let satyristes_template =
 
 (doc
   (name  "main")
-  (build ((run omake)))
+  (build ((omake)))
   (dependencies
    (;; Standard library
     (dist ())

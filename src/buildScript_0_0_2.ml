@@ -84,7 +84,7 @@ let load_sections f =
 
 let parse_build_command = function
   | "make" :: args ->
-    Make args
+    MakeWithEnvVar args
   | "satysfi" :: args ->
     Satysfi args
   | cmd -> failwithf "command %s is not yet supported" ([%sexp_of: string list] cmd |> Sexp.to_string) ()

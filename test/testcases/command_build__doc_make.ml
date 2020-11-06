@@ -21,9 +21,6 @@ let makefile =
 PHONY: build-doc
 build-doc:
 	@echo "Target: build-doc"
-	@echo 'Files under $$SATYSFI_RUNTIME'
-	@echo "=============================="
-	@cd "$(SATYSFI_RUNTIME)" ; find . | LC_ALL=C sort
 	@echo "=============================="
 	@echo "$(SATYROGRAPHOS_PROJECT)" | grep -e 'pkg/Satyristes' >/dev/null ; echo "$$?"
 |}
