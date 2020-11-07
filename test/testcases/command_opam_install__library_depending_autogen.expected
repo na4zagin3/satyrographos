@@ -43,7 +43,7 @@ diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash @@dest_
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/metadata @@dest_dir@@/dest/share/satysfi/grcnum/metadata
 0a1,2
 > ((version 1) (libraryName grcnum) (libraryVersion 0.2) (compatibility ())
->  (dependencies ((fonts-theano ()))))
+>  (dependencies ((fonts-theano ()))) (autogen ((%libraries ()))))
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh
 0a1
 > @@grcnum.satyh@@

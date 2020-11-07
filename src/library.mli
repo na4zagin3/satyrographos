@@ -100,6 +100,7 @@ type metadata = {
   libraryVersion: string [@default ""];
   compatibility: Compatibility.t;
   dependencies: (string * unit (* for future extension *)) list;
+  autogen: (string * unit (* for future extension *)) list [@sexp.omit_nil];
 }
 [@@deriving sexp, compare]
 

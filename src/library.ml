@@ -210,24 +210,36 @@ type metadata = {
   libraryVersion: string [@default ""];
   compatibility: Compatibility.t;
   dependencies: (string * unit (* for future extension *)) list;
+  autogen: (string * unit (* for future extension *)) list [@sexp.omit_nil];
 }
 [@@deriving sexp, compare]
+
 let current_version = 1
 
 let add_metadata f (p: t) =
   (* TODO Handle failure *)
   let metadata = Sexp.load_sexp_conv_exn f [%of_sexp: metadata] in
-  let ds = List.map ~f:fst metadata.dependencies in
+  let ds = metadata.dependencies |> List.map ~f:fst in
+  let ags = metadata.autogen |> List.map ~f:fst in
   { p with
     dependencies = Dependency.of_list ds |> Dependency.union p.dependencies;
+    autogen = Dependency.of_list ags |> Dependency.union p.autogen;
     compatibility = Compatibility.union p.compatibility metadata.compatibility;
     name = if String.is_empty metadata.libraryName then None else Some metadata.libraryName;
     version = if String.is_empty metadata.libraryVersion then None else Some metadata.libraryVersion;
   }
 let save_metadata f (p: t) =
-  let dependencies = Dependency.to_list p.dependencies |> List.map ~f:(fun f -> (f, ())) in
+  let dependencies =
+    Dependency.to_list p.dependencies
+    |> List.map ~f:(fun x -> x, ())
+  in
+  let autogen =
+    Dependency.to_list p.autogen
+    |> List.map ~f:(fun x -> x, ())
+  in
   { version = current_version;
-    dependencies = dependencies;
+    dependencies;
+    autogen;
     compatibility = p.compatibility;
     libraryName = Option.value ~default:"" p.name;
     libraryVersion = Option.value ~default:"" p.version;

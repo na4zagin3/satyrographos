@@ -14,7 +14,7 @@ let satyristes =
   (build
     ((satysfi "doc-example.saty" "-o" "doc-example-ja.pdf")
      (make "build-doc")))
-  (dependencies (grcnum fonts-theano))
+  (dependencies (localized-today))
   (autogen (%libraries)))
 |}
 
@@ -31,6 +31,23 @@ build-doc:
 	@echo "Target: build-doc"
 |}
 
+let lockdown_yaml =
+  "lockdown.yaml", {|satyrographos: 0.0.3
+dependencies:
+- Opam
+- packages:
+  - name: ocaml
+    version: 4.09.0
+  - name: satyrographos
+    version: 0.0.2.7
+  - name: satysfi
+    version: 0.0.5+dev2020.09.05
+autogen:
+  '%today':
+    time: 2020-11-06T00:46:35.000000+09:00
+    zone: Asia/Tokyo
+|}
+
 let files =
   [
     satysfi_grcnum_opam;
@@ -39,6 +56,7 @@ let files =
     "doc-grcnum.saty", "@@doc-grcnum.saty@@";
     "doc-example.saty", "@@doc-example.saty@@";
     "Makefile", makefile;
+    lockdown_yaml;
   ]
 
 let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
@@ -53,9 +71,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
   let opam_reg = FilePath.concat temp_dir "opam_reg" in
   let log_file = exec_log_file_path temp_dir in
   let prepare_opam_reg =
-    PrepareOpamReg.(prepare opam_reg theanoFiles)
-    >> PrepareOpamReg.(prepare opam_reg grcnumFiles)
-    >> PrepareOpamReg.(prepare opam_reg classGreekFiles)
+    PrepareOpamReg.(prepare opam_reg localizedTodayFiles)
     >> PrepareOpamReg.(prepare opam_reg baseFiles)
   in
   let bin = FilePath.concat temp_dir "bin" in

@@ -5,27 +5,15 @@ Target: build-doc
 ================
 Reading runtime dist: @@temp_dir@@/empty_dist
 Read user libraries: ()
-Reading opam libraries: (base class-greek fonts-theano grcnum)
+Reading opam libraries: (base localized-today)
 Not gathering system fonts
 Generating autogen libraries
+Generating autogen library %today
+autogen:%today: Using lockdowned values
 Generating autogen library %libraries
-Installing libraries: (%libraries dist fonts-theano grcnum)
+Installing libraries: (%libraries %today dist localized-today)
 Removing destination @@temp_dir@@/pkg/_build/satysfi/dist
 Installation completed!
-
-[1;33mCompatibility notice[0m for library fonts-theano:
-
-  Fonts have been renamed.
-  
-    TheanoDidot -> fonts-theano:TheanoDidot
-    TheanoModern -> fonts-theano:TheanoModern
-    TheanoOldStyle -> fonts-theano:TheanoOldStyle
-
-[1;33mCompatibility notice[0m for library grcnum:
-
-  Packages have been renamed.
-  
-    grcnum.satyh -> grcnum/grcnum.satyh
 
 ================
 ------------------------------------------------------------
@@ -37,23 +25,18 @@ Installation completed!
 @@temp_dir@@/pkg/_build/satysfi
 @@temp_dir@@/pkg/_build/satysfi/dist
 @@temp_dir@@/pkg/_build/satysfi/dist/.satyrographos
-@@temp_dir@@/pkg/_build/satysfi/dist/fonts
-@@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano
-@@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano/TheanoDidot-Regular.otf
-@@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano/TheanoModern-Regular.otf
-@@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano/TheanoOldStyle-Regular.otf
-@@temp_dir@@/pkg/_build/satysfi/dist/hash
-@@temp_dir@@/pkg/_build/satysfi/dist/hash/fonts.satysfi-hash
 @@temp_dir@@/pkg/_build/satysfi/dist/metadata
 @@temp_dir@@/pkg/_build/satysfi/dist/packages
-@@temp_dir@@/pkg/_build/satysfi/dist/packages/grcnum
-@@temp_dir@@/pkg/_build/satysfi/dist/packages/grcnum/grcnum.satyh
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today/localized-today.satyh
 @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos
 @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental
 @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/today.satyg
 @@temp_dir@@/pkg/doc-example-ja.pdf
 @@temp_dir@@/pkg/doc-example.saty
 @@temp_dir@@/pkg/doc-grcnum.saty
+@@temp_dir@@/pkg/lockdown.yaml
 @@temp_dir@@/pkg/satysfi-grcnum.opam
 ------------------------------------------------------------
 diff -Nr @@empty_dir@@/Makefile @@temp_dir@@/pkg/Makefile
@@ -76,36 +59,16 @@ diff -Nr @@empty_dir@@/Satyristes @@temp_dir@@/pkg/Satyristes
 >   (build
 >     ((satysfi "doc-example.saty" "-o" "doc-example-ja.pdf")
 >      (make "build-doc")))
->   (dependencies (grcnum fonts-theano))
+>   (dependencies (localized-today))
 >   (autogen (%libraries)))
 > 
-diff -Nr @@empty_dir@@/_build/satysfi/dist/fonts/fonts-theano/TheanoDidot-Regular.otf @@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano/TheanoDidot-Regular.otf
-0a1
-> @@TheanoDidot-Regular.otf@@
-diff -Nr @@empty_dir@@/_build/satysfi/dist/fonts/fonts-theano/TheanoModern-Regular.otf @@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano/TheanoModern-Regular.otf
-0a1
-> @@TheanoModern-Regular.otf@@
-diff -Nr @@empty_dir@@/_build/satysfi/dist/fonts/fonts-theano/TheanoOldStyle-Regular.otf @@temp_dir@@/pkg/_build/satysfi/dist/fonts/fonts-theano/TheanoOldStyle-Regular.otf
-0a1
-> @@TheanoOldStyle-Regular.otf@@
-diff -Nr @@empty_dir@@/_build/satysfi/dist/hash/fonts.satysfi-hash @@temp_dir@@/pkg/_build/satysfi/dist/hash/fonts.satysfi-hash
-0a1
-> {"fonts-theano:TheanoDidot":<"Single":{"src-dist":"fonts-theano/TheanoDidot-Regular.otf"}>,"fonts-theano:TheanoModern":<"Single":{"src-dist":"fonts-theano/TheanoModern-Regular.otf"}>,"fonts-theano:TheanoOldStyle":<"Single":{"src-dist":"fonts-theano/TheanoOldStyle-Regular.otf"}>}
-\ No newline at end of file
 diff -Nr @@empty_dir@@/_build/satysfi/dist/metadata @@temp_dir@@/pkg/_build/satysfi/dist/metadata
-0a1,9
-> ((version 1) (libraryName %libraries) (libraryVersion 0.1)
->  (compatibility
->   ((rename_packages
->     (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))
->    (rename_fonts
->     (((new_name fonts-theano:TheanoDidot) (old_name TheanoDidot))
->      ((new_name fonts-theano:TheanoModern) (old_name TheanoModern))
->      ((new_name fonts-theano:TheanoOldStyle) (old_name TheanoOldStyle))))))
->  (dependencies ((fonts-theano ()))))
-diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/grcnum/grcnum.satyh @@temp_dir@@/pkg/_build/satysfi/dist/packages/grcnum/grcnum.satyh
+0a1,2
+> ((version 1) (libraryName %libraries) (libraryVersion 0.1) (compatibility ())
+>  (dependencies ()) (autogen ((%today ()))))
+diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/localized-today/localized-today.satyh @@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today/localized-today.satyh
 0a1
-> @@grcnum.satyh@@
+> @require: satyrographos/experimental/today
 diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg
 0a1,18
 > let _ =
@@ -121,9 +84,29 @@ diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/satyrographos/experimental/l
 > library list
 > end = struct
 > let list =
-> [ (| name = `dist`; version = ` `; |);
->   (| name = `fonts-theano`; version = `2.0`; |);
->   (| name = `grcnum`; version = `0.2`; |); ]
+> [ (| name = `%today`; version = `0.1`; |);
+>   (| name = `dist`; version = ` `; |);
+>   (| name = `localized-today`; version = `0.1`; |); ]
+> 
+> end
+diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/satyrographos/experimental/today.satyg @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/today.satyg
+0a1,18
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/today is an experimental autogen package.`)
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
+> module Fonts : sig
+> val datetime :
+> string
+> val tzname :
+> string
+> end = struct
+> let datetime =
+> `2020-11-06T00:46:35.000000+09:00`
+> let tzname =
+> `Asia/Tokyo`
 > 
 > end
 diff -Nr @@empty_dir@@/doc-example-ja.pdf @@temp_dir@@/pkg/doc-example-ja.pdf
@@ -135,6 +118,23 @@ diff -Nr @@empty_dir@@/doc-example.saty @@temp_dir@@/pkg/doc-example.saty
 diff -Nr @@empty_dir@@/doc-grcnum.saty @@temp_dir@@/pkg/doc-grcnum.saty
 0a1
 > @@doc-grcnum.saty@@
+diff -Nr @@empty_dir@@/lockdown.yaml @@temp_dir@@/pkg/lockdown.yaml
+0a1,15
+> satyrographos: 0.0.3
+> dependencies:
+> - Opam
+> - packages:
+>   - name: ocaml
+>     version: 4.09.0
+>   - name: satyrographos
+>     version: 0.0.2.7
+>   - name: satysfi
+>     version: 0.0.5+dev2020.09.05
+> autogen:
+>   '%today':
+>     time: 2020-11-06T00:46:35.000000+09:00
+>     zone: Asia/Tokyo
+> 
 diff -Nr @@empty_dir@@/satysfi-grcnum.opam @@temp_dir@@/pkg/satysfi-grcnum.opam
 0a1,30
 > opam-version: "2.0"
