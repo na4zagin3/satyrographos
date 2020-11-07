@@ -8,18 +8,20 @@ open Shexp_process
 let satyristes =
 {|
 (lang "0.0.3")
-
 (library
   (name "grcnum")
   (version "0.2")
   (sources
-    ((font "grcnum-font.ttf" "./font.ttf"
-           ((Single "grcnum:grcnum-font")))
-     (hash "fonts.satysfi-hash" "./fonts.satysfi-hash")
+    ((package "grcnum.satyh" "./grcnum.satyh")
+     (font "grcnum-font.ttf" "./font.ttf" ())
+     ;; gh-229
+     ;; (hash "fonts.satysfi-hash" "./fonts.satysfi-hash")
      (file "doc/grcnum.md" "README.md")
     ))
   (opam "satysfi-grcnum.opam")
-  (dependencies (fonts-theano)))
+  (dependencies (fonts-theano))
+  (compatibility ((satyrographos 0.0.1)))
+  (autogen (%libraries)))
 |}
 
 let fontHash =
@@ -35,6 +37,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
     >> stdout_to (FilePath.concat pkg_dir "Satyristes") (echo satyristes)
     >> stdout_to (FilePath.concat pkg_dir "README.md") (echo "@@README.md@@")
     >> stdout_to (FilePath.concat pkg_dir "fonts.satysfi-hash") (echo fontHash)
+    >> stdout_to (FilePath.concat pkg_dir "grcnum.satyh") (echo "@@grcnum.satyh@@")
     >> stdout_to (FilePath.concat pkg_dir "font.ttf") (echo "@@font.ttf@@")
   in
   let empty_dist = FilePath.concat temp_dir "empty_dist" in

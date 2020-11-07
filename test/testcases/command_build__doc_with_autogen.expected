@@ -1,0 +1,175 @@
+Installing packages
+------------------------------------------------------------
+Target: build-doc
+
+================
+Reading runtime dist: @@temp_dir@@/empty_dist
+Read user libraries: ()
+Reading opam libraries: (base localized-today)
+Not gathering system fonts
+Generating autogen libraries
+Generating autogen library %today
+autogen:%today: Using lockdowned values
+Generating autogen library %libraries
+Installing libraries: (%libraries %today dist localized-today)
+Removing destination @@temp_dir@@/pkg/_build/satysfi/dist
+Installation completed!
+
+================
+------------------------------------------------------------
+@@temp_dir@@/pkg
+@@temp_dir@@/pkg/Makefile
+@@temp_dir@@/pkg/README.md
+@@temp_dir@@/pkg/Satyristes
+@@temp_dir@@/pkg/_build
+@@temp_dir@@/pkg/_build/satysfi
+@@temp_dir@@/pkg/_build/satysfi/dist
+@@temp_dir@@/pkg/_build/satysfi/dist/.satyrographos
+@@temp_dir@@/pkg/_build/satysfi/dist/metadata
+@@temp_dir@@/pkg/_build/satysfi/dist/packages
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today/localized-today.satyh
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/today.satyg
+@@temp_dir@@/pkg/doc-example-ja.pdf
+@@temp_dir@@/pkg/doc-example.saty
+@@temp_dir@@/pkg/doc-grcnum.saty
+@@temp_dir@@/pkg/lockdown.yaml
+@@temp_dir@@/pkg/satysfi-grcnum.opam
+------------------------------------------------------------
+diff -Nr @@empty_dir@@/Makefile @@temp_dir@@/pkg/Makefile
+0a1,5
+> 
+> PHONY: build-doc
+> build-doc:
+> 	@echo "Target: build-doc"
+> 
+diff -Nr @@empty_dir@@/README.md @@temp_dir@@/pkg/README.md
+0a1
+> @@README.md@@
+diff -Nr @@empty_dir@@/Satyristes @@temp_dir@@/pkg/Satyristes
+0a1,11
+> 
+> (lang "0.0.3")
+> 
+> (doc
+>   (name "example-doc")
+>   (build
+>     ((satysfi "doc-example.saty" "-o" "doc-example-ja.pdf")
+>      (make "build-doc")))
+>   (dependencies (localized-today))
+>   (autogen (%libraries)))
+> 
+diff -Nr @@empty_dir@@/_build/satysfi/dist/metadata @@temp_dir@@/pkg/_build/satysfi/dist/metadata
+0a1,2
+> ((version 1) (libraryName %libraries) (libraryVersion 0.1) (compatibility ())
+>  (dependencies ()) (autogen ((%today ()))))
+diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/localized-today/localized-today.satyh @@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today/localized-today.satyh
+0a1
+> @require: satyrographos/experimental/today
+diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg
+0a1,18
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/libraries is an experimental autogen package.`)
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
+> type library =
+> (| name : string; version : string; |)
+> module Libraries : sig
+> val list :
+> library list
+> end = struct
+> let list =
+> [ (| name = `%today`; version = `0.1`; |);
+>   (| name = `dist`; version = ` `; |);
+>   (| name = `localized-today`; version = `0.1`; |); ]
+> 
+> end
+diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/satyrographos/experimental/today.satyg @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/today.satyg
+0a1,18
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/today is an experimental autogen package.`)
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
+> module Fonts : sig
+> val datetime :
+> string
+> val tzname :
+> string
+> end = struct
+> let datetime =
+> `2020-11-06T00:46:35.000000+09:00`
+> let tzname =
+> `Asia/Tokyo`
+> 
+> end
+diff -Nr @@empty_dir@@/doc-example-ja.pdf @@temp_dir@@/pkg/doc-example-ja.pdf
+0a1
+> @@doc-example.saty@@
+diff -Nr @@empty_dir@@/doc-example.saty @@temp_dir@@/pkg/doc-example.saty
+0a1
+> @@doc-example.saty@@
+diff -Nr @@empty_dir@@/doc-grcnum.saty @@temp_dir@@/pkg/doc-grcnum.saty
+0a1
+> @@doc-grcnum.saty@@
+diff -Nr @@empty_dir@@/lockdown.yaml @@temp_dir@@/pkg/lockdown.yaml
+0a1,15
+> satyrographos: 0.0.3
+> dependencies:
+> - Opam
+> - packages:
+>   - name: ocaml
+>     version: 4.09.0
+>   - name: satyrographos
+>     version: 0.0.2.7
+>   - name: satysfi
+>     version: 0.0.5+dev2020.09.05
+> autogen:
+>   '%today':
+>     time: 2020-11-06T00:46:35.000000+09:00
+>     zone: Asia/Tokyo
+> 
+diff -Nr @@empty_dir@@/satysfi-grcnum.opam @@temp_dir@@/pkg/satysfi-grcnum.opam
+0a1,30
+> opam-version: "2.0"
+> synopsis: "Test Package"
+> name: "satysfi-grcnum"
+> version: "0.1"
+> description: """
+> Test package for SATySFi
+> """
+> maintainer: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
+> authors: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
+> license: "LGPL-3.0-or-later"
+> homepage: "https://github.com/na4zagin3/satysfi-fss"
+> dev-repo: "git+https://github.com/na4zagin3/satysfi-fss.git"
+> bug-reports: "https://github.com/na4zagin3/satysfi-fss/issues"
+> depends: [
+> 
+>   "satysfi" {>= "0.0.5" & < "0.0.6"}
+>   "satyrographos" {>= "0.0.2.6" & < "0.0.3"}
+> 
+>   "satysfi-base" {>= "1.3.0" & < "2"}
+>   "satysfi-fonts-junicode" {>= "1" & < "2"}
+> 
+> ]
+> build: [ ]
+> install: [
+>   ["satyrographos" "opam" "install"
+>    "--name" "test-package"
+>    "--prefix" "%{prefix}%"
+>    "--script" "%{build}%/Satyristes"]
+> ]
+> 
+------------------------------------------------------------
+Command invoked:
+satysfi -C @@temp_dir@@/pkg/_build/satysfi --version
+Command invoked:
+satysfi -C @@temp_dir@@/pkg/_build/satysfi doc-example.saty -o doc-example-ja.pdf
+doc-example.saty -> doc-example-ja.pdf

@@ -9,7 +9,6 @@ let library_dir prefix (buildscript: BuildScript.m) =
 
 let build_opam ~outf ~verbose ~prefix:_ ~build_module ~buildscript_path ~env =
   let system_font_prefix = None in
-  let autogen_libraries = [] in
   Build.build
     ~outf
     ~verbose
@@ -17,7 +16,6 @@ let build_opam ~outf ~verbose ~prefix:_ ~build_module ~buildscript_path ~env =
     ~buildscript_path
     ~build_dir:None
     ~system_font_prefix
-    ~autogen_libraries
     ~env
 
 let install_opam ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env:_ =

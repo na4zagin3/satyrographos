@@ -64,8 +64,9 @@ module Section = struct
     opam: string;
     sources: source list
       [@sexp.omit_nil];
-    dependencies: (string * unit (* for future extension *)) list
+    dependencies: string list
       [@sexp.omit_nil];
+    autogen: string list [@sexp.omit_nil];
     compatibility: Compatibility.t list [@sexp.omit_nil];
     (*
       sources: source list [@sexp.omit_nil];
@@ -80,15 +81,17 @@ module Section = struct
     build: string list list [@sexp.omit_nil];
     sources: documentSource list
       [@sexp.omit_nil];
-    dependencies: (string * unit (* for future extension *)) list
+    dependencies: string list
       [@sexp.omit_nil];
+    autogen: string list [@sexp.omit_nil];
   } [@sexpr.list]
   | Doc of {
       name: string;
       workingDirectory: string [@default "."];
       build: string list list [@sexp.omit_nil];
-      dependencies: (string * unit (* for future extension *)) list
+      dependencies: string list
                     [@sexp.omit_nil];
+      autogen: string list [@sexp.omit_nil];
     } [@sexpr.list]
   [@@deriving sexp]
 end
@@ -122,7 +125,7 @@ let section_to_modules ~base_dir (range, (m : Section.t)) =
   | Section.Lang "0.0.3" -> []
   | Lang v ->
     failwithf "BUG: section_to_modules: expects build script version 0.0.3, but got %s" v ()
-  | Library {name; version; opam; sources; dependencies; compatibility} ->
+  | Library {name; version; opam; sources; dependencies; compatibility; autogen;} ->
     let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
         | File (dst, src) -> add_files dst src acc
         | Font (dst, src, names) -> add_font_with_hash dst src names acc
@@ -131,17 +134,19 @@ let section_to_modules ~base_dir (range, (m : Section.t)) =
         | FontDir (src) -> recursively add_fonts base_dir src acc
         | PackageDir (src) -> recursively add_packages base_dir src acc
       end sources in
-    let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
+    let dependencies = dependencies |> Library.Dependency.of_list in
+    let autogen = autogen |> Library.Dependency.of_list in
     let compatibility =
       List.map ~f:Compatibility.to_internal compatibility
       |> CompatibilitySet.of_list
     in
     let position = Some (position_of_range range) in
-    [name, Library {name; version; opam; sources; dependencies; compatibility; position; }]
-  | LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies;} ->
+    [name, Library {name; version; opam; sources; dependencies; compatibility; position; autogen; }]
+  | LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies; autogen;} ->
     if String.suffix name 4 |> String.equal "-doc" |> not
     then failwithf "libraryDoc must have suffix -doc but got %s" name ();
-    let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
+    let dependencies = dependencies |> Library.Dependency.of_list in
+    let autogen = autogen |> Library.Dependency.of_list in
     let sources = List.fold_left ~init:empty_sources ~f:begin fun acc -> function
         | Doc (dst, src) -> add_doc dst src acc
       end sources in
@@ -149,14 +154,15 @@ let section_to_modules ~base_dir (range, (m : Section.t)) =
       List.map ~f:parse_build_command build
     in
     let position = Some (position_of_range range) in
-    [name, LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies; position; }]
-  | Doc {name; workingDirectory; build; dependencies;} ->
+    [name, LibraryDoc {name; version; opam; workingDirectory: string; build; sources; dependencies; position; autogen; }]
+  | Doc {name; workingDirectory; build; dependencies; autogen;} ->
     let position = Some (position_of_range range) in
     let build =
       List.map ~f:parse_build_command build
     in
-    let dependencies = List.map dependencies ~f:fst |> Library.Dependency.of_list in
-    [name, Doc {name; workingDirectory; build; dependencies; position;}]
+    let dependencies = dependencies |> Library.Dependency.of_list in
+    let autogen = autogen |> Library.Dependency.of_list in
+    [name, Doc {name; workingDirectory; build; dependencies; position; autogen;}]
 
 let sections_to_modules ~base_dir sections =
   let modules = sections |> List.concat_map ~f:(section_to_modules ~base_dir) in
@@ -206,10 +212,11 @@ let migrate_from_0_0_2 =
         version = l.version;
         opam = l.opam;
         sources = List.map ~f:conv_source l.sources;
-        dependencies = l.dependencies;
+        dependencies = l.dependencies |> List.map ~f:fst;
         compatibility =
           l.compatibility
           |> List.filter_map ~f:conv_compatibility ;
+        autogen = [];
       }
     | Section2.LibraryDoc l ->
       Section.LibraryDoc {
@@ -219,7 +226,8 @@ let migrate_from_0_0_2 =
         sources = List.map ~f:conv_document_source l.sources;
         workingDirectory = l.workingDirectory;
         build = l.build;
-        dependencies = l.dependencies;
+        dependencies = l.dependencies |> List.map ~f:fst;
+        autogen = [];
       }
   in
   conv_section

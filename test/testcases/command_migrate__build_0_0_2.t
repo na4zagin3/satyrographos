@@ -60,10 +60,10 @@ Dump generated files
   >    (Hash fonts.satysfi-hash fonts.satysfi-hash)
   >    (Font TheanoDidot-Regular.otf theano/TheanoDidot-Regular.otf ())
   >    (File md/mdja2.satysfi-md mdja2.satysfi-md)))
-  >  (dependencies ((fss ())))
+  >  (dependencies (fss))
   >  (compatibility ((RenameFont fonts-theano:TheanoDidot TheanoDidot))))
   > (LibraryDoc (name package-doc) (version 0.1) (opam satysfi-package-doc.opam)
-  >  (workingDirectory .) (dependencies ((package ()))))
+  >  (workingDirectory .) (dependencies (package)))
   [1]
 
 Migration is idempotent

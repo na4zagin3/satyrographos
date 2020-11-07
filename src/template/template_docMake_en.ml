@@ -166,9 +166,9 @@ let satyristes_template =
   (build ((make)))
   (dependencies
    (;; Standard library
-    (dist ())
+    dist
     ;; Third-party library
-    (fss ())
+    fss
     )))
 |}
 

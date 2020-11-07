@@ -7,9 +7,9 @@ let satyristes_template =
   (build ((omake)))
   (dependencies
    (;; Standard library
-    (dist ())
+    dist
     ;; Third-party library
-    (fss ())
+    fss
     )))
 |}
 

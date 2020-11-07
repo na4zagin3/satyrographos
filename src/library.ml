@@ -66,6 +66,7 @@ type t = {
   files: file LibraryFiles.t [@sexp.omit_nil];
   compatibility: Compatibility.t [@sexp.omit_nil];
   dependencies: Dependency.t [@sexp.omit_nil];
+  autogen: Dependency.t [@sexp.omit_nil];
 }
 [@@deriving sexp, compare]
 
@@ -76,6 +77,7 @@ let empty = {
   files = LibraryFiles.empty;
   compatibility = Compatibility.empty;
   dependencies = Dependency.empty;
+  autogen = Dependency.empty;
 }
 
 
@@ -137,6 +139,7 @@ let normalize ~outf p = {
   files = p.files;
   compatibility = p.compatibility;
   dependencies = p.dependencies;
+  autogen = p.autogen;
   name = p.name;
   version = p.version;
 }
@@ -185,6 +188,7 @@ let union p1 p2 =
     files = LibraryFiles.union handle_file_conflict p1.files p2.files;
     compatibility = Compatibility.union p1.compatibility p2.compatibility;
     dependencies = Dependency.union p1.dependencies p2.dependencies;
+    autogen = Dependency.union p1.autogen p2.autogen;
     name = Core.Option.first_some p1.name p2.name;
     version = Core.Option.first_some p1.version p2.version;
   }
@@ -206,24 +210,36 @@ type metadata = {
   libraryVersion: string [@default ""];
   compatibility: Compatibility.t;
   dependencies: (string * unit (* for future extension *)) list;
+  autogen: (string * unit (* for future extension *)) list [@sexp.omit_nil];
 }
 [@@deriving sexp, compare]
+
 let current_version = 1
 
 let add_metadata f (p: t) =
   (* TODO Handle failure *)
   let metadata = Sexp.load_sexp_conv_exn f [%of_sexp: metadata] in
-  let ds = List.map ~f:fst metadata.dependencies in
+  let ds = metadata.dependencies |> List.map ~f:fst in
+  let ags = metadata.autogen |> List.map ~f:fst in
   { p with
     dependencies = Dependency.of_list ds |> Dependency.union p.dependencies;
+    autogen = Dependency.of_list ags |> Dependency.union p.autogen;
     compatibility = Compatibility.union p.compatibility metadata.compatibility;
     name = if String.is_empty metadata.libraryName then None else Some metadata.libraryName;
     version = if String.is_empty metadata.libraryVersion then None else Some metadata.libraryVersion;
   }
 let save_metadata f (p: t) =
-  let dependencies = Dependency.to_list p.dependencies |> List.map ~f:(fun f -> (f, ())) in
+  let dependencies =
+    Dependency.to_list p.dependencies
+    |> List.map ~f:(fun x -> x, ())
+  in
+  let autogen =
+    Dependency.to_list p.autogen
+    |> List.map ~f:(fun x -> x, ())
+  in
   { version = current_version;
-    dependencies = dependencies;
+    dependencies;
+    autogen;
     compatibility = p.compatibility;
     libraryName = Option.value ~default:"" p.name;
     libraryVersion = Option.value ~default:"" p.version;
