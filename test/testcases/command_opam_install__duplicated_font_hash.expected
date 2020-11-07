@@ -1,7 +1,55 @@
 Installing packages
 ------------------------------------------------------------
-Exception:
-("[Map.add_exn] got key already present" (key hash/fonts.satysfi-hash))
+Read library:
+((name (grcnum)) (version (0.2))
+ (hashes
+  ((hash/fonts.satysfi-hash
+    ((@@temp_dir@@/pkg/fonts.satysfi-hash "(module grcnum)")
+     (Assoc
+      ((grcnum:grcnum-font
+        (Variant
+         (Single ((Assoc ((src-dist (String grcnum/grcnum-font.ttf))))))))
+       (grcnum:grcnum-font
+        (Variant
+         (Single
+          ((Assoc ((src (String dist/fonts/grcnum/grcnum-font.ttf))))))))))))))
+ (files
+  ((doc/grcnum.md (Filename @@temp_dir@@/pkg/README.md))
+   (fonts/grcnum/grcnum-font.ttf (Filename @@temp_dir@@/pkg/font.ttf))))
+ (dependencies (fonts-theano)))
+WARNING: Conflict values. Choosing first.
+<"Single":{"src-dist":"grcnum/grcnum-font.ttf"}>
+<"Single":{"src":"dist/fonts/grcnum/grcnum-font.ttf"}>
+
+Copying @@temp_dir@@/pkg/README.md to @@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
+Copying @@temp_dir@@/pkg/font.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+Generating @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
 ------------------------------------------------------------
 @@dest_dir@@
+@@dest_dir@@/dest
+@@dest_dir@@/dest/share
+@@dest_dir@@/dest/share/satysfi
+@@dest_dir@@/dest/share/satysfi/grcnum
+@@dest_dir@@/dest/share/satysfi/grcnum/doc
+@@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+@@dest_dir@@/dest/share/satysfi/grcnum/hash
+@@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
+@@dest_dir@@/dest/share/satysfi/grcnum/metadata
 ------------------------------------------------------------
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md @@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
+0a1
+> @@README.md@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+0a1
+> @@font.ttf@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
+0a1
+> {"grcnum:grcnum-font":<"Single":{"src-dist":"grcnum/grcnum-font.ttf"}>}
+\ No newline at end of file
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/metadata @@dest_dir@@/dest/share/satysfi/grcnum/metadata
+0a1,2
+> ((version 1) (libraryName grcnum) (libraryVersion 0.2) (compatibility ())
+>  (dependencies ((fonts-theano ()))))

@@ -149,16 +149,25 @@ let add_file f absolute_path p =
   then failwith ("BUG: FilePath must be absolute but got " ^ absolute_path)
   else { p with files = LibraryFiles.add_exn ~key:f ~data:(`Filename absolute_path) p.files }
 
+let handle_hash_conflict f (f1, h1) (f2, h2) = match h1, h2 with
+  | `Assoc a1, `Assoc a2 -> Some(List.append f1 f2, `Assoc (List.append a1 a2)) (* TODO: Handle conflicting cases*)
+  | _, _ -> failwith ("Conflicting file " ^ f ^ "\n  " ^ show_file_list f1 ^ "\n and \n  " ^ show_file_list f2)
+
+let add_hash_json f context json p =
+  { p with
+    hashes =
+      LibraryFiles.union handle_hash_conflict
+        p.hashes
+        (LibraryFiles.singleton f ([context], json));
+  }
+
 let add_hash f abs_f p =
   try
     let json = Json.from_file abs_f in
-    { p with hashes = LibraryFiles.add_exn ~key:f ~data:([abs_f], json) p.hashes }
+    add_hash_json f abs_f json p
   with
   | Yojson.Json_error msg ->
     failwithf "JSON Error in file %s: %s" abs_f msg ()
-
-let add_hash_json f context json p =
-  { p with hashes = LibraryFiles.add_exn ~key:f ~data:([context], json) p.hashes }
 
 let union p1 p2 =
   let handle_file_conflict f f1 f2= match f1, f2 with
@@ -179,10 +188,6 @@ let union p1 p2 =
       | None -> Some(`Filename f1)
       | Some(-1) -> failwith ("Cannot read either of files " ^ f ^ "\n  " ^ f1 ^ "\n  " ^ f2)
       | _ -> failwith ("Conflicting file " ^ f ^ "\n  " ^ f1 ^ "\n  " ^ f2)
-  in
-  let handle_hash_conflict f (f1, h1) (f2, h2) = match h1, h2 with
-    | `Assoc a1, `Assoc a2 -> Some(List.append f1 f2, `Assoc (List.append a1 a2)) (* TODO: Handle conflicting cases*)
-    | _, _ -> failwith ("Conflicting file " ^ f ^ "\n  " ^ show_file_list f1 ^ "\n and \n  " ^ show_file_list f2)
   in
   { hashes = LibraryFiles.union handle_hash_conflict p1.hashes p2.hashes;
     files = LibraryFiles.union handle_file_conflict p1.files p2.files;

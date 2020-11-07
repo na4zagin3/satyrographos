@@ -4,9 +4,13 @@ Read library:
 ((name (grcnum)) (version (0.2))
  (hashes
   ((hash/fonts.satysfi-hash
-    (("(module grcnum)")
+    (("(module grcnum)" "(module grcnum)")
      (Assoc
-      ((grcnum:grcnum-font
+      ((grcnum:grcnum-font2
+        (Variant
+         (Single
+          ((Assoc ((src (String dist/fonts/grcnum/grcnum-font2.ttf))))))))
+       (grcnum:grcnum-font
         (Variant
          (Single
           ((Assoc ((src (String dist/fonts/grcnum/grcnum-font.ttf))))))))
@@ -18,10 +22,12 @@ Read library:
              (index (Int 1))))))))))))))
  (files
   ((doc/grcnum.md (Filename @@temp_dir@@/pkg/README.md))
-   (fonts/grcnum/grcnum-font.ttf (Filename @@temp_dir@@/pkg/font.ttf))))
+   (fonts/grcnum/grcnum-font.ttf (Filename @@temp_dir@@/pkg/font.ttf))
+   (fonts/grcnum/grcnum-font2.ttf (Filename @@temp_dir@@/pkg/font2.ttf))))
  (dependencies (fonts-theano)))
 Copying @@temp_dir@@/pkg/README.md to @@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
 Copying @@temp_dir@@/pkg/font.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+Copying @@temp_dir@@/pkg/font2.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font2.ttf
 Generating @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
 ------------------------------------------------------------
 @@dest_dir@@
@@ -34,6 +40,7 @@ Generating @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
 @@dest_dir@@/dest/share/satysfi/grcnum/fonts
 @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum
 @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+@@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font2.ttf
 @@dest_dir@@/dest/share/satysfi/grcnum/hash
 @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
 @@dest_dir@@/dest/share/satysfi/grcnum/metadata
@@ -44,9 +51,12 @@ diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md @@dest_dir@@/dest
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
 0a1
 > @@font.ttf@@
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font2.ttf @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font2.ttf
+0a1
+> @@font2.ttf@@
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
 0a1
-> {"grcnum:grcnum-font":<"Single":{"src":"dist/fonts/grcnum/grcnum-font.ttf"}>,"grcnum:grcnum-font-1":<"Collection":{"src":"dist/fonts/grcnum/grcnum-font.ttf","index":1}>}
+> {"grcnum:grcnum-font":<"Single":{"src":"dist/fonts/grcnum/grcnum-font.ttf"}>,"grcnum:grcnum-font-1":<"Collection":{"src":"dist/fonts/grcnum/grcnum-font.ttf","index":1}>,"grcnum:grcnum-font2":<"Single":{"src":"dist/fonts/grcnum/grcnum-font2.ttf"}>}
 \ No newline at end of file
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/metadata @@dest_dir@@/dest/share/satysfi/grcnum/metadata
 0a1,2

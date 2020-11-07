@@ -16,6 +16,8 @@ let satyristes =
     ((font "grcnum-font.ttf" "./font.ttf"
            ((Single "grcnum:grcnum-font")
             (Collection "grcnum:grcnum-font-1" 1)))
+     (font "grcnum-font2.ttf" "./font2.ttf"
+           ((Single "grcnum:grcnum-font2")))
      (file "doc/grcnum.md" "README.md")
     ))
   (opam "satysfi-grcnum.opam")
@@ -30,6 +32,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
     >> stdout_to (FilePath.concat pkg_dir "Satyristes") (echo satyristes)
     >> stdout_to (FilePath.concat pkg_dir "README.md") (echo "@@README.md@@")
     >> stdout_to (FilePath.concat pkg_dir "font.ttf") (echo "@@font.ttf@@")
+    >> stdout_to (FilePath.concat pkg_dir "font2.ttf") (echo "@@font2.ttf@@")
   in
   let empty_dist = FilePath.concat temp_dir "empty_dist" in
   let prepare_dist = PrepareDist.empty empty_dist in
