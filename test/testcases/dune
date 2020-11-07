@@ -15,8 +15,9 @@
    command_install__thirdParties_brokenDependency
    command_install_l__autogen
    command_install_l__dependent
-   command_install_l__simple
    command_install_l__independentTwo
+   command_install_l__invalid_autogen
+   command_install_l__simple
    command_install_l__thirdParties_brokenDependency
    command_install_l__transitive
    command_lint__acyclic_for_each_mode

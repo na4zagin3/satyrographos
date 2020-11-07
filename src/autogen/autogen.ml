@@ -6,6 +6,12 @@ type t = {
     persistent_yojson:Yojson.Safe.t option -> Satyrographos.Library.t
 }
 
+let special_libraries = [
+  Fonts.name;
+  FontsSystem.name;
+  Libraries.name;
+]
+
 let normal_libraries = [
   { name=Today.name;
     generate_persistent=Today.generate_persistent_opt;
