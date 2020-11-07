@@ -20,8 +20,8 @@ let () =
   let system_font_prefix = None in
   let persistent_autogen = [
     "$today", `Assoc [
-      "time", `String "2020-11-05T23:52:11.000000Z";
-      "zone", `String "Asia/Tokyo";
+      "datetime", `String "2020-11-05T23:52:11.000000Z";
+      "tzname", `String "Asia/Tokyo";
     ]
   ]
   in

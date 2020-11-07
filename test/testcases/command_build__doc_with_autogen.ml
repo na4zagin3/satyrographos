@@ -44,8 +44,8 @@ dependencies:
     version: 0.0.5+dev2020.09.05
 autogen:
   '$today':
-    time: 2020-11-06T00:46:35.000000+09:00
-    zone: Asia/Tokyo
+    datetime: 2020-11-06T00:46:35.000000+09:00
+    tzname: Asia/Tokyo
 |}
 
 let files =
