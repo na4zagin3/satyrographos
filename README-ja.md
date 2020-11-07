@@ -97,16 +97,36 @@ document (|
 ```
 
 ## ライブラリ作者向け
-### 仕組み
-Satyrographos は `~/.opam/<ocaml-version>/share/satysfi/<package>` と  `~/.satyrographos/packages/<package>` にある全てのファイルを `~/.satysfi/dist` にリンクします。
+### 新規作成
+`new` サブコマンドを使うとテンプレートから新規ライブラリを作ることができます。
 
-また、ファイルの重複検知やハッシュファイルのマージ等も同時に行います。それを除けば、 `satyrographos install` は以下のコマンドを実行しているのと似たようなものです。
 ```sh
-$ cp -r "$(opam var share)"/share/satysfi/*/* ~/.satysfi/dist
-$ cp -r ~/.satyrographos/packages/*/* ~/.satysfi/dist
+$ satyrographos new lib your-new-library
+Name: your-new-library
+Choose licenses:
+0) MIT
+1) LGPL-3.0-or-later
+> 0
+License: MIT
+Created a new library/document.
 ```
 
-加えて、 `--system-font-prefix <system-font-name-prefix>` が用いられると、 Satyrograph はシステムフォントの情報を `fc-list` コマンドを用いて得、インストールします。
+Satyrographos は `lib` 以外のテンプレートも提供しています。テンプレートの一覧を得るには `--help` を追加してください。
+
+```sh
+$ satyrographos new --help
+
+...
+
+Available templates:
+  doc-make@en : Document with Makefile (en)
+  doc-make@ja : Document with Makefile (ja)
+  doc-omake@en : Document with OMakefile (en)
+  doc-omake@ja : Document with OMakefile (ja)
+  lib : Package library
+
+...
+```
 
 ### 名前
 ライブラリ名は以下の形式に従って下さい。

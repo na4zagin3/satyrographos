@@ -1,6 +1,5 @@
 Create a new document with doc-omake@en template
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos new doc-omake@en --license CC-BY-4.0 test-doc-en
-  Compatibility warning: You have opted in to use experimental features.
+  $ satyrographos new doc-omake@en --license CC-BY-4.0 test-doc-en
   Name: test-doc-en
   License: CC-BY-4.0
   Created a new library/document.
@@ -14,8 +13,7 @@ Try to build when there is satysfi command
   > fi
 
 Create a new document with doc-omake@ja template
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos new doc-omake@ja --license CC-BY-4.0 test-doc-ja
-  Compatibility warning: You have opted in to use experimental features.
+  $ satyrographos new doc-omake@ja --license CC-BY-4.0 test-doc-ja
   Name: test-doc-ja
   License: CC-BY-4.0
   Created a new library/document.

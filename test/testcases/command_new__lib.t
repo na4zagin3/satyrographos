@@ -1,6 +1,5 @@
 Create a new library with --license option
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos new --license MIT lib test-lib
-  Compatibility warning: You have opted in to use experimental features.
+  $ satyrographos new --license MIT lib test-lib
   Name: test-lib
   License: MIT
   Created a new library/document.
@@ -204,8 +203,7 @@ Dump generated files
 
 Interactively create a new library
   $ mv test-lib test-lib-non-interactive
-  $ printf "0\n" | SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos new lib test-lib
-  Compatibility warning: You have opted in to use experimental features.
+  $ printf "0\n" | satyrographos new lib test-lib
   Name: test-lib
   Choose licenses:
   0) MIT

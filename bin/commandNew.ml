@@ -30,7 +30,6 @@ Available templates:
       and license = flag "--license" (optional string) ~doc:"LICENSE License"
       in
       fun () ->
-        Compatibility.optin ();
         Satyrographos_command.New.create_project
           name
           license
