@@ -183,18 +183,18 @@ let%expect_test "format_type_decl_head: no variables" =
 
 let format_type_decl_body ppf = function
   | `TAlias t ->
-    Format.fprintf ppf " =@ @[<2>";
+    Format.fprintf ppf " =@ ";
     format_type ppf t;
-    Format.fprintf ppf "@]"
+    Format.fprintf ppf ""
   | `TSum cts ->
-    Format.fprintf ppf " =@ @[<2>";
+    Format.fprintf ppf " @[<v>=";
     List.iter cts ~f:(function
       | c, None ->
-        Format.fprintf ppf "| %s@." c
+        Format.fprintf ppf "@,| %s" c
       | c, Some t ->
-        Format.fprintf ppf "@[<2>| %s of@ " c;
+        Format.fprintf ppf "@,@[<2>| %s of@ " c;
         format_type ppf t;
-        Format.fprintf ppf "@]@."
+        Format.fprintf ppf "@]"
     );
     Format.fprintf ppf "@]"
 
@@ -210,14 +210,16 @@ let%expect_test "format_type_decl_body: sum" =
   |> format_type_decl_body Format.std_formatter;
   Format.pp_print_newline Format.std_formatter ();
   [%expect{|
-     =
+    =
     | A of int
     | B of 'x
     | C |}]
 
 let format_type_decl ppf (h, b) =
+  Format.fprintf ppf "@[<2>";
   format_type_decl_head ppf h;
-  format_type_decl_body ppf b
+  format_type_decl_body ppf b;
+  Format.fprintf ppf "@]"
 
 let%expect_test "format_type_decl_body: sum" =
   (("t", ["x"]), `TSum (["A", Some (`TConst "int"); "B", None]))
@@ -225,8 +227,8 @@ let%expect_test "format_type_decl_body: sum" =
   Format.pp_print_newline Format.std_formatter ();
   [%expect{|
     type 'x t =
-    | A of int
-    | B |}]
+              | A of int
+              | B |}]
 
 let rec format_expr ppf = function
   | (`Float _ | `Integer _ | `LiteralString _) as ls -> literal_simple ppf ls
@@ -275,26 +277,26 @@ let rec format_expr ppf = function
     Format.fprintf ppf "@])"
 and format_decl ppf = function
   | `Let (v, e) ->
-    Format.fprintf ppf "let %s =@.@[<2>" v;
+    Format.fprintf ppf "@[<hv 2>let %s =@ " v;
     format_expr ppf e;
     Format.fprintf ppf "@]"
   | `Module (m, ss, ds) ->
-    Format.fprintf ppf "module %s : sig@[<2>@." m;
+    Format.fprintf ppf "@[<v 2>module %s : sig" m;
     List.iter ss ~f:(fun s ->
+      Format.fprintf ppf "@;";
       format_sig_decl ppf s;
-      Format.fprintf ppf "@."
     );
-    Format.fprintf ppf "@]end = struct@[<2>@.";
+    Format.fprintf ppf "@]@;@[<v 2>end = struct";
     List.iter ds ~f:(fun d ->
+      Format.fprintf ppf "@;";
       format_decl ppf d;
-      Format.fprintf ppf "@."
     );
-    Format.fprintf ppf "@.end@]"
+    Format.fprintf ppf "@]@;end"
   | `Type td ->
     format_type_decl ppf td
 and format_sig_decl ppf = function
   | `Val (v, t) ->
-    Format.fprintf ppf "val %s :@ @[<2>" v;
+    Format.fprintf ppf "@[<hv 2>val %s :@ " v;
     format_type ppf t;
     Format.fprintf ppf "@]"
   | `Type th ->
@@ -387,8 +389,7 @@ let%expect_test "format_decl: let" =
   |> format_decl Format.std_formatter;
   Format.pp_print_newline Format.std_formatter ();
   [%expect{|
-    let x =
-    1 |} ]
+    let x = 1 |} ]
 
 let%expect_test "format_decl: module" =
   `Module ("List", [`Val ("x", `TConst "int")], [`Let ("x", `Integer 1)])
@@ -396,12 +397,8 @@ let%expect_test "format_decl: module" =
   Format.pp_print_newline Format.std_formatter ();
   [%expect{|
     module List : sig
-    val x :
-    int
-    end = struct
-    let x =
-    1
-
+      val x : int end = struct
+                    let x = 1
     end |}]
 
 let%expect_test "format_decl: type decl" =
@@ -410,8 +407,8 @@ let%expect_test "format_decl: type decl" =
   Format.pp_print_newline Format.std_formatter ();
   [%expect{|
     type 'a list =
-    | Nil
-    | Cons of ('a) |}]
+                 | Nil
+                 | Cons of ('a) |}]
 
 let format_directive ppf = function
   | `Import x ->
@@ -447,8 +444,7 @@ let%expect_test "expr_show_message" =
   |> format_decl Format.std_formatter;
   Format.pp_print_newline Format.std_formatter ();
   [%expect{|
-    let _ =
-    (display-message) (`p`) |}]
+    let _ = (display-message) (`p`) |}]
 
 let value_of_option f = function
   | None ->

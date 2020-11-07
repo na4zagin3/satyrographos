@@ -16,24 +16,21 @@ Loaded libraries
    ((packages/satyrographos/experimental/libraries.satyg
      (Content
        "let _ =\
-      \n(display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/libraries is an experimental autogen package.`)\
+      \n  (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/libraries is an experimental autogen package.`)\
       \nlet _ =\
-      \n(display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
+      \n  (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
       \nlet _ =\
-      \n(display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)\
-      \ntype library =\
-      \n(| name : string; version : string; |)\
+      \n  (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)\
+      \ntype library = (| name : string; version : string; |)\
       \nmodule Libraries : sig\
-      \nval list :\
-      \nlibrary list\
+      \n  val list : library list\
       \nend = struct\
-      \nlet list =\
-      \n[ (| name = `$today`; version = `0.1`; |);\
-      \n  (| name = `base`; version = `1.1.1`; |);\
-      \n  (| name = `dist`; version = ` `; |);\
-      \n  (| name = `fonts-theano`; version = `2.0`; |);\
-      \n  (| name = `grcnum`; version = `0.2`; |); ]\
-      \n\
+      \n  let list =\
+      \n    [ (| name = `$today`; version = `0.1`; |);\
+      \n      (| name = `base`; version = `1.1.1`; |);\
+      \n      (| name = `dist`; version = ` `; |);\
+      \n      (| name = `fonts-theano`; version = `2.0`; |);\
+      \n      (| name = `grcnum`; version = `0.2`; |); ]\
       \nend\
       \n")))))
  ((name ($today)) (version (0.1))
@@ -41,22 +38,17 @@ Loaded libraries
    ((packages/$today.satyg
      (Content
        "let _ =\
-      \n(display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)\
+      \n  (display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)\
       \nlet _ =\
-      \n(display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
+      \n  (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
       \nlet _ =\
-      \n(display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)\
+      \n  (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)\
       \nmodule Fonts : sig\
-      \nval datetime :\
-      \nstring\
-      \nval tzname :\
-      \nstring\
+      \n  val datetime : string\
+      \n  val tzname : string\
       \nend = struct\
-      \nlet datetime =\
-      \n`2020-11-05T23:52:11.000000Z`\
-      \nlet tzname =\
-      \n`Asia/Tokyo`\
-      \n\
+      \n  let datetime = `2020-11-05T23:52:11.000000Z`\
+      \n  let tzname = `Asia/Tokyo`\
       \nend\
       \n")))))
  ((name (base)) (version (1.1.1))
@@ -139,22 +131,17 @@ Installing ((name ($libraries)) (version (0.1))
    (packages/$today.satyg
     (Content
       "let _ =\
-     \n(display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)\
+     \n  (display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)\
      \nlet _ =\
-     \n(display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
+     \n  (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
      \nlet _ =\
-     \n(display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)\
+     \n  (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)\
      \nmodule Fonts : sig\
-     \nval datetime :\
-     \nstring\
-     \nval tzname :\
-     \nstring\
+     \n  val datetime : string\
+     \n  val tzname : string\
      \nend = struct\
-     \nlet datetime =\
-     \n`2020-11-05T23:52:11.000000Z`\
-     \nlet tzname =\
-     \n`Asia/Tokyo`\
-     \n\
+     \n  let datetime = `2020-11-05T23:52:11.000000Z`\
+     \n  let tzname = `Asia/Tokyo`\
      \nend\
      \n"))
    (packages/base/void.satyh
@@ -166,24 +153,21 @@ Installing ((name ($libraries)) (version (0.1))
    (packages/satyrographos/experimental/libraries.satyg
     (Content
       "let _ =\
-     \n(display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/libraries is an experimental autogen package.`)\
+     \n  (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/libraries is an experimental autogen package.`)\
      \nlet _ =\
-     \n(display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
+     \n  (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
      \nlet _ =\
-     \n(display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)\
-     \ntype library =\
-     \n(| name : string; version : string; |)\
+     \n  (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)\
+     \ntype library = (| name : string; version : string; |)\
      \nmodule Libraries : sig\
-     \nval list :\
-     \nlibrary list\
+     \n  val list : library list\
      \nend = struct\
-     \nlet list =\
-     \n[ (| name = `$today`; version = `0.1`; |);\
-     \n  (| name = `base`; version = `1.1.1`; |);\
-     \n  (| name = `dist`; version = ` `; |);\
-     \n  (| name = `fonts-theano`; version = `2.0`; |);\
-     \n  (| name = `grcnum`; version = `0.2`; |); ]\
-     \n\
+     \n  let list =\
+     \n    [ (| name = `$today`; version = `0.1`; |);\
+     \n      (| name = `base`; version = `1.1.1`; |);\
+     \n      (| name = `dist`; version = ` `; |);\
+     \n      (| name = `fonts-theano`; version = `2.0`; |);\
+     \n      (| name = `grcnum`; version = `0.2`; |); ]\
      \nend\
      \n"))))
  (compatibility
@@ -256,24 +240,19 @@ diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 >      ((new_name fonts-theano:TheanoOldStyle) (old_name TheanoOldStyle))))))
 >  (dependencies ((fonts-theano ()))))
 diff -Nr @@empty_dir@@/dest/packages/$today.satyg @@dest_dir@@/dest/packages/$today.satyg
-0a1,18
+0a1,13
 > let _ =
-> (display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)
+>   (display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)
 > let _ =
-> (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
+>   (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
 > let _ =
-> (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
+>   (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
 > module Fonts : sig
-> val datetime :
-> string
-> val tzname :
-> string
+>   val datetime : string
+>   val tzname : string
 > end = struct
-> let datetime =
-> `2020-11-05T23:52:11.000000Z`
-> let tzname =
-> `Asia/Tokyo`
-> 
+>   let datetime = `2020-11-05T23:52:11.000000Z`
+>   let tzname = `Asia/Tokyo`
 > end
 diff -Nr @@empty_dir@@/dest/packages/base/void.satyh @@dest_dir@@/dest/packages/base/void.satyh
 0a1
@@ -282,24 +261,21 @@ diff -Nr @@empty_dir@@/dest/packages/grcnum/grcnum.satyh @@dest_dir@@/dest/packa
 0a1
 > @@grcnum.satyh@@
 diff -Nr @@empty_dir@@/dest/packages/satyrographos/experimental/libraries.satyg @@dest_dir@@/dest/packages/satyrographos/experimental/libraries.satyg
-0a1,20
+0a1,17
 > let _ =
-> (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/libraries is an experimental autogen package.`)
+>   (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/libraries is an experimental autogen package.`)
 > let _ =
-> (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
+>   (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
 > let _ =
-> (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
-> type library =
-> (| name : string; version : string; |)
+>   (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
+> type library = (| name : string; version : string; |)
 > module Libraries : sig
-> val list :
-> library list
+>   val list : library list
 > end = struct
-> let list =
-> [ (| name = `$today`; version = `0.1`; |);
->   (| name = `base`; version = `1.1.1`; |);
->   (| name = `dist`; version = ` `; |);
->   (| name = `fonts-theano`; version = `2.0`; |);
->   (| name = `grcnum`; version = `0.2`; |); ]
-> 
+>   let list =
+>     [ (| name = `$today`; version = `0.1`; |);
+>       (| name = `base`; version = `1.1.1`; |);
+>       (| name = `dist`; version = ` `; |);
+>       (| name = `fonts-theano`; version = `2.0`; |);
+>       (| name = `grcnum`; version = `0.2`; |); ]
 > end
