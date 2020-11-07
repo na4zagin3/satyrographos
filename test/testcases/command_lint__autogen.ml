@@ -41,7 +41,7 @@ let satyristes =
 |}
 
 let test_satyh =
-  "test.satyh", {|@require: satyrographos/experimental/libraries|}
+  "test.satyh", {|@require: $libraries|}
 
 let opam_libs = Satyrographos.Library.[
     {empty with

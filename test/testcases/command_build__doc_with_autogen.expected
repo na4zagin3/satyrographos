@@ -27,12 +27,10 @@ Installation completed!
 @@temp_dir@@/pkg/_build/satysfi/dist/.satyrographos
 @@temp_dir@@/pkg/_build/satysfi/dist/metadata
 @@temp_dir@@/pkg/_build/satysfi/dist/packages
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/$libraries.satyg
 @@temp_dir@@/pkg/_build/satysfi/dist/packages/$today.satyg
 @@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today
 @@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today/localized-today.satyh
-@@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos
-@@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental
-@@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg
 @@temp_dir@@/pkg/doc-example-ja.pdf
 @@temp_dir@@/pkg/doc-example.saty
 @@temp_dir@@/pkg/doc-grcnum.saty
@@ -66,28 +64,10 @@ diff -Nr @@empty_dir@@/_build/satysfi/dist/metadata @@temp_dir@@/pkg/_build/saty
 0a1,2
 > ((version 1) (libraryName $libraries) (libraryVersion 0.1) (compatibility ())
 >  (dependencies ()) (autogen (($today ()))))
-diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/$today.satyg @@temp_dir@@/pkg/_build/satysfi/dist/packages/$today.satyg
-0a1,13
-> let _ =
->   (display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)
-> let _ =
->   (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
-> let _ =
->   (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
-> module Fonts : sig
->   val datetime : string
->   val tzname : string
-> end = struct
->   let datetime = `2020-11-06T00:46:35.000000+09:00`
->   let tzname = `Asia/Tokyo`
-> end
-diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/localized-today/localized-today.satyh @@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today/localized-today.satyh
-0a1
-> @require: satyrographos/experimental/today
-diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg
+diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/$libraries.satyg @@temp_dir@@/pkg/_build/satysfi/dist/packages/$libraries.satyg
 0a1,15
 > let _ =
->   (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/libraries is an experimental autogen package.`)
+>   (display-message) (#` [Warning] Satyrographos: Package $libraries is an experimental autogen package.`)
 > let _ =
 >   (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
 > let _ =
@@ -101,6 +81,24 @@ diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/satyrographos/experimental/l
 >       (| name = `dist`; version = ` `; |);
 >       (| name = `localized-today`; version = `0.1`; |); ]
 > end
+diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/$today.satyg @@temp_dir@@/pkg/_build/satysfi/dist/packages/$today.satyg
+0a1,13
+> let _ =
+>   (display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)
+> let _ =
+>   (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
+> let _ =
+>   (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
+> module Today : sig
+>   val datetime : string
+>   val tzname : string
+> end = struct
+>   let datetime = `2020-11-06T00:46:35.000000+09:00`
+>   let tzname = `Asia/Tokyo`
+> end
+diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/localized-today/localized-today.satyh @@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today/localized-today.satyh
+0a1
+> @require: $today
 diff -Nr @@empty_dir@@/doc-example-ja.pdf @@temp_dir@@/pkg/doc-example-ja.pdf
 0a1
 > @@doc-example.saty@@

@@ -13,10 +13,10 @@ Removing destination @@dest_dir@@/dest
 Loaded libraries
 (((name ($libraries)) (version (0.1))
   (files
-   ((packages/satyrographos/experimental/libraries.satyg
+   ((packages/$libraries.satyg
      (Content
        "let _ =\
-      \n  (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/libraries is an experimental autogen package.`)\
+      \n  (display-message) (#` [Warning] Satyrographos: Package $libraries is an experimental autogen package.`)\
       \nlet _ =\
       \n  (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
       \nlet _ =\
@@ -43,7 +43,7 @@ Loaded libraries
       \n  (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
       \nlet _ =\
       \n  (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)\
-      \nmodule Fonts : sig\
+      \nmodule Today : sig\
       \n  val datetime : string\
       \n  val tzname : string\
       \nend = struct\
@@ -128,32 +128,10 @@ Installing ((name ($libraries)) (version (0.1))
    (fonts/fonts-theano/TheanoOldStyle-Regular.otf
     (Filename
      @@temp_dir@@/opam_reg/fonts-theano/fonts/fonts-theano/TheanoOldStyle-Regular.otf))
-   (packages/$today.satyg
+   (packages/$libraries.satyg
     (Content
       "let _ =\
-     \n  (display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)\
-     \nlet _ =\
-     \n  (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
-     \nlet _ =\
-     \n  (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)\
-     \nmodule Fonts : sig\
-     \n  val datetime : string\
-     \n  val tzname : string\
-     \nend = struct\
-     \n  let datetime = `2020-11-05T23:52:11.000000Z`\
-     \n  let tzname = `Asia/Tokyo`\
-     \nend\
-     \n"))
-   (packages/base/void.satyh
-    (Filename
-     @@temp_dir@@/opam_reg/base/packages/base/void.satyh))
-   (packages/grcnum/grcnum.satyh
-    (Filename
-     @@temp_dir@@/opam_reg/grcnum/packages/grcnum/grcnum.satyh))
-   (packages/satyrographos/experimental/libraries.satyg
-    (Content
-      "let _ =\
-     \n  (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/libraries is an experimental autogen package.`)\
+     \n  (display-message) (#` [Warning] Satyrographos: Package $libraries is an experimental autogen package.`)\
      \nlet _ =\
      \n  (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
      \nlet _ =\
@@ -169,7 +147,29 @@ Installing ((name ($libraries)) (version (0.1))
      \n      (| name = `fonts-theano`; version = `2.0`; |);\
      \n      (| name = `grcnum`; version = `0.2`; |); ]\
      \nend\
-     \n"))))
+     \n"))
+   (packages/$today.satyg
+    (Content
+      "let _ =\
+     \n  (display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)\
+     \nlet _ =\
+     \n  (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)\
+     \nlet _ =\
+     \n  (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)\
+     \nmodule Today : sig\
+     \n  val datetime : string\
+     \n  val tzname : string\
+     \nend = struct\
+     \n  let datetime = `2020-11-05T23:52:11.000000Z`\
+     \n  let tzname = `Asia/Tokyo`\
+     \nend\
+     \n"))
+   (packages/base/void.satyh
+    (Filename
+     @@temp_dir@@/opam_reg/base/packages/base/void.satyh))
+   (packages/grcnum/grcnum.satyh
+    (Filename
+     @@temp_dir@@/opam_reg/grcnum/packages/grcnum/grcnum.satyh))))
  (compatibility
   ((rename_packages
     (((new_name grcnum/grcnum.satyh) (old_name grcnum.satyh))))
@@ -206,14 +206,12 @@ Installation completed!
 @@dest_dir@@/dest/hash/fonts.satysfi-hash
 @@dest_dir@@/dest/metadata
 @@dest_dir@@/dest/packages
+@@dest_dir@@/dest/packages/$libraries.satyg
 @@dest_dir@@/dest/packages/$today.satyg
 @@dest_dir@@/dest/packages/base
 @@dest_dir@@/dest/packages/base/void.satyh
 @@dest_dir@@/dest/packages/grcnum
 @@dest_dir@@/dest/packages/grcnum/grcnum.satyh
-@@dest_dir@@/dest/packages/satyrographos
-@@dest_dir@@/dest/packages/satyrographos/experimental
-@@dest_dir@@/dest/packages/satyrographos/experimental/libraries.satyg
 ------------------------------------------------------------
 diff -Nr @@empty_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf @@dest_dir@@/dest/fonts/fonts-theano/TheanoDidot-Regular.otf
 0a1
@@ -239,31 +237,10 @@ diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 >      ((new_name fonts-theano:TheanoModern) (old_name TheanoModern))
 >      ((new_name fonts-theano:TheanoOldStyle) (old_name TheanoOldStyle))))))
 >  (dependencies ((fonts-theano ()))))
-diff -Nr @@empty_dir@@/dest/packages/$today.satyg @@dest_dir@@/dest/packages/$today.satyg
-0a1,13
-> let _ =
->   (display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)
-> let _ =
->   (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
-> let _ =
->   (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
-> module Fonts : sig
->   val datetime : string
->   val tzname : string
-> end = struct
->   let datetime = `2020-11-05T23:52:11.000000Z`
->   let tzname = `Asia/Tokyo`
-> end
-diff -Nr @@empty_dir@@/dest/packages/base/void.satyh @@dest_dir@@/dest/packages/base/void.satyh
-0a1
-> @@void.satyh@@
-diff -Nr @@empty_dir@@/dest/packages/grcnum/grcnum.satyh @@dest_dir@@/dest/packages/grcnum/grcnum.satyh
-0a1
-> @@grcnum.satyh@@
-diff -Nr @@empty_dir@@/dest/packages/satyrographos/experimental/libraries.satyg @@dest_dir@@/dest/packages/satyrographos/experimental/libraries.satyg
+diff -Nr @@empty_dir@@/dest/packages/$libraries.satyg @@dest_dir@@/dest/packages/$libraries.satyg
 0a1,17
 > let _ =
->   (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/libraries is an experimental autogen package.`)
+>   (display-message) (#` [Warning] Satyrographos: Package $libraries is an experimental autogen package.`)
 > let _ =
 >   (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
 > let _ =
@@ -279,3 +256,24 @@ diff -Nr @@empty_dir@@/dest/packages/satyrographos/experimental/libraries.satyg 
 >       (| name = `fonts-theano`; version = `2.0`; |);
 >       (| name = `grcnum`; version = `0.2`; |); ]
 > end
+diff -Nr @@empty_dir@@/dest/packages/$today.satyg @@dest_dir@@/dest/packages/$today.satyg
+0a1,13
+> let _ =
+>   (display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)
+> let _ =
+>   (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
+> let _ =
+>   (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
+> module Today : sig
+>   val datetime : string
+>   val tzname : string
+> end = struct
+>   let datetime = `2020-11-05T23:52:11.000000Z`
+>   let tzname = `Asia/Tokyo`
+> end
+diff -Nr @@empty_dir@@/dest/packages/base/void.satyh @@dest_dir@@/dest/packages/base/void.satyh
+0a1
+> @@void.satyh@@
+diff -Nr @@empty_dir@@/dest/packages/grcnum/grcnum.satyh @@dest_dir@@/dest/packages/grcnum/grcnum.satyh
+0a1
+> @@grcnum.satyh@@

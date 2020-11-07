@@ -32,7 +32,7 @@ let library_list_entry (name, (lib: Library.t)) =
       "version", `LiteralString (Option.value ~default:"" lib.version);
     ]
 
-let package_name = "satyrographos/experimental/libraries"
+let package_name = "$libraries"
 let package_path = "packages/" ^ package_name ^ ".satyg"
 
 let generate ~outf:_ ~persistent_yojson:_ library_map =

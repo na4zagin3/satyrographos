@@ -72,7 +72,7 @@ let generate ~outf ~persistent_yojson =
       generate_persistent ()
   in
 
-  let f = `Module ("Fonts", module_sig, module_struct data) in
+  let f = `Module ("Today", module_sig, module_struct data) in
   let decls =
     Satysfi.expr_experimental_message package_name
     @ [f] in
