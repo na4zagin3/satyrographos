@@ -29,7 +29,7 @@ let satyristes =
   (sources ((package "test.satyh" "test.satyh")))
   (opam "satysfi-package.opam")
   (dependencies ())
-  (autogen (%%libraries)))
+  (autogen ($libraries)))
 
 (libraryDoc
   (name "package-doc")

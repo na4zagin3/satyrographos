@@ -22,7 +22,7 @@ let () =
   ]
   in
   let autogen_libraries = [
-    "%invalid-autogen";
+    "$invalid-autogen";
   ] in
   let libraries = Some ["grcnum"; "base"] in
   let verbose = true in

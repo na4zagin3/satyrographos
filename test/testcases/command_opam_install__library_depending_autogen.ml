@@ -21,7 +21,7 @@ let satyristes =
   (opam "satysfi-grcnum.opam")
   (dependencies (fonts-theano))
   (compatibility ((satyrographos 0.0.1)))
-  (autogen (%libraries)))
+  (autogen ($libraries)))
 |}
 
 let fontHash =

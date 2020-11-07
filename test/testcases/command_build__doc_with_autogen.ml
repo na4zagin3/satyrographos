@@ -15,7 +15,7 @@ let satyristes =
     ((satysfi "doc-example.saty" "-o" "doc-example-ja.pdf")
      (make "build-doc")))
   (dependencies (localized-today))
-  (autogen (%libraries)))
+  (autogen ($libraries)))
 |}
 
 let satysfi_grcnum_opam =
@@ -43,7 +43,7 @@ dependencies:
   - name: satysfi
     version: 0.0.5+dev2020.09.05
 autogen:
-  '%today':
+  '$today':
     time: 2020-11-06T00:46:35.000000+09:00
     zone: Asia/Tokyo
 |}

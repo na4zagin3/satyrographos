@@ -8,10 +8,10 @@ Read user libraries: ()
 Reading opam libraries: (base localized-today)
 Not gathering system fonts
 Generating autogen libraries
-Generating autogen library %today
-autogen:%today: Using lockdowned values
-Generating autogen library %libraries
-Installing libraries: (%libraries %today dist localized-today)
+Generating autogen library $today
+autogen:$today: Using lockdowned values
+Generating autogen library $libraries
+Installing libraries: ($libraries $today dist localized-today)
 Removing destination @@temp_dir@@/pkg/_build/satysfi/dist
 Installation completed!
 
@@ -27,12 +27,12 @@ Installation completed!
 @@temp_dir@@/pkg/_build/satysfi/dist/.satyrographos
 @@temp_dir@@/pkg/_build/satysfi/dist/metadata
 @@temp_dir@@/pkg/_build/satysfi/dist/packages
+@@temp_dir@@/pkg/_build/satysfi/dist/packages/$today.satyg
 @@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today
 @@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today/localized-today.satyh
 @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos
 @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental
 @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/libraries.satyg
-@@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/today.satyg
 @@temp_dir@@/pkg/doc-example-ja.pdf
 @@temp_dir@@/pkg/doc-example.saty
 @@temp_dir@@/pkg/doc-grcnum.saty
@@ -60,12 +60,32 @@ diff -Nr @@empty_dir@@/Satyristes @@temp_dir@@/pkg/Satyristes
 >     ((satysfi "doc-example.saty" "-o" "doc-example-ja.pdf")
 >      (make "build-doc")))
 >   (dependencies (localized-today))
->   (autogen (%libraries)))
+>   (autogen ($libraries)))
 > 
 diff -Nr @@empty_dir@@/_build/satysfi/dist/metadata @@temp_dir@@/pkg/_build/satysfi/dist/metadata
 0a1,2
-> ((version 1) (libraryName %libraries) (libraryVersion 0.1) (compatibility ())
->  (dependencies ()) (autogen ((%today ()))))
+> ((version 1) (libraryName $libraries) (libraryVersion 0.1) (compatibility ())
+>  (dependencies ()) (autogen (($today ()))))
+diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/$today.satyg @@temp_dir@@/pkg/_build/satysfi/dist/packages/$today.satyg
+0a1,18
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Package $today is an experimental autogen package.`)
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
+> let _ =
+> (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
+> module Fonts : sig
+> val datetime :
+> string
+> val tzname :
+> string
+> end = struct
+> let datetime =
+> `2020-11-06T00:46:35.000000+09:00`
+> let tzname =
+> `Asia/Tokyo`
+> 
+> end
 diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/localized-today/localized-today.satyh @@temp_dir@@/pkg/_build/satysfi/dist/packages/localized-today/localized-today.satyh
 0a1
 > @require: satyrographos/experimental/today
@@ -84,29 +104,9 @@ diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/satyrographos/experimental/l
 > library list
 > end = struct
 > let list =
-> [ (| name = `%today`; version = `0.1`; |);
+> [ (| name = `$today`; version = `0.1`; |);
 >   (| name = `dist`; version = ` `; |);
 >   (| name = `localized-today`; version = `0.1`; |); ]
-> 
-> end
-diff -Nr @@empty_dir@@/_build/satysfi/dist/packages/satyrographos/experimental/today.satyg @@temp_dir@@/pkg/_build/satysfi/dist/packages/satyrographos/experimental/today.satyg
-0a1,18
-> let _ =
-> (display-message) (#` [Warning] Satyrographos: Package satyrographos/experimental/today is an experimental autogen package.`)
-> let _ =
-> (display-message) (#` [Warning] Satyrographos: Its API is unstable; will thus be backward-incompatibly changed.`)
-> let _ =
-> (display-message) (#` [Warning] Satyrographos: Furthermore, the package itself may be renamed or removed.`)
-> module Fonts : sig
-> val datetime :
-> string
-> val tzname :
-> string
-> end = struct
-> let datetime =
-> `2020-11-06T00:46:35.000000+09:00`
-> let tzname =
-> `Asia/Tokyo`
 > 
 > end
 diff -Nr @@empty_dir@@/doc-example-ja.pdf @@temp_dir@@/pkg/doc-example-ja.pdf
@@ -131,7 +131,7 @@ diff -Nr @@empty_dir@@/lockdown.yaml @@temp_dir@@/pkg/lockdown.yaml
 >   - name: satysfi
 >     version: 0.0.5+dev2020.09.05
 > autogen:
->   '%today':
+>   '$today':
 >     time: 2020-11-06T00:46:35.000000+09:00
 >     zone: Asia/Tokyo
 > 

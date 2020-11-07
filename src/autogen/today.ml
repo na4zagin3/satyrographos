@@ -5,9 +5,9 @@ module Satysfi = Satyrographos_satysfi.Writer
 
 module StringMap = Map.Make(String)
 
-let name = "%today"
+let name = "$today"
 
-let package_name = "satyrographos/experimental/today"
+let package_name = "$today"
 let package_path = "packages/" ^ package_name ^ ".satyg"
 
 let datetime_field_name = "datetime"
