@@ -1,6 +1,5 @@
 Interactively create a new library with giving wrong answers.
-  $ printf "\na\n999\n1\n" | SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos new lib test-lib
-  Compatibility warning: You have opted in to use experimental features.
+  $ printf "\na\n999\n1\n" | satyrographos new lib test-lib
   Name: test-lib
   Choose licenses:
   0) MIT

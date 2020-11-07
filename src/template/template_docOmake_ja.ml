@@ -39,4 +39,4 @@ let files = [
 ]
 
 let template =
-  "doc-omake@ja", ("Document with OMakefile (ja)", files)
+  "[experimental]doc-omake@ja", ("Document with OMakefile (ja)", files)

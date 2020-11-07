@@ -115,16 +115,40 @@ document (|
 ```
 
 ## For Library Authors
-### How Does It Work?
-Satyrographos links all files under `~/.opam/<ocaml-version>/share/satysfi/<package>` and  `~/.satyrographos/packages/<package>` into `~/.satysfi/dist`.
+### Create a new library
 
-Satyrographos also does duplication detection, hash file merging, show compatibility warning, &c. Basically `satyrographos install` behaves as
+Satyrographos provides `new` subcommand to create a new library from a template.
+
 ```sh
-$ cp -r "$(opam var share)"/share/satysfi/*/* ~/.satysfi/dist
-$ cp -r ~/.satyrographos/packages/*/* ~/.satysfi/dist
+$ satyrographos new lib your-new-library
+Name: your-new-library
+Choose licenses:
+0) MIT
+1) LGPL-3.0-or-later
+> 0
+License: MIT
+Created a new library/document.
+
+$ ls
+your-new-library/
 ```
 
-With `--system-font-prefix <system-font-name-prefix>`, Satyrograph query system fonts with `fc-list` and installs those fonts too.
+Satyrographos also has templates other than `lib`.  To get the list of the templates, add `--help` option.
+
+```sh
+$ satyrographos new --help
+
+...
+
+Available templates:
+  doc-make@en : Document with Makefile (en)
+  doc-make@ja : Document with Makefile (ja)
+  doc-omake@en : Document with OMakefile (en)
+  doc-omake@ja : Document with OMakefile (ja)
+  lib : Package library
+
+...
+```
 
 ### Library Names
 Please follow the following formats.
