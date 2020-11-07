@@ -19,7 +19,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
 let () =
   let system_font_prefix = None in
   let persistent_autogen = [
-    "%today", `Assoc [
+    "$today", `Assoc [
       "time", `String "2020-11-05T23:52:11.000000Z";
       "zone", `String "Asia/Tokyo";
     ]
@@ -27,9 +27,9 @@ let () =
   in
   let autogen_libraries = [
     (* Some libraries are commented out since they are not reproducible. *)
-    (* "%fonts"; *)
-    "%libraries";
-    "%today";
+    (* "$fonts"; *)
+    "$libraries";
+    "$today";
   ] in
   let libraries = Some ["grcnum"; "base"] in
   let verbose = true in

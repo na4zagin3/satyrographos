@@ -5,7 +5,7 @@ module Satysfi = Satyrographos_satysfi.Writer
 
 module StringMap = Map.Make(String)
 
-let name = "%fonts"
+let name = "$fonts"
 
 type font_location =
   | Single of { src: string; orig_location: string option; }

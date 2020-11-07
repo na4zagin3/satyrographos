@@ -1,7 +1,7 @@
 Installing packages
 ------------------------------------------------------------
 Exception:
-(Failure "Autogen libraries (%invalid-autogen) are not available.")
+(Failure "Autogen libraries ($invalid-autogen) are not available.")
 ------------------------------------------------------------
 @@dest_dir@@
 ------------------------------------------------------------

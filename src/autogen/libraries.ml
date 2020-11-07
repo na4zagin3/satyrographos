@@ -5,7 +5,7 @@ module Satysfi = Satyrographos_satysfi.Writer
 
 module StringMap = Map.Make(String)
 
-let name = "%libraries"
+let name = "$libraries"
 
 let library_type_name = "library"
 let library_name_field_name = "name"
