@@ -121,6 +121,21 @@ let install_libraries d ~outf ~library_map  ~verbose ~copy () =
 
 
 let add_autogen_libraries ~outf ~libraries ~env:(_ : Environment.t) ~(persistent_autogen: persistent_autogen) library_map =
+  let available_libraries =
+    Library.Dependency.of_list Autogen.Autogen.(
+        List.map ~f:(fun a -> a.name) normal_libraries
+        @ special_libraries
+      )
+  in
+  let invalid_libraries =
+    Set.diff libraries available_libraries
+  in
+  begin if Set.is_empty invalid_libraries |> not
+    then failwithf
+        !"Autogen libraries %{sexp: Library.Dependency.t} are not available."
+        invalid_libraries
+        ()
+  end;
   Format.fprintf outf "Generating autogen libraries@.";
   let add_library name f m =
     if Set.mem libraries name
