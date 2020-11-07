@@ -1,4 +1,4 @@
-let name = "doc-make@ja"
+let name = "[experimental]doc-make@ja"
 
 let local_satyh_template =
 "local.satyh",

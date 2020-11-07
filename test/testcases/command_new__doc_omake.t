@@ -1,5 +1,5 @@
 Create a new document with doc-omake@en template
-  $ satyrographos new doc-omake@en --license CC-BY-4.0 test-doc-en
+  $ satyrographos new [experimental]doc-omake@en --license CC-BY-4.0 test-doc-en
   Name: test-doc-en
   License: CC-BY-4.0
   Created a new library/document.
@@ -13,7 +13,7 @@ Try to build when there is satysfi command
   > fi
 
 Create a new document with doc-omake@ja template
-  $ satyrographos new doc-omake@ja --license CC-BY-4.0 test-doc-ja
+  $ satyrographos new [experimental]doc-omake@ja --license CC-BY-4.0 test-doc-ja
   Name: test-doc-ja
   License: CC-BY-4.0
   Created a new library/document.
