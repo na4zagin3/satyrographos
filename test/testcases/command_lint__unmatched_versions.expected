@@ -1,7 +1,8 @@
 @@test_library@@/Satyristes:3:1: (module package):
 @@test_library@@/satysfi-package.opam:
 Error: opam-file/version
-  OPAM package version “0.0.1” should be prefixed with “0.1”.
+  OPAM package version “0.0.1” does not match “0.1” specified in Satyristes.
+  Hint: OPAM package version may be more specific than that in Satyristes, but not the other way around.
 
 @@test_library@@/Satyristes:24:1: (module package-doc):
 @@test_library@@/satysfi-package-doc.opam:
@@ -11,11 +12,13 @@ Error: opam-file/version
 @@test_library@@/Satyristes:17:1: (module package-end-with-alpha):
 @@test_library@@/satysfi-package-end-with-alpha.opam:
 Error: opam-file/version
-  OPAM package version “0ab” should be prefixed with “0a”.
+  OPAM package version “0ab” does not match “0a” specified in Satyristes.
+  Hint: OPAM package version may be more specific than that in Satyristes, but not the other way around.
 
 @@test_library@@/Satyristes:10:1: (module package-end-with-digit):
 @@test_library@@/satysfi-package-end-with-digit.opam:
 Error: opam-file/version
-  OPAM package version “0.11” should be prefixed with “0.1”.
+  OPAM package version “0.11” does not match “0.1” specified in Satyristes.
+  Hint: OPAM package version may be more specific than that in Satyristes, but not the other way around.
 
 4 problem(s) found.

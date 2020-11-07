@@ -97,7 +97,7 @@ let show_problem ~outf = function
       "OPAM file lacks the version field"
   | OpamPackageVersionShouldBePrefixedWithLibraryVersion {opam_version; module_version;} ->
     Format.fprintf outf
-      "OPAM package version “%s” should be prefixed with “%s”." opam_version module_version
+      "OPAM package version “%s” does not match “%s” specified in Satyristes.@;Hint: OPAM package version may be more specific than that in Satyristes, but not the other way around." opam_version module_version
   | OpamProblem (error_no, msg) ->
     Format.fprintf outf
       "(%d) %s" error_no msg
