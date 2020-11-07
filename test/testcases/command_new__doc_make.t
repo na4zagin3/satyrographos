@@ -29,11 +29,9 @@ Try to build when there is satysfi command
   > fi
 
 Ensure there are no warnings
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos lint -W '-lib/dep/exception-during-setup' --script test-doc-en/Satyristes --satysfi-version 0.0.5
-  Compatibility warning: You have opted in to use experimental features.
+  $ satyrographos lint -W '-lib/dep/exception-during-setup' --script test-doc-en/Satyristes --satysfi-version 0.0.5
   WARNING: Script lang 0.0.3 is under development.
   0 problem(s) found.
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos lint -W '-lib/dep/exception-during-setup' --script test-doc-ja/Satyristes --satysfi-version 0.0.5
-  Compatibility warning: You have opted in to use experimental features.
+  $ satyrographos lint -W '-lib/dep/exception-during-setup' --script test-doc-ja/Satyristes --satysfi-version 0.0.5
   WARNING: Script lang 0.0.3 is under development.
   0 problem(s) found.

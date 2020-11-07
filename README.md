@@ -312,11 +312,20 @@ $ opam add -vy "file://$PWD"
 There’s ongoing ticket [#4](https://github.com/na4zagin3/satyrographos/issues/4) to run
 test cases without OPAM installation. Stay tuned!
 
+You can use `lint` subcommand to detect several problems.  See [satyrographos-lint](./doc/lint.md) for more details.
+
+```sh
+$ satyrographos lint
+```
+
 #### Register Satyrograpohs Repo
 `opam-publish` must work.
 Follow https://opam.ocaml.org/doc/Packaging.html except you need to specify `--repo` option.
 
-```
+```sh
+# Check validity
+$ satyrographos lint
+
 # Tag you repository
 git tag -a <tag>
 # Push the tag

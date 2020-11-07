@@ -219,6 +219,5 @@ Compare them
 
 Ensure there are no warnings
   $ cd test-lib-interactive
-  $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos lint -W '-lib/dep/exception-during-setup' --satysfi-version 0.0.5
-  Compatibility warning: You have opted in to use experimental features.
+  $ satyrographos lint -W '-lib/dep/exception-during-setup' --satysfi-version 0.0.5
   0 problem(s) found.
