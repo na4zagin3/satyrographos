@@ -309,15 +309,24 @@ $ opam add -vy "file://$PWD"
 
 OPAMに頼らずテストを実行する方法については開発中（[#4](https://github.com/na4zagin3/satyrographos/issues/4)）です。
 
+また、`lint` コマンドは依存関係等の問題を検出することができます。適宜実行して下さい。詳しいオプションは[lint](./doc/lint.md)を見て下さい。
+
+```sh
+$ satyrographos lint
+```
+
 #### Satyrograpohsレポへの登録
 https://opam.ocaml.org/doc/Packaging.html に従えば上手に行くはずです。
 但し、`opam publish`には`--repo`オプションを加えて下さい。
 
-```
+```sh
+# 問題検出
+$ satyrographos lint
+
 # レポジトリにタグを打つ
-git tag -a <tag>
+$ git tag -a <tag>
 # タグをプッシュ
-git push origin <tag>
+$ git push origin <tag>
 
 opam publish --repo=na4zagin3/satyrographos-repo
 ```

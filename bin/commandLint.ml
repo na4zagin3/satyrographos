@@ -22,7 +22,6 @@ let lint_command =
       and warning_expr = flag "W" (optional warning_expr_flag_type) ~doc:"WARNING_EXPR Enable/disable warnings. (e.g., “-lib/dep,-opam-file/version” disables warnings related to library dependencies and OPAM package versions; “opam-file/lint/{-*,+3..5}” disables all the OPAM lint warnings except warnings 3 through 5)"
       in
       fun () ->
-        Compatibility.optin ();
         let exit_code =
           Satyrographos_command.Lint.lint
             ~env
