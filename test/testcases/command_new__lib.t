@@ -96,7 +96,7 @@ Dump generated files
   >   >
   > >
   diff -Nr empty-dir/satysfi-test-lib-doc.opam test-lib/satysfi-test-lib-doc.opam
-  0a1,35
+  0a1,36
   > opam-version: "2.0"
   > name: "satysfi-test-lib-doc"
   > version: "1.0.0"
@@ -113,10 +113,11 @@ Dump generated files
   > depends: [
   >   "satysfi" { >= "0.0.5" & < "0.0.6" }
   >   "satyrographos" { >= "0.0.2.6" & < "0.0.3" }
-  >   "satysfi-dist"
   > 
   >   # You may want to include the corresponding library
   >   "satysfi-test-lib" {= "%{version}%"}
+  > 
+  >   # Other libraries
   >   "satysfi-dist"
   >   "satysfi-base"
   > ]

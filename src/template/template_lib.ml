@@ -173,10 +173,11 @@ bug-reports: "https://github.com/<github-username>/satysfi-@@library@@/issues"
 depends: [
   "satysfi" { @@satysfi_version@@ }
   "satyrographos" { @@satyrographos_version@@ }
-  "satysfi-dist"
 
   # You may want to include the corresponding library
   "satysfi-@@library@@" {= "%{version}%"}
+
+  # Other libraries
   "satysfi-dist"
   "satysfi-base"
 ]
