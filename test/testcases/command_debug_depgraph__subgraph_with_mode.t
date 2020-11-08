@@ -14,7 +14,6 @@ Generate dependency graphs for satyh
   $ SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos debug depgraph -S 0.0.5 --mode pdf first.saty
   Compatibility warning: You have opted in to use experimental features.
   digraph G {
-    "second.satyh-md" [shape=box, ];
     "second" [shape=doubleoctagon, ];
     "second.satyh" [shape=box, ];
     "second.satyg" [shape=box, ];
@@ -34,7 +33,6 @@ Generate dependency graphs for satyh-md
   digraph G {
     "second.satyh-md" [shape=box, ];
     "second" [shape=doubleoctagon, ];
-    "second.satyh" [shape=box, ];
     "second.satyg" [shape=box, ];
     "first.saty" [shape=box, ];
     

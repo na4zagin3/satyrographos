@@ -17,6 +17,7 @@ let satyristes =
   (sources ((package "first.satyh" "first.satyh")
             (package "second.satyg" "second.satyg")
             (package "third.satyh" "third.satyh")
+            (package "safe.satyg" "safe.satyg")
            ))
   (opam "satysfi-package.opam")
   (dependencies ()))
@@ -28,6 +29,8 @@ let packages = [
   "second.satyg", {|@import: third
 |};
   "third.satyh", {|
+|};
+  "safe.satyg", {|@import: second
 |};
 ]
 
