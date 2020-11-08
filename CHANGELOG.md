@@ -6,6 +6,8 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.2.8] - 2020-11-08
+
 ### Added
 - Add `build` subcommand to create a new project from templates ([#194]).
 - Add `$today` autogen library, which has the current datetime and tzname ([#201]).
@@ -267,7 +269,8 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#252]: https://github.com/na4zagin3/satyrographos/pull/252
 
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.7...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.8...HEAD
+[v0.0.2.8]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.7...v0.0.2.8
 [v0.0.2.7]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.6...v0.0.2.7
 [v0.0.2.6]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.5...v0.0.2.6
 [v0.0.2.5]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.4...v0.0.2.5
