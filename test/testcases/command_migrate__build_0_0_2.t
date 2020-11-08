@@ -34,6 +34,7 @@ Prepare a Satyrographos 0.0.2 library
   >    "--prefix" "%{prefix}%"
   >    "--script" "%{build}%/Satyristes"]
   > ]
+  > EOF
   $ cat > test-lib/satysfi-package-doc.opam <<EOF
   > opam-version: "2.0"
   > build: [
@@ -48,6 +49,7 @@ Prepare a Satyrographos 0.0.2 library
   >    "--prefix" "%{prefix}%"
   >    "--script" "%{build}%/Satyristes"]
   > ]
+  > EOF
 
   $ cd test-lib
 
