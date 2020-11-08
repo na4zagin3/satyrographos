@@ -6,6 +6,39 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+### Added
+- Add `build` subcommand to create a new project from templates ([#194]).
+- Add `$today` autogen library, which has the current datetime and tzname ([#201]).
+- (Experimental) Add build script lang 0.0.3 support ([#202]).
+  - `(run <args>...)` build command ([#217])
+  - `(omake <args>...)` build command ([#226])
+  - `(make-with-env-var <args>...)` build command which is equivalent to `(make <args>...)` in build script lang 0.0.2  ([#226])
+  - `(make <args>...)` build command now does not set `SATYSFI_RUNTIME` environmental variable ([#226])
+  - `(font <dst> <src> (<font-hashes>...))` source ([#224], [#235])
+  - `(autogen (<autogen-libraries>...))` clause ([#231])
+- Add `[experimental]doc-make@en`, `[experimental]doc-make@ja`, `[experimental]doc-omake@en`, `[experimental]doc-omake@ja`, and `[experimental]example-autogen` templates ([#206], [#209], [#219], [#223], [#242], [#244], [#240]).
+- Add `-W <warning-expr>` option to `lint` command to enable/disable specific warnings ([#215]).
+- (Experimental) Add `migrate` subcommand to automatically migrate Satyrographos projects ([#216], [#251])
+- (Experimental) Add `lockdown` subcommand to save/restore the current build environment ([#225], [#228])
+- Support `.satysfi-md` as a source type for dependency extraction ([#248]).
+
+### Changed
+- Refine commandline options of `util deps-make` subcommand ([#203], [#204]).
+- Remove Compatibility notices for Satyrographos 0.0.1 libraries ([#210])
+- Remove prefixes for SATySFi or Make output (e.g., `satysfi out>`) ([#214])
+- Improve the error message when the OPAM file and the Satyrographos module have mismatching versions ([#238])
+- Renamed autogen libraries ([#239]).  Now they are prefixed with `$`.
+- `new` subcommand is no longer experimental ([#242]).
+- `lint` subcommand is no longer experimental ([#243]).
+- `build` subcommand runs `opam pin` and `opam reinstall` separately ([#252]).
+
+### Fixed
+- Fix a bug where unit tests executing satyrographos occationally fail ([#199]).
+- Fix a bug where `lint` subcommand fails with an exception when SATySFi is not installed ([#220]).
+- Explicitly reject unavailable autogen libraries instead of silently ignoring ([#234]).
+- Require paths with `..` are now normalized ([#245]).
+- Valid imports were reported when they are importing the same target of problematic imports ([#246]).
+- Fix command summaries ([#250])
 
 ## [v0.0.2.7] - 2020-10-19
 ### Added
@@ -197,6 +230,41 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#188]: https://github.com/na4zagin3/satyrographos/pull/188
 [#189]: https://github.com/na4zagin3/satyrographos/pull/189
 [#190]: https://github.com/na4zagin3/satyrographos/pull/190
+[#194]: https://github.com/na4zagin3/satyrographos/pull/194
+[#199]: https://github.com/na4zagin3/satyrographos/pull/199
+[#201]: https://github.com/na4zagin3/satyrographos/pull/201
+[#202]: https://github.com/na4zagin3/satyrographos/pull/202
+[#203]: https://github.com/na4zagin3/satyrographos/pull/203
+[#204]: https://github.com/na4zagin3/satyrographos/pull/204
+[#206]: https://github.com/na4zagin3/satyrographos/pull/206
+[#209]: https://github.com/na4zagin3/satyrographos/pull/209
+[#210]: https://github.com/na4zagin3/satyrographos/pull/210
+[#214]: https://github.com/na4zagin3/satyrographos/pull/214
+[#215]: https://github.com/na4zagin3/satyrographos/pull/215
+[#216]: https://github.com/na4zagin3/satyrographos/pull/216
+[#217]: https://github.com/na4zagin3/satyrographos/pull/217
+[#219]: https://github.com/na4zagin3/satyrographos/pull/219
+[#220]: https://github.com/na4zagin3/satyrographos/pull/220
+[#223]: https://github.com/na4zagin3/satyrographos/pull/223
+[#224]: https://github.com/na4zagin3/satyrographos/pull/224
+[#225]: https://github.com/na4zagin3/satyrographos/pull/225
+[#226]: https://github.com/na4zagin3/satyrographos/pull/226
+[#228]: https://github.com/na4zagin3/satyrographos/pull/228
+[#231]: https://github.com/na4zagin3/satyrographos/pull/231
+[#234]: https://github.com/na4zagin3/satyrographos/pull/234
+[#235]: https://github.com/na4zagin3/satyrographos/pull/235
+[#238]: https://github.com/na4zagin3/satyrographos/pull/238
+[#239]: https://github.com/na4zagin3/satyrographos/pull/239
+[#240]: https://github.com/na4zagin3/satyrographos/pull/240
+[#242]: https://github.com/na4zagin3/satyrographos/pull/242
+[#243]: https://github.com/na4zagin3/satyrographos/pull/243
+[#244]: https://github.com/na4zagin3/satyrographos/pull/244
+[#245]: https://github.com/na4zagin3/satyrographos/pull/245
+[#246]: https://github.com/na4zagin3/satyrographos/pull/246
+[#248]: https://github.com/na4zagin3/satyrographos/pull/248
+[#250]: https://github.com/na4zagin3/satyrographos/pull/250
+[#251]: https://github.com/na4zagin3/satyrographos/pull/251
+[#252]: https://github.com/na4zagin3/satyrographos/pull/252
 
 
 [Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.7...HEAD
