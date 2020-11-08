@@ -106,6 +106,15 @@ module G = struct
     let hash_fold = hash_fold_edge
     let equal =  equal_edge
   end
+
+  let sexp_of_t g =
+    let edges =
+      GOrig.fold_edges_e (fun e acc -> e :: acc) g []
+    in
+    let vertices =
+      GOrig.fold_vertex (fun v acc -> v :: acc) g []
+    in
+    [%sexp_of: Vertex.t list * E.t list] (vertices, edges)
 end
 
 module Oper =
@@ -127,7 +136,9 @@ module Dot =
         | Edge.Directive (_, d) ->
           let label = Dependency.render_directive d in
           let color = match d with
-            | Require _ -> 0x117722
+            | Require _
+            | MdDepends _ ->
+              0x117722
             | Import _ -> 0x002288
           in
           [`Label label; `Fontcolor color; `Color color]
@@ -169,17 +180,22 @@ let dependency_graph ~outf ?(follow_required=false) ~package_root_dirs ~satysfi_
         match directive, bs with
         | Import _, [b] ->
           Vertex.Basename b
-        | Require p, _ ->
+        | Require p, _
+        | MdDepends p, _ ->
           Package p
-        | directive, bs ->
+        | Import _, bs ->
           failwithf !"BUG: Directive %{sexp:Dependency.directive} has wrong number of candidate basenames %{sexp: string list}"
             directive bs ()
       in
       let e1 : Edge.t = Some (Directive (off, directive)) in
       G.add_edge_e g (vf, e1, vm);
       let recursion_enabled = match directive, follow_required with
-        | Require _, false -> false
-        | _ -> true
+        | _, true ->
+          true
+        | Require _, false
+        | MdDepends _, false ->
+          false
+        | Import _, _ -> true
       in
       if recursion_enabled
       then

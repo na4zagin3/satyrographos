@@ -5,18 +5,19 @@ module Location = Satyrographos.Location
 type directive =
   | Import of string
   | Require of string
+  | MdDepends of string
 [@@deriving sexp, compare, hash, equal]
 
 type t = {
   path: string;
-  imports: (Location.t * string) list;
-  requires: (Location.t * string) list;
+  directives: (Location.t * directive) list;
 }
 [@@deriving sexp]
 
 let render_directive = function
   | Import f -> sprintf "@import: %s" f
   | Require p -> sprintf "@require: %s" p
+  | MdDepends p -> sprintf "md depends %s" p
 
 let parse_directives =
   (* TODO Rewrite when multi-line comment is added to SATySFi *)
@@ -80,225 +81,270 @@ let of_directives ~path ds =
       range = Some (ColumnRange cr);
     }
   in
-  let accum acc = function
-    | cr, Import c ->
-      { acc with imports = (loc cr, c) :: acc.imports; }
-    | cr, Require c ->
-      { acc with requires = (loc cr, c) :: acc.requires; }
-  in
-  let empty = {
+  {
     path = path;
-    imports = [];
-    requires = [];
-  } in
-  List.fold_left ~f:accum ~init:empty ds
+    directives = List.map ds ~f:(fun (cr, d) -> loc cr, d);
+  }
 
-let parse_string ~path str =
+let parse_string_saty ~path str =
   parse_directives str
   |> of_directives ~path
 
-let parse_file_result path =
-  Result.try_with (fun () ->
-      In_channel.read_all path
-    )
-  |> Result.map ~f:(parse_string ~path)
-
-let%expect_test "parse_string: empty" =
+let%expect_test "parse_string_saty: empty" =
   let path = "test.saty" in
-  parse_string ~path ""
+  parse_string_saty ~path ""
   |> [%sexp_of: t]
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
-    ((path test.saty) (imports ()) (requires ())) |}]
+    ((path test.saty) (directives ())) |}]
 
-let%expect_test "parse_string: single import with crlf" =
+let%expect_test "parse_string_saty: single import with crlf" =
   let path = "test.saty" in
-  parse_string ~path "@import: imported/file1\r\n"
+  parse_string_saty ~path "@import: imported/file1\r\n"
   |> [%sexp_of: t]
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
     ((path test.saty)
-     (imports
+     (directives
       ((((path test.saty)
          (range
           ((ColumnRange
             ((rstart ((lnum 0) (cnum 0))) (rend ((lnum 0) (cnum 8))))))))
-        imported/file1)))
-     (requires ())) |}]
+        (Import imported/file1))))) |}]
 
-let%expect_test "parse_string: single import with eol" =
+let%expect_test "parse_string_saty: single import with eol" =
   let path = "test.saty" in
-  parse_string ~path "@import: imported/file1\n"
+  parse_string_saty ~path "@import: imported/file1\n"
   |> [%sexp_of: t]
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
     ((path test.saty)
-     (imports
+     (directives
       ((((path test.saty)
          (range
           ((ColumnRange
             ((rstart ((lnum 0) (cnum 0))) (rend ((lnum 0) (cnum 8))))))))
-        imported/file1)))
-     (requires ())) |}]
+        (Import imported/file1))))) |}]
 
-let%expect_test "parse_string: single import with eos" =
+let%expect_test "parse_string_saty: single import with eos" =
   let path = "test.saty" in
-  parse_string ~path "@import: imported/file1"
+  parse_string_saty ~path "@import: imported/file1"
   |> [%sexp_of: t]
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
     ((path test.saty)
-     (imports
+     (directives
       ((((path test.saty)
          (range
           ((ColumnRange
             ((rstart ((lnum 0) (cnum 0))) (rend ((lnum 0) (cnum 8))))))))
-        imported/file1)))
-     (requires ())) |}]
+        (Import imported/file1))))) |}]
 
-let%expect_test "parse_string: single require" =
+let%expect_test "parse_string_saty: single require" =
   let path = "test.saty" in
-  parse_string ~path "@require: required/file1"
+  parse_string_saty ~path "@require: required/file1"
   |> [%sexp_of: t]
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
-    ((path test.saty) (imports ())
-     (requires
+    ((path test.saty)
+     (directives
       ((((path test.saty)
          (range
           ((ColumnRange
             ((rstart ((lnum 0) (cnum 0))) (rend ((lnum 0) (cnum 9))))))))
-        required/file1)))) |}]
+        (Require required/file1))))) |}]
 
-let%expect_test "parse_string: imports and requires" =
+let%expect_test "parse_string_saty: imports and requires" =
   let path = "test.saty" in
-  parse_string ~path "@require: required/file1\n@import: imported/file1\n@require: required/file2\n@import: imported/file2\n"
+  parse_string_saty ~path "@require: required/file1\n@import: imported/file1\n@require: required/file2\n@import: imported/file2\n"
   |> [%sexp_of: t]
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
     ((path test.saty)
-     (imports
+     (directives
       ((((path test.saty)
          (range
           ((ColumnRange
-            ((rstart ((lnum 3) (cnum 1))) (rend ((lnum 3) (cnum 9))))))))
-        imported/file2)
+            ((rstart ((lnum 0) (cnum 0))) (rend ((lnum 0) (cnum 9))))))))
+        (Require required/file1))
        (((path test.saty)
          (range
           ((ColumnRange
             ((rstart ((lnum 1) (cnum 1))) (rend ((lnum 1) (cnum 9))))))))
-        imported/file1)))
-     (requires
-      ((((path test.saty)
+        (Import imported/file1))
+       (((path test.saty)
          (range
           ((ColumnRange
             ((rstart ((lnum 2) (cnum 1))) (rend ((lnum 2) (cnum 10))))))))
-        required/file2)
+        (Require required/file2))
        (((path test.saty)
          (range
           ((ColumnRange
-            ((rstart ((lnum 0) (cnum 0))) (rend ((lnum 0) (cnum 9))))))))
-        required/file1)))) |}]
+            ((rstart ((lnum 3) (cnum 1))) (rend ((lnum 3) (cnum 9))))))))
+        (Import imported/file2))))) |}]
 
-let%expect_test "parse_string: conflicting names" =
+let%expect_test "parse_string_saty: conflicting names" =
   let path = "test.saty" in
-  parse_string ~path "@require: file1\n@import: file1\n"
+  parse_string_saty ~path "@require: file1\n@import: file1\n"
   |> [%sexp_of: t]
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
     ((path test.saty)
-     (imports
+     (directives
       ((((path test.saty)
+         (range
+          ((ColumnRange
+            ((rstart ((lnum 0) (cnum 0))) (rend ((lnum 0) (cnum 9))))))))
+        (Require file1))
+       (((path test.saty)
          (range
           ((ColumnRange
             ((rstart ((lnum 1) (cnum 1))) (rend ((lnum 1) (cnum 9))))))))
-        file1)))
-     (requires
-      ((((path test.saty)
-         (range
-          ((ColumnRange
-            ((rstart ((lnum 0) (cnum 0))) (rend ((lnum 0) (cnum 9))))))))
-        file1)))) |}]
+        (Import file1))))) |}]
 
-let%expect_test "parse_string: % in package name" =
+let%expect_test "parse_string_saty: % in package name" =
   let path = "test.saty" in
-  parse_string ~path "@require: file1 % not a comment\n@import: file1 % not a comment\n"
+  parse_string_saty ~path "@require: file1 % not a comment\n@import: file1 % not a comment\n"
   |> [%sexp_of: t]
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
     ((path test.saty)
-     (imports
+     (directives
       ((((path test.saty)
+         (range
+          ((ColumnRange
+            ((rstart ((lnum 0) (cnum 0))) (rend ((lnum 0) (cnum 9))))))))
+        (Require "file1 % not a comment"))
+       (((path test.saty)
          (range
           ((ColumnRange
             ((rstart ((lnum 1) (cnum 1))) (rend ((lnum 1) (cnum 9))))))))
-        "file1 % not a comment")))
-     (requires
-      ((((path test.saty)
-         (range
-          ((ColumnRange
-            ((rstart ((lnum 0) (cnum 0))) (rend ((lnum 0) (cnum 9))))))))
-        "file1 % not a comment")))) |}]
+        (Import "file1 % not a comment"))))) |}]
 
-let%expect_test "parse_string: comment lines" =
+let%expect_test "parse_string_saty: comment lines" =
   let path = "test.saty" in
-  parse_string ~path "% comment\n%\n"
+  parse_string_saty ~path "% comment\n%\n"
   |> [%sexp_of: t]
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
-    ((path test.saty) (imports ()) (requires ())) |}]
+    ((path test.saty) (directives ())) |}]
 
-let%expect_test "parse_string: comment lines followed by directives" =
+let%expect_test "parse_string_saty: comment lines followed by directives" =
   let path = "test.saty" in
-  parse_string ~path "% comment\n%\n@import: file\n"
+  parse_string_saty ~path "% comment\n%\n@import: file\n"
   |> [%sexp_of: t]
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
     ((path test.saty)
-     (imports
+     (directives
       ((((path test.saty)
          (range
           ((ColumnRange
             ((rstart ((lnum 2) (cnum 1))) (rend ((lnum 2) (cnum 9))))))))
-        file)))
-     (requires ())) |}]
+        (Import file))))) |}]
 
-let%expect_test "parse_string: comment lines interleaved between directives" =
+let%expect_test "parse_string_saty: comment lines interleaved between directives" =
   let path = "test.saty" in
-  parse_string ~path "% comment\n@require: lib\n%\n@import: file\n"
+  parse_string_saty ~path "% comment\n@require: lib\n%\n@import: file\n"
   |> [%sexp_of: t]
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
     ((path test.saty)
-     (imports
-      ((((path test.saty)
-         (range
-          ((ColumnRange
-            ((rstart ((lnum 3) (cnum 1))) (rend ((lnum 3) (cnum 9))))))))
-        file)))
-     (requires
+     (directives
       ((((path test.saty)
          (range
           ((ColumnRange
             ((rstart ((lnum 1) (cnum 1))) (rend ((lnum 1) (cnum 10))))))))
-        lib)))) |}]
+        (Require lib))
+       (((path test.saty)
+         (range
+          ((ColumnRange
+            ((rstart ((lnum 3) (cnum 1))) (rend ((lnum 3) (cnum 9))))))))
+        (Import file))))) |}]
 
-let%expect_test "parse_string: directives followed by declarations" =
+let%expect_test "parse_string_saty: directives followed by declarations" =
   let path = "test.saty" in
-  parse_string ~path "@import: file\nlet x = 1\n"
+  parse_string_saty ~path "@import: file\nlet x = 1\n"
   |> [%sexp_of: t]
   |> Sexp.output_hum Out_channel.stdout;
   [%expect{|
     ((path test.saty)
-     (imports
+     (directives
       ((((path test.saty)
          (range
           ((ColumnRange
             ((rstart ((lnum 0) (cnum 0))) (rend ((lnum 0) (cnum 8))))))))
-        file)))
-     (requires ())) |}]
+        (Import file))))) |}]
 
-let referred_file_basenames ~package_root_dirs { path; imports; requires; }=
+let parse_satysfi_md_yojson ~path (json: Yojson.Safe.t) =
+  begin match json with
+    | `Assoc lvs ->
+      List.find_map lvs ~f:(function
+          | "depends", `List ds ->
+            List.filter_map ds ~f:(function
+                | `String s -> Some s
+                | _ ->
+                  failwithf
+                    "%s:\nDependency must be a list of strings but got %s@."
+                    path
+                    (Yojson.Safe.to_string (`List ds))
+                    ()
+              )
+            |> Option.some
+          | _ -> None
+        )
+      |> Option.map ~f:(fun ps ->
+          {
+            path = path;
+            directives =
+              let loc = {
+                Location.path;
+                range = None;
+              }
+              in
+              List.map ~f:(fun p -> loc, MdDepends p) ps
+          })
+    | _ ->
+      None
+  end
+  |> Option.value_exn ~message:(sprintf "File %s does not have depends field" path)
+
+let parse_satysfi_md_str ~path str =
+  Yojson.Safe.from_string str
+  |> parse_satysfi_md_yojson ~path
+
+let parse_satysfi_md_file ~path =
+  Yojson.Safe.from_file path
+  |> parse_satysfi_md_yojson ~path
+
+let%expect_test "parse_satysfi_md_str: valid" =
+  let path = "test.saty" in
+  parse_satysfi_md_str ~path {|{"depends":["mdja"]}|}
+  |> [%sexp_of: t]
+  |> Sexp.output_hum Out_channel.stdout;
+  [%expect{|
+    ((path test.saty)
+     (directives ((((path test.saty) (range ())) (MdDepends mdja))))) |}]
+
+let parse_file_result path =
+  match FilePath.get_extension path with
+  | "satysfi-md" ->
+    Result.try_with (fun () ->
+        parse_satysfi_md_file ~path)
+  | _ ->
+    Result.try_with (fun () ->
+        In_channel.read_all path
+      )
+    |> Result.map ~f:(match FilePath.get_extension path with
+        | _ -> parse_string_saty ~path)
+
+let referred_file_basenames ~package_root_dirs { path; directives; }=
   let basedir = FilePath.dirname path in
-  List.map imports ~f:(fun (loc, p) -> loc, Import p, [FilePath.concat basedir p])
-  @ List.map requires ~f:(fun (loc, p) -> loc, Require p, List.map package_root_dirs ~f:(fun rd -> FilePath.concat rd p))
+  List.map directives ~f:(fun (loc, d) ->
+      match d with
+      | Import f ->
+        loc, d, [FilePath.concat basedir f]
+      | Require p
+      | MdDepends p ->
+        loc, d, List.map package_root_dirs ~f:(fun rd -> FilePath.concat rd p)
+    )
