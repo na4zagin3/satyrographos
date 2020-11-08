@@ -47,5 +47,6 @@ let templates = [
   Template_docMake_ja.template;
   Template_docOmake_en.template;
   Template_docOmake_ja.template;
+  Template_exampleAutogen.template;
   Template_lib.template;
 ]

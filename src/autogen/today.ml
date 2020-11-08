@@ -21,32 +21,32 @@ let module_sig =
   ]
 
 type persistent = {
-  time: string;
-  zone: string;
+  datetime: string;
+  tzname: string;
 }
 [@@deriving equal, yojson]
 
 let module_struct data =
   [`Let (datetime_field_name,
-         data.time
+         data.datetime
          |> Satysfi.value_of_string);
    `Let (tzname_field_name,
-         data.zone
+         data.tzname
          |> Satysfi.value_of_string);
   ]
 
 let generate_persistent () =
   (* TODO (gh-98) get the values from the lockfile *)
-  let time = Time.now () in
-  let zone =
+  let datetime = Time.now () in
+  let tzname =
     Time.Zone.local
     |> Lazy.force
   in
-  { time =
-      time
-      |> Time.to_string_iso8601_basic ~zone;
-    zone =
-      zone
+  { datetime =
+      datetime
+      |> Time.to_string_iso8601_basic ~zone:tzname;
+    tzname =
+      tzname
       |> Time.Zone.name;
   }
 
@@ -72,7 +72,7 @@ let generate ~outf ~persistent_yojson =
       generate_persistent ()
   in
 
-  let f = `Module ("Fonts", module_sig, module_struct data) in
+  let f = `Module ("Today", module_sig, module_struct data) in
   let decls =
     Satysfi.expr_experimental_message package_name
     @ [f] in

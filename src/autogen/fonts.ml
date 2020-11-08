@@ -130,7 +130,7 @@ let get_font_info ~outf font_list =
   FontInfo.font_list_task ~outf (FontInfo.font_info_list_task font_files)
   >>| join_with_font_info
 
-let package_name = "satyrographos/experimental/fonts"
+let package_name = "$fonts"
 let package_path = "packages/" ^ package_name ^ ".satyg"
 
 let font_type_name = "font"

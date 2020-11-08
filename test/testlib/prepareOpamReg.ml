@@ -52,7 +52,7 @@ let localizedTodayFiles = [
   "localized-today/metadata",
   {|((version 1) (libraryName localized-today) (libraryVersion 0.1) (compatibility ())
 (dependencies ()) (autogen (($today ()))))|};
-  "localized-today/packages/localized-today/localized-today.satyh", "@require: satyrographos/experimental/today"; ]
+  "localized-today/packages/localized-today/localized-today.satyh", "@require: $today"; ]
 
 (* TODO Remove this function *)
 let prepare =
