@@ -23,7 +23,7 @@ Please take a backup beforehand.
 |}
   in
   Command.basic
-    ~summary:"Migrate an old project format for a new format"
+    ~summary:"Migrate an old project format for a new format (experimental)"
     ~readme
     [%map_open
       let buildscript_path = flag "--script" (optional string) ~doc:"SCRIPT Install script"

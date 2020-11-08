@@ -15,7 +15,7 @@ let opam_with_build_module_command f =
   let open RenameOption in
   let outf = Format.std_formatter in
   Command.basic
-    ~summary:"Install module into OPAM registory (experimental)"
+    ~summary:"Install module into OPAM registory"
     [%map_open
       let prefix = long_flag_optional "prefix" string ~doc_arg:"PREFIX" ~doc:"Install destination"
       and script = long_flag_optional "script" string ~doc_arg:"SCRIPT" ~doc:"Install script"

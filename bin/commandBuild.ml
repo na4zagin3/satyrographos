@@ -12,7 +12,7 @@ let build_command =
   let open RenameOption in
   let outf = Format.std_formatter in
   Command.basic
-    ~summary:"Install module into OPAM registory (experimental)"
+    ~summary:"Build modules (experimental)"
     [%map_open
       let script = flag "--script" (optional string) ~doc:"SCRIPT Install script"
       and name = anon (maybe ("MODULE_NAME" %: string))
