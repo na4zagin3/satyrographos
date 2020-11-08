@@ -211,8 +211,8 @@ let dependency_graph ~outf ?(follow_required=false) ~package_root_dirs ~satysfi_
 
 let subgraph_with_mode ~mode g =
   let g = G.copy g in
-  let edges_to_be_removed =
-    G.fold_vertex (fun (v : Vertex.t) acc ->
+  let edges_to_be_removed, vertices_to_be_removed =
+    G.fold_vertex (fun (v : Vertex.t) (acc_nodes, acc_vertices) ->
         let filter_edge e =
           match e with
           | _, Some (Edge.Mode m), _ ->
@@ -238,10 +238,28 @@ let subgraph_with_mode ~mode g =
             )
           |> EdgeSet.of_list
         in
-        EdgeSet.union edges acc
-      ) g EdgeSet.empty
+        let vertices acc =
+          match v with
+          | Basename _
+          | Package _
+          | MissingFile _ ->
+            acc
+          | File fn ->
+            let fmode =
+              Mode.of_basename_opt fn
+            in
+            Option.value_map fmode ~default:acc ~f:(fun fmode ->
+                if Mode.(fmode <=: mode)
+                then acc
+                else VertexSet.add acc v
+              )
+        in
+        EdgeSet.union edges acc_nodes,
+        vertices acc_vertices
+      ) g (EdgeSet.empty, VertexSet.empty)
   in
   EdgeSet.iter edges_to_be_removed ~f:(G.remove_edge_e g);
+  VertexSet.iter vertices_to_be_removed ~f:(G.remove_vertex g);
   g
 
 let%expect_test "subgraph_with_mode: test 1" =
@@ -279,9 +297,6 @@ let%expect_test "subgraph_with_mode: test 1" =
      (Basename c))
     ((File b.satyh) ((Directive ((path b.satyh) (range ((Line 2)))) (Require p)))
      (Package p))
-    ((File b.satyh-md)
-     ((Directive ((path b.satyh-md) (range ((Line 3)))) (Require q)))
-     (Package q))
     ((File c.satyg) ((Directive ((path c.satyg) (range ((Line 4)))) (Require b)))
      (Basename b))
     ((Basename b) ((Mode Pdf)) (File b.satyh)) |}]

@@ -45,8 +45,12 @@ let of_extension_opt = function
     |> Option.map ~f:(fun m -> Text m)
 
 let of_basename_opt basename =
-  "." ^ FilePath.get_extension basename
-  |> of_extension_opt
+  try
+    "." ^ FilePath.get_extension basename
+    |> of_extension_opt
+  with
+  | _ ->
+    None
 
 let to_extension = function
   | Pdf ->
