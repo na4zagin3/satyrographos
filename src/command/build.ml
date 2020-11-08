@@ -117,7 +117,8 @@ let opam_pin_project ~(buildscript: BuildScript.t) ~buildscript_path =
           let opam_name =
             Lint.get_opam_name ~opam ~opam_path
           in
-          P.run "opam" ["pin"; "add"; "--yes"; opam_name; "file://" ^ workdir cwd]
+          P.run "opam" ["pin"; "add"; "--no-action"; "--yes"; opam_name; "file://" ^ workdir cwd]
+          >> P.run "opam" ["reinstall"; workdir cwd]
         )
     )
 

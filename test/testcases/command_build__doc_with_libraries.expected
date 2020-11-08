@@ -31,7 +31,9 @@ Installation completed!
 ------------------------------------------------------------
 ------------------------------------------------------------
 Command invoked:
-opam pin add --yes satysfi-grcnum file://@@temp_dir@@/pkg
+opam pin add --no-action --yes satysfi-grcnum file://@@temp_dir@@/pkg
+Command invoked:
+opam reinstall @@temp_dir@@/pkg
 Command invoked:
 satysfi -C @@temp_dir@@/pkg/_build/satysfi --version
 Command invoked:
