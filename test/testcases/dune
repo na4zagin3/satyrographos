@@ -36,6 +36,7 @@
    command_lint__unmatched_versions
    command_lint__valid
    command_lint__valid_in_specified_location
+   command_lint__valid_reference_to_parent_dir
    command_lint__valid_versions
    command_lint__warning_expr
    command_lockdown_restore__opam

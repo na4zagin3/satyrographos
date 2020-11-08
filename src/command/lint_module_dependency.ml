@@ -133,7 +133,9 @@ let lint_module_dependency ~outf ~locs ~satysfi_version ~basedir ~(env : Environ
     in
     let decode_path path =
       let package_relative_path =
-        FilePath.make_relative d path
+        (* Satyrographos install does not create directory symlinks *)
+        FilePath.reduce ~no_symlink:true path
+        |> FilePath.make_relative d
       in
       let content = Library.LibraryFiles.find
         merged.files
