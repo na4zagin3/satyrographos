@@ -29,7 +29,7 @@ depends: [
   "ocamlgraph"
   "opam-format" {>= "2.0" & < "2.1"}
   "opam-state" {>= "2.0" & < "2.1"}
-  "re" {with-test}
+  "re"
   "stringext" {with-test}
   "uri" {>= "3.0.0"}
   "uri-sexp" {>= "3.0.0"}
@@ -40,6 +40,9 @@ depends: [
   "core" {>= "v0.13" & < "v0.15"}
   "ppx_jane"
   "shexp"
+]
+depexts: [
+  [ "diffutils" ] {with-test}
 ]
 synopsis: "A package manager for SATySFi"
 description: """
