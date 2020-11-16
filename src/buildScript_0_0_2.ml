@@ -13,6 +13,7 @@ let recursively f base_dir src acc =
 let add_files dst src acc = `File {dst; src} :: acc
 let add_fonts dst src acc = `Font {dst; src} :: acc
 let add_hashes dst src acc = `Hash {dst; src} :: acc
+let add_mds dst src acc = `Md {dst; src} :: acc
 let add_packages dst src acc = `Package {dst; src} :: acc
 let add_doc dst src acc = `Doc {dst; src} :: acc
 
@@ -21,6 +22,7 @@ type source =
   | Font of string * string
   | FontDir of string
   | Hash of string * string
+  | Md of string * string
   | Package of string * string
   | PackageDir of string
 [@@deriving sexp]
@@ -99,6 +101,7 @@ let section_to_modules ~base_dir (range, (m : Section.t)) =
         | File (dst, src) -> add_files dst src acc
         | Font (dst, src) -> add_fonts dst src acc
         | Hash (dst, src) -> add_hashes dst src acc
+        | Md (dst, src) -> add_mds dst src acc
         | Package (dst, src) -> add_packages dst src acc
         | FontDir (src) -> recursively add_fonts base_dir src acc
         | PackageDir (src) -> recursively add_packages base_dir src acc
