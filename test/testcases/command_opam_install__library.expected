@@ -12,10 +12,12 @@ Read library:
  (files
   ((doc/grcnum.md (Filename @@temp_dir@@/pkg/README.md))
    (fonts/grcnum/grcnum-font.ttf (Filename @@temp_dir@@/pkg/font.ttf))
+   (md/grcnum/mdja.satysfi-md (Filename @@temp_dir@@/pkg/mdja.satysfi-md))
    (packages/grcnum/grcnum.satyh (Filename @@temp_dir@@/pkg/grcnum.satyh))))
  (dependencies (fonts-theano)))
 Copying @@temp_dir@@/pkg/README.md to @@dest_dir@@/dest/share/satysfi/grcnum/doc/grcnum.md
 Copying @@temp_dir@@/pkg/font.ttf to @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
+Copying @@temp_dir@@/pkg/mdja.satysfi-md to @@dest_dir@@/dest/share/satysfi/grcnum/md/grcnum/mdja.satysfi-md
 Copying @@temp_dir@@/pkg/grcnum.satyh to @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum/grcnum.satyh
 Generating @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
 ------------------------------------------------------------
@@ -31,6 +33,9 @@ Generating @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
 @@dest_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf
 @@dest_dir@@/dest/share/satysfi/grcnum/hash
 @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
+@@dest_dir@@/dest/share/satysfi/grcnum/md
+@@dest_dir@@/dest/share/satysfi/grcnum/md/grcnum
+@@dest_dir@@/dest/share/satysfi/grcnum/md/grcnum/mdja.satysfi-md
 @@dest_dir@@/dest/share/satysfi/grcnum/metadata
 @@dest_dir@@/dest/share/satysfi/grcnum/packages
 @@dest_dir@@/dest/share/satysfi/grcnum/packages/grcnum
@@ -46,6 +51,9 @@ diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash @@dest_
 0a1
 > {"grcnum:grcnum-font":<"Single":{"src-dist":"grcnum/grcnum-font.ttf"}>}
 \ No newline at end of file
+diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/md/grcnum/mdja.satysfi-md @@dest_dir@@/dest/share/satysfi/grcnum/md/grcnum/mdja.satysfi-md
+0a1
+> @@mdja.satysfi-md@@
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/metadata @@dest_dir@@/dest/share/satysfi/grcnum/metadata
 0a1,2
 > ((version 1) (libraryName grcnum) (libraryVersion 0.2) (compatibility ())
