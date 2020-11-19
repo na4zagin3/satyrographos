@@ -25,6 +25,7 @@ type source = [
   | `FontWithHash of link * font list
   | `Font of link
   | `Hash of link
+  | `Md of link
   | `Package of link
 ]
 [@@deriving sexp]
@@ -285,6 +286,8 @@ let rebase_file ~src_dir ~library_name =
     [`Filename (append_prefix "" l)]
   | `Hash l ->
     [`Hash (append_prefix "hash" l)]
+  | `Md l ->
+    [`Filename (append_prefix (Filename.concat "md" library_name) l)]
   | `Font l ->
     [`Filename (append_prefix (Filename.concat "fonts" library_name) l)]
   | `FontWithHash (l, names) ->

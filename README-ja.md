@@ -346,6 +346,7 @@ Satyristes ファイルはS式の列で記述されます。以下の宣言を�
   - `(font "<dst>" <src>")` :: `<src>` を `dist/fonts/<library-name>/<dst>` に配置
   - `(fontDir "<src>")` :: `<src>` 以下のファイルを再帰的に `dist/fonts/<library-name>/` 以下に配置
   - `(hash "<dst>" "<src>")` :: `<src>` を `dist/hash/<dst>` に配置
+  - `(md "<dst>" <src>")` :: `<src>` を `dist/md/<library-name>/<dst>` に配置
   - `(package "<dst>" "<src>")` :: `<src>` を `dist/packages/<library-name>/<dst>` に配置
   - `(packageDir "<src>")` :: `<src>` 以下のファイルを再帰的に `dist/packages/<library-name>/` 以下に配置
   - `(file "<dst>" "<src>")` :: `<src>` を `dist/<dst>` に配置

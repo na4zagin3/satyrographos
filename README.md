@@ -374,6 +374,7 @@ Satyristes file is a sequence of S-Expressions. A Satyristes can contain the fol
   - `(font "<dst>" "<src>")` :: Copies `<src>` into `dist/fonts/<library-name>/<dst>`.
   - `(fontDir "<src>")` :: Recursively copies files under `<src>` into `dist/fonts/<library-name>/`.
   - `(hash "<dst>" "<src>")` :: Copies `<src>` into `dist/hash/<dst>`.
+  - `(md "<dst>" "<src>")` :: Copies `<src>` into `dist/md/<library-name>/<dst>`.
   - `(package "<dst>" "<src>")` :: Copies `<src>` into `dist/packages/<library-name>/<dst>`.
   - `(packageDir "<src>")` :: Recursively copies files under `<src>` into `dist/packages/<library-name>`.
   - `(file "<dst>" "<src>")` :: Copies `<src>` into `dist/<dst>`.

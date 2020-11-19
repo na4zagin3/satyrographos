@@ -15,6 +15,7 @@ let satyristes =
     ((package "grcnum.satyh" "./grcnum.satyh")
      (font "grcnum-font.ttf" "./font.ttf")
      (hash "fonts.satysfi-hash" "./fonts.satysfi-hash")
+     (md "mdja.satysfi-md" "./mdja.satysfi-md")
      (file "doc/grcnum.md" "README.md")
     ))
   (opam "satysfi-grcnum.opam")
@@ -46,6 +47,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
     >> stdout_to (FilePath.concat pkg_dir "README.md") (echo "@@README.md@@")
     >> stdout_to (FilePath.concat pkg_dir "fonts.satysfi-hash") (echo fontHash)
     >> stdout_to (FilePath.concat pkg_dir "grcnum.satyh") (echo "@@grcnum.satyh@@")
+    >> stdout_to (FilePath.concat pkg_dir "mdja.satysfi-md") (echo "@@mdja.satysfi-md@@")
     >> stdout_to (FilePath.concat pkg_dir "font.ttf") (echo "@@font.ttf@@")
   in
   let empty_dist = FilePath.concat temp_dir "empty_dist" in
