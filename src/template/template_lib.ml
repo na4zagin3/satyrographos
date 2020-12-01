@@ -1,3 +1,7 @@
+(*
+   SPDX-License-Identifier: CC0-1.0
+*)
+
 let name = "lib"
 
 let lib_satyh_template =

@@ -1,3 +1,7 @@
+(*
+   SPDX-License-Identifier: CC0-1.0
+*)
+
 let name = "[experimental]doc-make@ja"
 
 let local_satyh_template =

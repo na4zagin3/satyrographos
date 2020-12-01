@@ -1,3 +1,7 @@
+(*
+   SPDX-License-Identifier: CC0-1.0
+*)
+
 let main_saty_template =
   "main.saty", {|
 @require: stdjabook
