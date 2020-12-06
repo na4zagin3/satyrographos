@@ -1,3 +1,7 @@
+(*
+   SPDX-License-Identifier: CC0-1.0
+*)
+
 let satyristes_template =
 "Satyristes",
 {|(lang "0.0.3")
