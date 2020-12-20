@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  - pull_request
+  - push
+
+jobs:
+  build:
+    name: Build
+    strategy:
+      matrix:
+        with-satysfi:
+          - false
+        os:
+          - 'ubuntu-latest'
+#         - 'macos-latest'
+        ocaml-version:
+          - 4.09.1
+          - 4.10.1
+          - 4.11.1
+    runs-on: ${{ matrix.os }}
+    env:
+      OPAMSOLVERTIMEOUT: 3600
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache OPAM directory (Non Windows)
+        uses: actions/cache@v2
+        if: runner.os != 'Windows'
+        with:
+          path: "~/.opam"
+          key: ${{ runner.os }}-opam-${{ matrix.ocaml-version }}-${{ matrix.snapshot }}
+
+      - name: Cache OPAM directory (Windows)
+        uses: actions/cache@v2
+        if: runner.os == 'Windows'
+        with:
+          path: "C:\\cygwin\\home\\runneradmin\\.opam"
+          key: ${{ runner.os }}-opam-${{ matrix.ocaml-version }}-${{ matrix.snapshot }}
+
+      - name: Setup OCaml ${{ matrix.ocaml-version }}
+        uses: avsm/setup-ocaml@v1
+        with:
+          ocaml-version: ${{ matrix.ocaml-version }}
+
+      - name: Check validity of the snapshot OPAM files
+        run: |
+          opam lint --strict *.opam
+
+      - name: Add SATySFi-related repos
+        if: matrix.with-satysfi
+        run: |
+          opam repository add satysfi-external https://github.com/gfngfn/satysfi-external-repo.git
+          opam repository add satyrographos https://github.com/na4zagin3/satyrographos-repo.git
+
+      - name: Setup OPAM repositories
+        run: |
+          opam update
+          opam upgrade --yes
+
+      - name: Install SATySFi
+        if: matrix.with-satysfi
+        run: |
+          opam depext satysfi --yes --with-doc --with-test
+          opam install satysfi --yes --with-doc --with-test
+
+      - name: Install Satyrographos
+        run: |
+          opam pin add satyrographos.dev . --no-action
+          opam depext satyrographos --yes --with-doc --with-test
+          opam install satyrographos --yes --with-doc --with-test
+
+      - name: Clean up logs and temporary files
+        run: |
+          opam clean --switch-cleanup --logs
