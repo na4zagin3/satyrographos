@@ -1,6 +1,6 @@
 # Satyrographos サテュログラポ̣ス
 
-[![Build Status](https://travis-ci.com/na4zagin3/satyrographos.svg?branch=master)](https://travis-ci.com/na4zagin3/satyrographos)
+[![Build Status](https://github.com/na4zagin3/satyrographos/workflows/CI/badge.svg?branch=master)](https://github.com/na4zagin3/satyrographos/actions?query=workflow%3ACI)
 
 <img src="./doc/logo.svg" width="100"/>
 
