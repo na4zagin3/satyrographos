@@ -150,7 +150,12 @@ depends: [
   "satysfi-dist"
   "satysfi-base"
 ]
-build: [ ]
+build: [
+  ["satyrographos" "opam" "build"
+   "--name" "@@library@@"
+   "--prefix" "%{prefix}%"
+   "--script" "%{build}%/Satyristes"]
+]
 install: [
   ["satyrographos" "opam" "install"
    "--name" "@@library@@"

@@ -134,7 +134,7 @@ Dump generated files
   >    "--script" "%{build}%/Satyristes"]
   > ]
   diff -Nr empty-dir/satysfi-test-lib.opam test-lib/satysfi-test-lib.opam
-  0a1,28
+  0a1,33
   > opam-version: "2.0"
   > name: "satysfi-test-lib"
   > version: "1.0.0"
@@ -156,7 +156,12 @@ Dump generated files
   >   "satysfi-dist"
   >   "satysfi-base"
   > ]
-  > build: [ ]
+  > build: [
+  >   ["satyrographos" "opam" "build"
+  >    "--name" "test-lib"
+  >    "--prefix" "%{prefix}%"
+  >    "--script" "%{build}%/Satyristes"]
+  > ]
   > install: [
   >   ["satyrographos" "opam" "install"
   >    "--name" "test-lib"
