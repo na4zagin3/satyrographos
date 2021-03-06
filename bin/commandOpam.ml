@@ -20,12 +20,13 @@ let opam_with_build_module_command f =
       let prefix = long_flag_optional "prefix" string ~doc_arg:"PREFIX" ~doc:"Install destination"
       and script = long_flag_optional "script" string ~doc_arg:"SCRIPT" ~doc:"Install script"
       and name = long_flag_optional "name" string ~doc_arg:"MODULE_NAME" ~doc:"MODULE_NAME Module name"
+      and satysfi_version = Satyrographos_satysfi.Version.flag
       and verbose = long_flag_bool  "verbose" no_arg ~doc:"Make verbose"
       in
         let buildscript_path = Option.value ~default:(default_script_path ()) script in
         let env = Setup.read_environment () in
         (fun () ->
-          Satyrographos_command.Opam.with_build_script f ~outf ~prefix ~buildscript_path ~name ~verbose ~env ();
+          Satyrographos_command.Opam.with_build_script f ~outf ~prefix ~satysfi_version ~buildscript_path ~name ~verbose ~env ();
           reprint_err_warn ())
     ]
 
@@ -33,9 +34,9 @@ let opam_build_command =
   opam_with_build_module_command Satyrographos_command.Opam.build_opam
 
 let opam_install_command =
-  opam_with_build_module_command (fun ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env ->
+  opam_with_build_module_command (fun ~outf ~verbose ~prefix ~satysfi_version ~script_version ~build_module ~buildscript_path ~env ->
     match prefix with
-    | Some prefix -> Satyrographos_command.Opam.install_opam ~outf ~verbose ~prefix ~build_module ~buildscript_path ~env
+      | Some prefix -> Satyrographos_command.Opam.install_opam ~outf ~verbose ~prefix ~satysfi_version ~script_version ~build_module ~buildscript_path ~env
     | None -> Format.fprintf Format.err_formatter
         "Please specify “--prefix <dir>̣” option")
 

@@ -106,7 +106,7 @@ diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/fonts/grcnum/grcnum-font.ttf @@
 > @@font.ttf@@
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash @@dest_dir@@/dest/share/satysfi/grcnum/hash/fonts.satysfi-hash
 0a1
-> {"grcnum:grcnum-font":<"Single":{"src-dist":"grcnum/grcnum-font.ttf"}>}
+> {"grcnum:grcnum-font":<"Single":{"src":"dist/fonts/grcnum/grcnum-font.ttf"}>}
 \ No newline at end of file
 diff -Nr @@empty_dir@@/dest/share/satysfi/grcnum/metadata @@dest_dir@@/dest/share/satysfi/grcnum/metadata
 0a1,2
