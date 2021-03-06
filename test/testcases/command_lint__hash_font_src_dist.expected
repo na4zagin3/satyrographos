@@ -1,0 +1,9 @@
+@@test_library@@/Satyristes:3:1: (module package):
+Warning: hash/font/location/src-dist
+  src-dist field in font hashes (font1) has been deprecated.  See https://github.com/gfngfn/SATySFi/commit/868fd678aaa19aeb59d4fb77c928e833af4c2359
+
+@@test_library@@/Satyristes:3:1: (module package):
+Warning: hash/font/location/src-dist
+  src-dist field in font hashes (mathfont1) has been deprecated.  See https://github.com/gfngfn/SATySFi/commit/868fd678aaa19aeb59d4fb77c928e833af4c2359
+
+2 problem(s) found.
