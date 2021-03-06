@@ -4,6 +4,7 @@ type problem =
   | ExceptionDuringSettingUpEnv of Exn.t
   | InternalBug of string
   | InternalException of Exn.t * string
+  | HashFontLocationSrcDist of string list
   | LibraryBuildDeprecatedMakeCommand
   | LibraryMissingFile
   | LibraryVersionShouldNotBeEmpty
@@ -36,6 +37,8 @@ let problem_class = function
     "internal/bug"
   | InternalException _ ->
     "internal/exception"
+  | HashFontLocationSrcDist _ ->
+    "hash/font/location/src-dist"
   | LibraryBuildDeprecatedMakeCommand ->
     "lib/build/deprecated/make"
   | LibraryMissingFile ->
@@ -76,6 +79,10 @@ let show_problem ~outf = function
       exn;
     Format.fprintf outf
       "@;%s" stacktrace
+  | HashFontLocationSrcDist font_names ->
+    Format.fprintf outf
+      !"src-dist field in font hashes %{sexp:string list} has been deprecated.  See https://github.com/gfngfn/SATySFi/commit/868fd678aaa19aeb59d4fb77c928e833af4c2359"
+      font_names
   | LibraryBuildDeprecatedMakeCommand ->
     Format.fprintf outf
       "(make <args>...) build command has been deprecated.@ Please use (make <args>...) instead and then `satyrographos satysfi ...` command instead of `satysfi -C $SATYSFI_RUNTIME ...`."

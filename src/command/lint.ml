@@ -55,8 +55,12 @@ let lint_module ~outf ~verbose:_ ~satysfi_version ~basedir
   let dependency_problems =
     Lint_module_dependency.lint_module_dependency ~outf ~locs ~satysfi_version ~basedir ~env m
   in
+  let hash_problems =
+    Lint_module_hashes.lint_module_hashes ~outf ~locs ~satysfi_version ~basedir ~env m
+  in
   opam_problems
   @ dependency_problems
+  @ hash_problems
   @ lint_compatibility ~locs m
   @ lint_build ~locs ~buildscript_version m
 

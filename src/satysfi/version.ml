@@ -128,3 +128,7 @@ let flag =
       get_current_version ()
       |> Option.value_exn ~message:"Cannot detect SATySFi Version.  Please specify with --satysfi-version"
   ]
+
+let is_hash_font_src_dist_deprecated = function
+  | Satysfi_0_0_3 -> false
+  | _ -> true
