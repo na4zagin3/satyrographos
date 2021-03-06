@@ -70,8 +70,13 @@ jobs:
       - name: Install Satyrographos
         run: |
           opam pin add satyrographos.dev . --no-action
-          opam depext satyrographos --yes --with-doc --with-test
-          opam install satyrographos --yes --with-doc --with-test
+          opam depext . --yes --with-doc
+          opam install . --with-doc
+          
+      - name: Test Satyrographos
+        run: |
+          opam test
+          dune runtest
 
       - name: Clean up logs and temporary files
         run: |
