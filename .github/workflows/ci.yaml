@@ -70,8 +70,8 @@ jobs:
       - name: Install Satyrographos
         run: |
           opam pin add satyrographos.dev . --no-action
-          opam depext . --yes --with-doc
-          opam install . --with-doc
+          opam depext satyrographos --yes --with-doc
+          opam install satyrographos --yes --with-doc
           
       - name: Test Satyrographos
         run: |
