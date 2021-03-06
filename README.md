@@ -405,6 +405,7 @@ Satyristes file is a sequence of S-Expressions. A Satyristes can contain the fol
 
 |Satyrographos|SATySFi|
 |-------|-------------|
+|v0.0.2.9 to latest|v0.0.6 series|
 |v0.0.2.5 to latest|v0.0.5 series|
 |v0.0.2.1 to v0.0.2.4|v0.0.4 series and older (Library build requires  satysfi.0.0.3+dev2019.02.27 or newer)|
 |v0.0.1 series|v0.0.3 series and older|

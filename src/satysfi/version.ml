@@ -4,6 +4,7 @@ type t =
   | Satysfi_0_0_3
   | Satysfi_0_0_4
   | Satysfi_0_0_5
+  | Satysfi_0_0_6
 [@@deriving sexp, compare, equal]
 
 let alist = [
@@ -13,6 +14,8 @@ let alist = [
   "v0.0.4", Satysfi_0_0_4;
   "0.0.5", Satysfi_0_0_5;
   "v0.0.5", Satysfi_0_0_5;
+  "0.0.6", Satysfi_0_0_6;
+  "v0.0.6", Satysfi_0_0_6;
 ]
 
 let of_string_opt =
