@@ -75,7 +75,7 @@ jobs:
           
       - name: Test Satyrographos
         run: |
-          opam test
+          opam lint
           dune runtest
 
       - name: Clean up logs and temporary files
