@@ -7,6 +7,8 @@ type t =
   | Satysfi_0_0_6
 [@@deriving sexp, compare, equal]
 
+let latest_version = Satysfi_0_0_6
+
 let alist = [
   "0.0.3", Satysfi_0_0_3;
   "v0.0.3", Satysfi_0_0_3;
@@ -118,6 +120,7 @@ let get_current_version () =
       Shexp_process.eval get_current_version_cmd)
 
 let flag =
+  let outf = Format.err_formatter in
   let open Command.Let_syntax in
   [%map_open
     let satysfi_version = flag "--satysfi-version" (optional (Arg_type.of_alist_exn alist)) ~aliases:["S"] ~doc:"VERSION SATySFi version"
@@ -125,8 +128,13 @@ let flag =
     match satysfi_version with
     | Some x -> x
     | None ->
-      get_current_version ()
-      |> Option.value_exn ~message:"Cannot detect SATySFi Version.  Please specify with --satysfi-version"
+      match get_current_version () with
+      | Some x -> x
+      | None ->
+        Format.fprintf outf
+          "Cannot detect SATySFi Version.  Please specify with --satysfi-version.  Assuming %s"
+          (to_string latest_version);
+        latest_version
   ]
 
 let is_hash_font_src_dist_deprecated = function
