@@ -6,6 +6,20 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.2.9] - 2021-03-07
+### Added
+- Added `md` source type ([#255] by @puripuri2100)
+- Added new lint test case `hash/font/location/src-dist` that warns `src-dist` locations in font hash files ([#268])
+- Automatically convert `src-dist` field into `src` for Build File 0.0.2 ([#269])
+
+### Changed
+- Apply `CC0-1.0` license to the templates ([#258])
+- Add build section to library OPAM files in the templates ([#257])
+
+### Fixed
+- Fixed library dependencies ([#254])
+- CI: Use GitHub Action ([#261], [#262], [#267]; [#263] by @y-yu)
+
 ## [v0.0.2.8] - 2020-11-08
 
 ### Added
@@ -267,9 +281,20 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#250]: https://github.com/na4zagin3/satyrographos/pull/250
 [#251]: https://github.com/na4zagin3/satyrographos/pull/251
 [#252]: https://github.com/na4zagin3/satyrographos/pull/252
+[#254]: https://github.com/na4zagin3/satyrographos/pull/254
+[#255]: https://github.com/na4zagin3/satyrographos/pull/255
+[#257]: https://github.com/na4zagin3/satyrographos/pull/257
+[#258]: https://github.com/na4zagin3/satyrographos/pull/258
+[#261]: https://github.com/na4zagin3/satyrographos/pull/261
+[#262]: https://github.com/na4zagin3/satyrographos/pull/262
+[#263]: https://github.com/na4zagin3/satyrographos/pull/263
+[#267]: https://github.com/na4zagin3/satyrographos/pull/267
+[#268]: https://github.com/na4zagin3/satyrographos/pull/268
+[#269]: https://github.com/na4zagin3/satyrographos/pull/269
 
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.8...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.9...HEAD
+[v0.0.2.9]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.8...v0.0.2.9
 [v0.0.2.8]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.7...v0.0.2.8
 [v0.0.2.7]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.6...v0.0.2.7
 [v0.0.2.6]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.5...v0.0.2.6
