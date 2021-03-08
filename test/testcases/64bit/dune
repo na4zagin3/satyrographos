@@ -1,0 +1,4 @@
+(cram
+ (applies_to *)
+ (enabled_if
+  (or (= %{ocaml-config:word_size} 64))))
