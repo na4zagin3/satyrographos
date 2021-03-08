@@ -6,6 +6,10 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.2.10] - 2021-03-08
+### Fixed
+- Run some architecture-dependent test cases only on 64-bit architectures ([#272])
+
 ## [v0.0.2.9] - 2021-03-07
 ### Added
 - Added `md` source type ([#255] by @puripuri2100)
@@ -291,9 +295,11 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#267]: https://github.com/na4zagin3/satyrographos/pull/267
 [#268]: https://github.com/na4zagin3/satyrographos/pull/268
 [#269]: https://github.com/na4zagin3/satyrographos/pull/269
+[#272]: https://github.com/na4zagin3/satyrographos/pull/272
 
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.9...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.10...HEAD
+[v0.0.2.10]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.9...v0.0.2.10
 [v0.0.2.9]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.8...v0.0.2.9
 [v0.0.2.8]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.7...v0.0.2.8
 [v0.0.2.7]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.6...v0.0.2.7
