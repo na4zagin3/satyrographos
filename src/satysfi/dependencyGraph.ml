@@ -281,9 +281,16 @@ let subgraph_with_mode ~mode g =
 let%expect_test "subgraph_with_mode: test 1" =
   let g = G.create () in
   let print_result (g : G.t) : unit =
-    G.iter_edges_e
-      (printf !"%{sexp:(Vertex.t * Edge.t * Vertex.t)}\n")
-      g
+    let edges =
+      let edge_list = ref [] in
+      G.iter_edges_e
+        (fun e -> edge_list := e :: !edge_list)
+        g;
+      !edge_list
+    in
+    edges
+    |> List.sort ~compare:[%compare: (Vertex.t * Edge.t * Vertex.t)]
+    |> printf !"%{sexp:(Vertex.t * Edge.t * Vertex.t) list}\n"
   in
   let test g mode =
     subgraph_with_mode g ~mode
@@ -306,16 +313,16 @@ let%expect_test "subgraph_with_mode: test 1" =
   G.add_vertex g (File "d.saty");
   test g Mode.Pdf;
   [%expect{|
-    ((File a.saty) ((Directive ((path a.saty) (range ((Line 0)))) (Require b)))
-     (Basename b))
-    ((Basename c) ((Mode Generic)) (File c.satyg))
-    ((File b.satyh) ((Directive ((path b.satyh) (range ((Line 1)))) (Require c)))
-     (Basename c))
-    ((File b.satyh) ((Directive ((path b.satyh) (range ((Line 2)))) (Require p)))
-     (Package p))
-    ((File c.satyg) ((Directive ((path c.satyg) (range ((Line 4)))) (Require b)))
-     (Basename b))
-    ((Basename b) ((Mode Pdf)) (File b.satyh)) |}]
+    (((Basename b) ((Mode Pdf)) (File b.satyh))
+     ((Basename c) ((Mode Generic)) (File c.satyg))
+     ((File a.saty) ((Directive ((path a.saty) (range ((Line 0)))) (Require b)))
+      (Basename b))
+     ((File b.satyh)
+      ((Directive ((path b.satyh) (range ((Line 1)))) (Require c))) (Basename c))
+     ((File b.satyh)
+      ((Directive ((path b.satyh) (range ((Line 2)))) (Require p))) (Package p))
+     ((File c.satyg)
+      ((Directive ((path c.satyg) (range ((Line 4)))) (Require b))) (Basename b))) |}]
 
 let reachable_sinks g root_vertices =
   let gc = Oper.transitive_closure g in
@@ -509,7 +516,10 @@ let cyclic_edges dep_graph =
 let%expect_test "cyclic_edges: test 1" =
   let g = G.create () in
   let print_result paths : unit =
-    printf !"%{sexp:(Vertex.t * Edge.t * Vertex.t) list list}\n" paths
+    paths
+    |> List.map ~f:(List.sort ~compare:[%compare: (Vertex.t * Edge.t * Vertex.t)])
+    |> List.sort ~compare:[%compare: (Vertex.t * Edge.t * Vertex.t) list]
+    |> printf !"%{sexp:(Vertex.t * Edge.t * Vertex.t) list list}\n"
   in
   let test g  =
     cyclic_edges g
@@ -532,13 +542,13 @@ let%expect_test "cyclic_edges: test 1" =
   test g;
   [%expect{|
     ((((Basename b) ((Mode Pdf)) (File b.satyh))
-      ((File c.satyg)
-       ((Directive ((path c.satyg) (range ((Line 4)))) (Require b)))
-       (Basename b))
+      ((Basename c) ((Mode Generic)) (File c.satyg))
       ((File b.satyh)
        ((Directive ((path b.satyh) (range ((Line 1)))) (Require c)))
        (Basename c))
-      ((Basename c) ((Mode Generic)) (File c.satyg)))) |}]
+      ((File c.satyg)
+       ((Directive ((path c.satyg) (range ((Line 4)))) (Require b)))
+       (Basename b)))) |}]
 
 let cyclic_directives dep_graph =
   cyclic_edges dep_graph
