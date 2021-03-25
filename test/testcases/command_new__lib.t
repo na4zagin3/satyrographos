@@ -111,7 +111,7 @@ Dump generated files
   > dev-repo: "git+https://github.com/<github-username>/satysfi-test-lib.git"
   > bug-reports: "https://github.com/<github-username>/satysfi-test-lib/issues"
   > depends: [
-  >   "satysfi" { >= "0.0.5" & < "0.0.6" }
+  >   "satysfi" { >= "0.0.6" & < "0.0.7" }
   >   "satyrographos" { >= "0.0.2.6" & < "0.0.3" }
   > 
   >   # You may want to include the corresponding library
@@ -149,7 +149,7 @@ Dump generated files
   > dev-repo: "git+https://github.com/<github-username>/satysfi-test-lib.git"
   > bug-reports: "https://github.com/<github-username>/satysfi-test-lib/issues"
   > depends: [
-  >   "satysfi" { >= "0.0.5" & < "0.0.6" }
+  >   "satysfi" { >= "0.0.6" & < "0.0.7" }
   >   "satyrographos" { >= "0.0.2.6" & < "0.0.3" }
   > 
   >   # If your library depends on other libraries, please write down here
