@@ -326,11 +326,11 @@ I assume your document files contain many use cases.
 You can install the package and build the document with the following command.
 
 ```sh
-$ opam add  --verbose --yes "file://$PWD"
+$ opam pin add  --verbose --yes "file://$PWD"
 
 OR
 
-$ opam add -vy "file://$PWD"
+$ opam pin add -vy "file://$PWD"
 ```
 
 There’s ongoing ticket [#4](https://github.com/na4zagin3/satyrographos/issues/4) to run
