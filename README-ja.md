@@ -302,9 +302,9 @@ install: [
 以下のコマンドを実行することで、パッケージのインストールからドキュメントのビルドまでを一括で行うことができます。
 
 ```sh
-$ opam add  --verbose --yes "file://$PWD"
+$ opam pin add  --verbose --yes "file://$PWD"
 又は
-$ opam add -vy "file://$PWD"
+$ opam pin add -vy "file://$PWD"
 ```
 
 OPAMに頼らずテストを実行する方法については開発中（[#4](https://github.com/na4zagin3/satyrographos/issues/4)）です。
