@@ -23,7 +23,7 @@ build-doc:
 	@echo "Target: build-doc"
 |}
 
-let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
+let env ~version_string ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
   let open Shexp_process.Infix in
   let pkg_dir = FilePath.concat temp_dir "pkg" in
   let prepare_pkg =
@@ -47,7 +47,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
   prepare_pkg
   >> prepare_dist
   >> prepare_opam_reg
-  >> PrepareBin.prepare_bin bin log_file
+  >> PrepareBin.prepare_bin ~version_string bin log_file
   >>| read_env ~opam_reg ~dist_library_dir:empty_dist
 
 let () =
@@ -63,4 +63,9 @@ let () =
       ~env
       ~name
   in
-  eval (test_install env main)
+  Format.(fprintf std_formatter "========@.SATySFi 0.0.6@.@.");
+  eval (test_install (env ~version_string:"0.0.6")  main);
+  Format.(fprintf std_formatter "========@.SATySFi 0.0.4@.@.");
+  eval (test_install (env ~version_string:"0.0.4")  main);
+  Format.(fprintf std_formatter "========@.SATySFi 0.0.3@.@.");
+  eval (test_install (env ~version_string:"0.0.3")  main)

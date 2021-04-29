@@ -58,8 +58,17 @@ let with_env ~outf ~(project_env : Satyrographos.Environment.project_env option)
 
 let run_satysfi_command ~satysfi_runtime args =
   let open P.Infix in
-  assert_satysfi_option_C satysfi_runtime
-  >> P.run "satysfi" (["-C"; satysfi_runtime] @ args)
+  Satyrographos_satysfi.Version.get_current_version_cmd
+  >>= function
+  | None ->
+    P.run "satysfi" (["-C"; satysfi_runtime; "--no-default-config"] @ args)
+  | Some v when Satyrographos_satysfi.Version.has_option_no_default_config v ->
+    P.run "satysfi" (["-C"; satysfi_runtime; "--no-default-config"] @ args)
+  | Some v when Satyrographos_satysfi.Version.has_option_C v ->
+    P.run "satysfi" (["-C"; satysfi_runtime] @ args)
+  | _ ->
+    assert_satysfi_option_C satysfi_runtime
+    >> P.run "satysfi" (["-C"; satysfi_runtime] @ args)
 
 let satysfi_command ~outf ~system_font_prefix ~autogen_libraries ~libraries ~verbose ~(project_env : Satyrographos.Environment.project_env option) ~env args =
   let persistent_autogen =

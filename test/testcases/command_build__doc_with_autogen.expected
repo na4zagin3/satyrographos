@@ -159,7 +159,7 @@ diff -Nr @@empty_dir@@/satysfi-grcnum.opam @@temp_dir@@/pkg/satysfi-grcnum.opam
 > 
 ------------------------------------------------------------
 Command invoked:
-satysfi -C @@temp_dir@@/pkg/_build/satysfi --version
+satysfi --version
 Command invoked:
-satysfi -C @@temp_dir@@/pkg/_build/satysfi doc-example.saty -o doc-example-ja.pdf
+satysfi -C @@temp_dir@@/pkg/_build/satysfi --no-default-config doc-example.saty -o doc-example-ja.pdf
 doc-example.saty -> doc-example-ja.pdf

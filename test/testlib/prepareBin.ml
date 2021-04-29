@@ -1,5 +1,5 @@
 
-let satysfi log_file =
+let satysfi ~version_string log_file =
   let log_invocation =
 {|
     echo 'Command invoked:' >> $LOG_FILE
@@ -36,7 +36,7 @@ done
 payload () {
 case "$MODE" in
   version)
-    echo '  SATySFi version 0.0.3'
+    echo "  SATySFi version $VERSION_STRING"
     ;;
   process)
     echo "$INPUT -> $OUTPUT" >> $LOG_FILE
@@ -47,6 +47,7 @@ esac
   in
   String.concat "\n"
     [ "#!/bin/sh";
+      "VERSION_STRING='" ^ version_string ^ "'" ;
       "LOG_FILE='" ^ log_file ^"'";
       "MODE=help";
       "INPUT=";
@@ -83,7 +84,7 @@ esac
     ]
 
 (* TODO Refactor this so that bin_dir is implicitly shared by the main test function (e.g., test_install) *)
-let prepare_bin ?opam_response bin log_file =
+let prepare_bin ?opam_response ?(version_string="0.0.6") bin log_file =
   let path = Unix.getenv "PATH" in
   let gen_bin name content =
     let path = FilePath.concat bin name in
@@ -96,5 +97,5 @@ let prepare_bin ?opam_response bin log_file =
   let open Shexp_process in
   let open Infix in
   Unix.putenv "PATH" (bin ^ ":" ^ path);
-  gen_bin "satysfi" (satysfi log_file)
+  gen_bin "satysfi" (satysfi ~version_string log_file)
   >> gen_bin "opam" (opam ~opam_response log_file)

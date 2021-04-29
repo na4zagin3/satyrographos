@@ -1,3 +1,6 @@
+========
+SATySFi 0.0.6
+
 Installing packages
 ------------------------------------------------------------
 Target: build-doc
@@ -30,6 +33,88 @@ Installation completed!
 @@dest_dir@@
 ------------------------------------------------------------
 ------------------------------------------------------------
+Command invoked:
+satysfi --version
+Command invoked:
+satysfi -C @@temp_dir@@/pkg/_build/satysfi --no-default-config doc-example.saty -o doc-example-ja.pdf
+doc-example.saty -> doc-example-ja.pdf
+========
+SATySFi 0.0.4
+
+Installing packages
+------------------------------------------------------------
+Target: build-doc
+
+================
+Reading runtime dist: @@temp_dir@@/empty_dist
+Read user libraries: ()
+Reading opam libraries: (base class-greek fonts-theano grcnum)
+Not gathering system fonts
+Installing libraries: (dist fonts-theano grcnum)
+Removing destination @@temp_dir@@/pkg/_build/satysfi/dist
+Installation completed!
+
+[1;33mCompatibility notice[0m for library fonts-theano:
+
+  Fonts have been renamed.
+  
+    TheanoDidot -> fonts-theano:TheanoDidot
+    TheanoModern -> fonts-theano:TheanoModern
+    TheanoOldStyle -> fonts-theano:TheanoOldStyle
+
+[1;33mCompatibility notice[0m for library grcnum:
+
+  Packages have been renamed.
+  
+    grcnum.satyh -> grcnum/grcnum.satyh
+
+================
+------------------------------------------------------------
+@@dest_dir@@
+------------------------------------------------------------
+------------------------------------------------------------
+Command invoked:
+satysfi --version
+Command invoked:
+satysfi -C @@temp_dir@@/pkg/_build/satysfi doc-example.saty -o doc-example-ja.pdf
+doc-example.saty -> doc-example-ja.pdf
+========
+SATySFi 0.0.3
+
+Installing packages
+------------------------------------------------------------
+Target: build-doc
+
+================
+Reading runtime dist: @@temp_dir@@/empty_dist
+Read user libraries: ()
+Reading opam libraries: (base class-greek fonts-theano grcnum)
+Not gathering system fonts
+Installing libraries: (dist fonts-theano grcnum)
+Removing destination @@temp_dir@@/pkg/_build/satysfi/dist
+Installation completed!
+
+[1;33mCompatibility notice[0m for library fonts-theano:
+
+  Fonts have been renamed.
+  
+    TheanoDidot -> fonts-theano:TheanoDidot
+    TheanoModern -> fonts-theano:TheanoModern
+    TheanoOldStyle -> fonts-theano:TheanoOldStyle
+
+[1;33mCompatibility notice[0m for library grcnum:
+
+  Packages have been renamed.
+  
+    grcnum.satyh -> grcnum/grcnum.satyh
+
+================
+------------------------------------------------------------
+@@dest_dir@@
+------------------------------------------------------------
+------------------------------------------------------------
+Command invoked:
+satysfi --version
 Command invoked:
 satysfi -C @@temp_dir@@/pkg/_build/satysfi --version
 Command invoked:
