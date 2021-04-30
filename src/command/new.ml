@@ -94,7 +94,7 @@ let create_project name license files =
   let vars = [
     "library", name;
     "license", license;
-    "satysfi_version", {|>= "0.0.5" & < "0.0.6"|};
+    "satysfi_version", {|>= "0.0.6" & < "0.0.7"|};
     "satyrographos_version", {|>= "0.0.2.6" & < "0.0.3"|};
   ] in
   Satyrographos_template.Template.create_files
