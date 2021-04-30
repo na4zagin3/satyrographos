@@ -44,7 +44,7 @@ Installation completed!
 ------------------------------------------------------------
 ------------------------------------------------------------
 Command invoked:
-satysfi -C @@build@@/satysfi --version
+satysfi --version
 Command invoked:
-satysfi -C @@build@@/satysfi doc-grcnum.saty -o doc-grcnum-ja.pdf
+satysfi -C @@build@@/satysfi --no-default-config doc-grcnum.saty -o doc-grcnum-ja.pdf
 doc-grcnum.saty -> doc-grcnum-ja.pdf

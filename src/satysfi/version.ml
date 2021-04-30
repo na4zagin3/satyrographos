@@ -140,3 +140,13 @@ let flag =
 let is_hash_font_src_dist_deprecated = function
   | Satysfi_0_0_3 -> false
   | _ -> true
+
+let has_option_C = function
+  | Satysfi_0_0_3 -> false
+  | _ -> true
+
+let has_option_no_default_config = function
+  | Satysfi_0_0_3
+  | Satysfi_0_0_4
+  | Satysfi_0_0_5 -> false
+  | _ -> true
