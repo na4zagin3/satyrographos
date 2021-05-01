@@ -5,6 +5,7 @@ Installing packages
 = Build modules: (example-doc)
 
 == Build module example-doc
+== Install dependencies: (fonts-theano grcnum)
 === Build docs
 Target: build-doc
 ================
@@ -37,6 +38,8 @@ Command invoked:
 opam pin add --no-action --yes satysfi-grcnum file://@@temp_dir@@/pkg
 Command invoked:
 opam reinstall --verbose --yes @@temp_dir@@/pkg
+Command invoked:
+opam install --yes satysfi-fonts-theano satysfi-grcnum
 Command invoked:
 satysfi --version
 Command invoked:

@@ -125,6 +125,21 @@ let opam_pin_project ~(buildscript: BuildScript.t) ~buildscript_path =
         )
     )
 
+let instal_dependencies_opam_cmd ~(build_module:BuildScript.m) =
+  let opam_dependencies d =
+    d
+    |> Library.Dependency.to_list
+    |> List.map ~f:(fun name -> "satysfi-" ^ name)
+  in
+  match BuildScript.get_dependencies_opt build_module with
+  | Some dependencies ->
+    let open P.Infix in
+    P.echo (Printf.sprintf !"== Install dependencies: %{sexp: Library.Dependency.t}" dependencies)
+    >> (["install"; "--yes"] @ opam_dependencies dependencies
+        |> P.run "opam")
+  | None ->
+    P.return ()
+
 let build_command ~outf ~buildscript_path ~names ~verbose ~env =
   let f ~buildscript ~build_modules ~build_dir =
     let system_font_prefix = None in
@@ -140,6 +155,7 @@ let build_command ~outf ~buildscript_path ~names ~verbose ~env =
         begin match build_module with
           | BuildScript.Doc _ ->
             P.echo ("\n== Build module " ^ BuildScript.get_name build_module)
+            >> instal_dependencies_opam_cmd ~build_module
             >> P.echo ("=== Build docs")
             >> build_cmd ~outf ~verbose ~build_module ~buildscript_path ~system_font_prefix ~env ~build_dir
             >> P.echo "================"

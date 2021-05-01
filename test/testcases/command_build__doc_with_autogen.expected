@@ -5,6 +5,7 @@ Installing packages
 = Build modules: (example-doc)
 
 == Build module example-doc
+== Install dependencies: (localized-today)
 === Build docs
 Target: build-doc
 ================
@@ -161,6 +162,8 @@ diff -Nr @@empty_dir@@/satysfi-grcnum.opam @@temp_dir@@/pkg/satysfi-grcnum.opam
 > ]
 > 
 ------------------------------------------------------------
+Command invoked:
+opam install --yes satysfi-localized-today
 Command invoked:
 satysfi --version
 Command invoked:
