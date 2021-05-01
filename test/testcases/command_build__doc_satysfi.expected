@@ -3,8 +3,13 @@ SATySFi 0.0.6
 
 Installing packages
 ------------------------------------------------------------
-Target: build-doc
+= Pin projects
 
+= Build modules: (example-doc)
+
+== Build module example-doc
+=== Build docs
+Target: build-doc
 ================
 Reading runtime dist: @@temp_dir@@/empty_dist
 Read user libraries: ()
@@ -27,8 +32,6 @@ Installation completed!
   Packages have been renamed.
   
     grcnum.satyh -> grcnum/grcnum.satyh
-
-================
 ------------------------------------------------------------
 @@dest_dir@@
 ------------------------------------------------------------
@@ -43,8 +46,13 @@ SATySFi 0.0.4
 
 Installing packages
 ------------------------------------------------------------
-Target: build-doc
+= Pin projects
 
+= Build modules: (example-doc)
+
+== Build module example-doc
+=== Build docs
+Target: build-doc
 ================
 Reading runtime dist: @@temp_dir@@/empty_dist
 Read user libraries: ()
@@ -67,8 +75,6 @@ Installation completed!
   Packages have been renamed.
   
     grcnum.satyh -> grcnum/grcnum.satyh
-
-================
 ------------------------------------------------------------
 @@dest_dir@@
 ------------------------------------------------------------
@@ -83,8 +89,13 @@ SATySFi 0.0.3
 
 Installing packages
 ------------------------------------------------------------
-Target: build-doc
+= Pin projects
 
+= Build modules: (example-doc)
+
+== Build module example-doc
+=== Build docs
+Target: build-doc
 ================
 Reading runtime dist: @@temp_dir@@/empty_dist
 Read user libraries: ()
@@ -107,8 +118,6 @@ Installation completed!
   Packages have been renamed.
   
     grcnum.satyh -> grcnum/grcnum.satyh
-
-================
 ------------------------------------------------------------
 @@dest_dir@@
 ------------------------------------------------------------

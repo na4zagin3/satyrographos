@@ -1,7 +1,12 @@
 Installing packages
 ------------------------------------------------------------
-Target: build-doc
+= Pin projects
 
+= Build modules: (example-doc)
+
+== Build module example-doc
+=== Build docs
+Target: build-doc
 ================
 Reading runtime dist: @@temp_dir@@/empty_dist
 Read user libraries: ()
@@ -14,8 +19,6 @@ Generating autogen library $libraries
 Installing libraries: ($libraries $today dist localized-today)
 Removing destination @@temp_dir@@/pkg/_build/satysfi/dist
 Installation completed!
-
-================
 ------------------------------------------------------------
 @@temp_dir@@/pkg
 @@temp_dir@@/pkg/Makefile

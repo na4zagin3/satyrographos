@@ -50,7 +50,7 @@ let setup_project_env ~buildscript_path ~satysfi_runtime_dir ~outf ~verbose ~lib
   Install.install satysfi_dist ~outf ~system_font_prefix ~persistent_autogen ~autogen_libraries ~libraries ~verbose ~safe:true ~copy:false ~env ();
   project_env
 
-let build ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_font_prefix ~env =
+let build_cmd ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_font_prefix ~env =
   let src_dir, p = read_module ~outf ~verbose ~build_module ~buildscript_path in
   let libraries = Library.Dependency.to_list p.dependencies |> Some in
   let autogen_libraries = Library.Dependency.to_list p.autogen in
@@ -71,27 +71,30 @@ let build ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_font
       with_build_dir build_dir c
   in
 
-  let build workingDirectory build_commands =
-    let context = P.Context.create() in
+  let with_working_dir workingDirectory build_commands =
     let workingDir = Filename.concat src_dir workingDirectory in
-    let _, trace =
-      with_project_env (fun project_env ->
-          run_build_commands ~workingDir ~project_env build_commands)
-      |> P.Traced.eval_exn ~context in
-    if verbose
-    then begin Format.fprintf outf "Executed commands:@.";
-      Sexp.pp_hum_indent 2 Format.std_formatter trace;
-      Format.fprintf outf "@."
-    end
+    with_project_env (fun project_env ->
+        run_build_commands ~workingDir ~project_env build_commands)
   in
 
   match build_module with
   | BuildScript.Doc build_module ->
-    build build_module.workingDirectory build_module.build
+    with_working_dir build_module.workingDirectory build_module.build
   | BuildScript.LibraryDoc build_module ->
-    build build_module.workingDirectory build_module.build
+    with_working_dir build_module.workingDirectory build_module.build
   | BuildScript.Library _ ->
-    ()
+    P.return ()
+
+let build ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_font_prefix ~env =
+  let context = P.Context.create() in
+  let _, trace =
+    build_cmd ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_font_prefix ~env
+    |> P.Traced.eval_exn ~context in
+  if verbose
+  then begin Format.fprintf outf "Executed commands:@.";
+    Sexp.pp_hum_indent 2 Format.std_formatter trace;
+    Format.fprintf outf "@."
+  end
 
 
 let opam_pin_project ~(buildscript: BuildScript.t) ~buildscript_path =
@@ -118,32 +121,44 @@ let opam_pin_project ~(buildscript: BuildScript.t) ~buildscript_path =
             Lint.get_opam_name ~opam ~opam_path
           in
           P.run "opam" ["pin"; "add"; "--no-action"; "--yes"; opam_name; "file://" ^ workdir cwd]
-          >> P.run "opam" ["reinstall"; workdir cwd]
+          >> P.run "opam" ["reinstall"; "--verbose"; "--yes"; workdir cwd]
         )
     )
 
-
-let build_command ~outf ~buildscript_path ~name ~verbose ~env =
-  let f ~buildscript ~build_module ~build_dir =
+let build_command ~outf ~buildscript_path ~names ~verbose ~env =
+  let f ~buildscript ~build_modules ~build_dir =
     let system_font_prefix = None in
-    opam_pin_project ~buildscript ~buildscript_path
-    |> P.eval ;
-    Format.fprintf outf "@.================@.";
-    build ~outf ~verbose ~build_module ~buildscript_path ~system_font_prefix ~env ~build_dir;
-    Format.fprintf outf "@.================@."
+    let open P.Infix in
+    let module_names =
+      build_modules
+    |> List.map ~f:BuildScript.get_name
+    in
+    P.echo ("= Pin projects")
+    >> opam_pin_project ~buildscript ~buildscript_path
+    >> P.echo (Printf.sprintf !"\n= Build modules: %{sexp: string list}" module_names)
+    >> P.List.iter build_modules ~f:(fun build_module ->
+        begin match build_module with
+          | BuildScript.Doc _ ->
+            P.echo ("\n== Build module " ^ BuildScript.get_name build_module)
+            >> P.echo ("=== Build docs")
+            >> build_cmd ~outf ~verbose ~build_module ~buildscript_path ~system_font_prefix ~env ~build_dir
+            >> P.echo "================"
+          | _ ->
+            P.return ()
+        end
+      )
+    |> P.eval
   in
   let buildscript = BuildScript.load buildscript_path in
   let module_map = BuildScript.get_module_map buildscript in
-  match name with
+  match names with
   | None -> begin
-      if Map.length module_map = 1
-      then let build_module = Map.nth_exn module_map 0 |> snd in
-        f ~buildscript ~build_module
-      else failwith "Please specify module name"
+      let build_modules = Map.data module_map in
+      f ~buildscript ~build_modules
     end
-  | Some name ->
-    match Map.find module_map name with
-    | Some build_module ->
-      f ~buildscript ~build_module
-    | _ ->
-      failwithf "Build file does not contains library %s" name ()
+  | Some names ->
+    match List.map names ~f:(Map.find_or_error module_map) |> Or_error.all with
+    | Result.Ok build_modules ->
+      f ~buildscript ~build_modules
+    | Result.Error err ->
+      failwithf "Build file does not contains library %s" (Error.to_string_hum err) ()

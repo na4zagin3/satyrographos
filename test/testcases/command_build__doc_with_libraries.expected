@@ -1,7 +1,12 @@
 Installing packages
 ------------------------------------------------------------
-Target: build-doc
+= Pin projects
 
+= Build modules: (example-doc)
+
+== Build module example-doc
+=== Build docs
+Target: build-doc
 ================
 Reading runtime dist: @@temp_dir@@/empty_dist
 Read user libraries: ()
@@ -24,8 +29,6 @@ Installation completed!
   Packages have been renamed.
   
     grcnum.satyh -> grcnum/grcnum.satyh
-
-================
 ------------------------------------------------------------
 @@dest_dir@@
 ------------------------------------------------------------
@@ -33,7 +36,7 @@ Installation completed!
 Command invoked:
 opam pin add --no-action --yes satysfi-grcnum file://@@temp_dir@@/pkg
 Command invoked:
-opam reinstall @@temp_dir@@/pkg
+opam reinstall --verbose --yes @@temp_dir@@/pkg
 Command invoked:
 satysfi --version
 Command invoked:

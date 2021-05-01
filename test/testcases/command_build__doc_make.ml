@@ -54,7 +54,7 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
 let () =
   let verbose = false in
   let main env ~dest_dir:_ ~temp_dir ~outf =
-    let name = Some "example-doc" in
+    let names = Some ["example-doc"] in
     (* let dest_dir = FilePath.concat dest_dir "dest" in *)
     Satyrographos_command.Build.build_command
       ~outf
@@ -62,6 +62,6 @@ let () =
       ~buildscript_path:(FilePath.concat temp_dir "pkg/Satyristes")
       ~build_dir:(FilePath.concat temp_dir "pkg/_build" |> Option.some)
       ~env
-      ~name
+      ~names
   in
   eval (test_install env main)

@@ -15,7 +15,7 @@ let build_command =
     ~summary:"Build modules (experimental)"
     [%map_open
       let script = flag "--script" (optional string) ~doc:"SCRIPT Install script"
-      and name = anon (maybe ("MODULE_NAME" %: string))
+      and names = anon (sequence ("MODULE_NAME" %: string))
       and verbose = flag  "--verbose" no_arg ~doc:"Make verbose"
       in
       Compatibility.optin ();
@@ -28,6 +28,7 @@ let build_command =
       in
       let env = Setup.read_environment () in
       (fun () ->
-         Satyrographos_command.Build.build_command ~outf ~build_dir ~buildscript_path ~name ~verbose ~env;
+         let names = if List.is_empty names then None else Some names in
+         Satyrographos_command.Build.build_command ~outf ~build_dir ~buildscript_path ~names ~verbose ~env;
          reprint_err_warn ())
     ]
