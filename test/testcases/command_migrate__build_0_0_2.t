@@ -81,8 +81,8 @@ Migrate the library
   Please be sure satysfi-package-doc.opam has the following build section.
   
   build:
-    ["satyrographos" "opam" "install"
-     "--name" "satysfi-package-doc"
+    ["satyrographos" "opam" "build"
+     "--name" "package-doc"
      "--prefix" "%{prefix}%"
      "--script" "%{build}%/Satyristes"]
   Done.
@@ -124,9 +124,9 @@ Dump generated files
   > build: [
   >   "satyrographos"
   >   "opam"
-  >   "install"
+  >   "build"
   >   "--name"
-  >   "satysfi-package"
+  >   "package"
   >   "--prefix"
   >   "%{prefix}%"
   >   "--script"
