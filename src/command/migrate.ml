@@ -34,8 +34,8 @@ let migrate_0_0_2 ~outf ~buildscript_path  =
       | [] ->
         Format.fprintf outf "Fixing build section in %s.@." opam_path;
         let cmd =
-          ["satyrographos"; "opam"; "install";
-           "--name"; "satysfi-" ^ name;
+          ["satyrographos"; "opam"; "build";
+           "--name"; name;
            "--prefix"; "%{prefix}%";
            "--script"; "%{build}%/Satyristes"]
         in
@@ -45,8 +45,8 @@ let migrate_0_0_2 ~outf ~buildscript_path  =
       | _ ->
         Format.fprintf outf {|Please be sure %s has the following build section.@.
 build:
-  ["satyrographos" "opam" "install"
-   "--name" "satysfi-%s"
+  ["satyrographos" "opam" "build"
+   "--name" "%s"
    "--prefix" "%%{prefix}%%"
    "--script" "%%{build}%%/Satyristes"]
 |} opam_path name;
