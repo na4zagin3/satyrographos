@@ -55,12 +55,12 @@ satyrographos install
 
 Now you can use the fonts in the library.
 
-You can also set up with specified libraries with `--package <package>` (or `-l <package>`) option rather than all the available ones.
-Be noticed that `--package` option is followed by a package names _without_ `satysfi-` prefix.
+You can also set up with specified libraries with `--library <package>` (or `-l <package>`) option rather than all the available ones.
+Be noticed that `--library` option is followed by a package names _without_ `satysfi-` prefix.
 
 ```sh
 opam install satysfi-fonts-theano
-satyrographos install --package fonts-theano
+satyrographos install --library fonts-theano
 ```
 
 ### Install System Fonts

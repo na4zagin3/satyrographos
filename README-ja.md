@@ -33,13 +33,13 @@ satyrographos install
 とすると、SATySFi-Fonts-Theano提供のフォント`fonts-theano:TheanoDidot`等が利用可能になります。
 
 `satyrographos install`は既定で全てのライブラリを準備しますが、一部のみにすることも可能です。
-以下のように、`--package <package>`（または `-l <package>`）オプションが指定されると、
+以下のように、`--library <package>`（または `-l <package>`）オプションが指定されると、
 指定されたライブラリのみが準備されます。
-`--package`オプションはライブラリ名を取るのですが、ここには`satysfi-`がついていないことに注意してください。
+`--library`オプションはライブラリ名を取るのですが、ここには`satysfi-`がついていないことに注意してください。
 
 ```sh
 opam install satysfi-fonts-theano
-satyrographos install --package fonts-theano
+satyrographos install --library fonts-theano
 ```
 
 ### システムフォントのインストール
