@@ -1,7 +1,13 @@
 Installing packages
 ------------------------------------------------------------
-Target: build-doc
+= Pin projects
 
+= Build modules: (example-doc)
+
+== Build module example-doc
+== Install dependencies: (localized-today)
+=== Build docs
+Target: build-doc
 ================
 Reading runtime dist: @@temp_dir@@/empty_dist
 Read user libraries: ()
@@ -14,8 +20,6 @@ Generating autogen library $libraries
 Installing libraries: ($libraries $today dist localized-today)
 Removing destination @@temp_dir@@/pkg/_build/satysfi/dist
 Installation completed!
-
-================
 ------------------------------------------------------------
 @@temp_dir@@/pkg
 @@temp_dir@@/pkg/Makefile
@@ -158,6 +162,8 @@ diff -Nr @@empty_dir@@/satysfi-grcnum.opam @@temp_dir@@/pkg/satysfi-grcnum.opam
 > ]
 > 
 ------------------------------------------------------------
+Command invoked:
+opam install --yes satysfi-localized-today
 Command invoked:
 satysfi --version
 Command invoked:

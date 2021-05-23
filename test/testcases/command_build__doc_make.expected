@@ -1,9 +1,15 @@
 Installing packages
 ------------------------------------------------------------
+= Pin projects
+
+= Build modules: (example-doc)
+
+== Build module example-doc
+== Install dependencies: (fonts-theano grcnum)
+=== Build docs
 Target: build-doc
 ==============================
 0
-
 ================
 Reading runtime dist: @@temp_dir@@/empty_dist
 Read user libraries: ()
@@ -26,8 +32,9 @@ Installation completed!
   Packages have been renamed.
   
     grcnum.satyh -> grcnum/grcnum.satyh
-
-================
 ------------------------------------------------------------
 @@dest_dir@@
 ------------------------------------------------------------
+------------------------------------------------------------
+Command invoked:
+opam install --yes satysfi-fonts-theano satysfi-grcnum
