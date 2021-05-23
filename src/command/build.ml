@@ -56,10 +56,11 @@ let build_cmd ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_
   let autogen_libraries = Library.Dependency.to_list p.autogen in
   let with_build_dir build_dir c =
     let satysfi_runtime_dir = FilePath.concat build_dir "satysfi" in
-    let project_env =
-      setup_project_env ~satysfi_runtime_dir ~buildscript_path ~outf ~verbose ~libraries ~env ~system_font_prefix ~autogen_libraries
-    in
-    c project_env
+    let open P.Infix in
+    P.return ()
+    >>| (fun () ->
+        setup_project_env ~satysfi_runtime_dir ~buildscript_path ~outf ~verbose ~libraries ~env ~system_font_prefix ~autogen_libraries)
+    >>= c
   in
   let with_project_env c =
     match build_dir with
