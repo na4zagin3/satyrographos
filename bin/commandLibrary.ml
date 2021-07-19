@@ -25,33 +25,6 @@ let library_list_command_g p_list =
         p_list ()
     ]
 
-let library_list () =
-  Compatibility.optin ();
-  let env = Setup.read_environment () in
-  match env.depot with
-  | Some Environment.{ repo=_; reg; } ->
-    [%derive.show: string list] (Registry.list reg) |> print_endline
-  | None -> printf "No libraries"
-  let library_list_command =
-    library_list_command_g library_list
-
-let library_show p () =
-  Compatibility.optin ();
-  let Environment.{ repo=_; reg; } = Setup.read_depot_exn () in
-  Registry.directory reg p
-    |> Library.read_dir ~outf
-    |> [%sexp_of: Library.t]
-    |> Sexp.to_string_hum
-    |> print_endline
-let library_show_command =
-  library_show_command_g library_show
-
-let library_command =
-  Command.group ~summary:"Install libraries (experimental)"
-    [ "list", library_list_command; (* ToDo: use this default*)
-      "show", library_show_command;
-    ]
-
 
 let library_opam_list () =
   Compatibility.optin ();

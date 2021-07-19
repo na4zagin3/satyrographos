@@ -10,7 +10,6 @@ Installing packages
 Target: build-doc
 ================
 Reading runtime dist: @@temp_dir@@/empty_dist
-Read user libraries: ()
 Reading opam libraries: (base localized-today)
 Not gathering system fonts
 Generating autogen libraries

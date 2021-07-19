@@ -12,7 +12,6 @@ Target: build-doc
 0
 ================
 Reading runtime dist: @@temp_dir@@/empty_dist
-Read user libraries: ()
 Reading opam libraries: (base class-greek fonts-theano grcnum)
 Not gathering system fonts
 Installing libraries: (dist fonts-theano grcnum)

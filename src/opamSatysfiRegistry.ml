@@ -1,6 +1,8 @@
+open Sexplib.Conv
 type t = {
   registry_dir: string;
 }
+[@@deriving sexp]
 
 let read registry_dir =
   if FileUtil.(test Is_dir registry_dir)
