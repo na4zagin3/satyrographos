@@ -8,7 +8,6 @@ let total_command =
       "debug", CommandDebug.debug_command;
       "new", CommandNew.new_command;
       "opam", CommandOpam.opam_command;
-      "library", CommandLibrary.library_command;
       "library-opam", CommandLibrary.library_opam_command;
       "lint", CommandLint.lint_command;
       "lockdown", CommandLockdown.lockdown_command;
@@ -16,7 +15,6 @@ let total_command =
       "satysfi", CommandSatysfi.satysfi_command;
       "status", CommandStatus.status_command;
       "util", CommandUtil.util_command;
-      "pin", CommandPin.pin_command;
       "install", CommandInstall.install_command;
     ]
 

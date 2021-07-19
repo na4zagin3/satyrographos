@@ -1,7 +1,6 @@
 Installing packages
 ------------------------------------------------------------
 Reading runtime dist: @@temp_dir@@/empty_dist
-Read user libraries: ()
 Reading opam libraries: (dist)
 Overriding dist with user installed one
 Not gathering system fonts

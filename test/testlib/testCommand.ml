@@ -32,10 +32,8 @@ in
     in
     let env () =
       Environment.{
-        empty
-        with
-          opam_reg = OpamSatysfiRegistry.read opam_dir;
-          dist_library_dir=Some dist_library_dir
+        opam_reg = OpamSatysfiRegistry.read opam_dir;
+        dist_library_dir=Some dist_library_dir
       }
     in
     mkdir ~p:() dist_library_dir

@@ -19,7 +19,6 @@ Files under $SATYSFI_RUNTIME
 ./dist/packages/grcnum/grcnum.satyh
 ==============================
 Reading runtime dist: @@temp_dir@@/empty_dist
-Read user libraries: ()
 Reading opam libraries: (base class-greek fonts-theano grcnum)
 Not gathering system fonts
 Installing libraries: (dist fonts-theano grcnum)

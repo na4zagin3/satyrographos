@@ -18,18 +18,11 @@ Registry has the following priority:
 
 It fails when some of transitively-required libraries are missing.
  *)
-let get_libraries ~outf ~maybe_reg ~(env: Environment.t) ~libraries =
+let get_libraries ~outf ~(env: Environment.t) ~libraries =
   let dist_library_dir = Option.value_exn ~message:"SATySFi dist directory is not found. Please run opam install satysfi-dist" env.dist_library_dir in
   let opam_reg = env.opam_reg in
   Format.fprintf outf "Reading runtime dist: %s\n" dist_library_dir;
   let dist_library = Library.read_dir ~outf dist_library_dir in
-  let user_libraries = Option.map maybe_reg ~f:(fun reg -> Registry.list reg
-    |> StringSet.of_list
-    |> StringSet.to_map ~f:(Registry.directory reg))
-  in
-  Format.fprintf outf "Read user libraries: %s\n"
-    (Option.value_map ~default:[] ~f:Map.keys user_libraries
-    |> [%sexp_of: string list] |> Sexp.to_string_hum);
   let opam_libraries = match opam_reg with
     | None -> StringSet.to_map StringSet.empty ~f:ident
     | Some reg_opam ->
@@ -38,14 +31,7 @@ let get_libraries ~outf ~maybe_reg ~(env: Environment.t) ~libraries =
         |> StringSet.to_map ~f:(OpamSatysfiRegistry.directory reg_opam)
   in
   Format.fprintf outf "Reading opam libraries: %s\n" (opam_libraries |> Map.keys |> [%sexp_of: string list] |> Sexp.to_string_hum);
-  let all_libraries =
-    Option.value ~default:(Map.empty (module StringSet.Elt)) user_libraries
-    |> Map.merge opam_libraries ~f:(fun ~key -> function
-      | `Left x -> Library.read_dir ~outf x |> Some
-      | `Right x -> Library.read_dir ~outf x |> Some
-      | `Both (_, x) ->
-        Format.fprintf outf "Library %s is provided by both the user local and opam repositories\n" key;
-        Library.read_dir ~outf x |> Some) in
+  let all_libraries = Map.map opam_libraries ~f:(Library.read_dir ~outf) in
   let all_libraries = match Map.add all_libraries ~key:"dist" ~data:dist_library with
     | `Ok result -> result
     | `Duplicate ->
@@ -164,9 +150,7 @@ let add_autogen_libraries ~outf ~libraries ~env:(_ : Environment.t) ~(persistent
   |> add_library Autogen.Libraries.name Autogen.Libraries.generate
 
 let get_library_map ~outf ~system_font_prefix ~autogen_libraries ~libraries ~(env: Environment.t) ~persistent_autogen () =
-  let maybe_depot = env.depot in
-  let maybe_reg = Option.map maybe_depot ~f:(fun p -> p.reg) in
-  let library_map = get_libraries ~outf ~maybe_reg ~env ~libraries in
+  let library_map = get_libraries ~outf ~env ~libraries in
   let library_map = match system_font_prefix with
     | None -> Format.fprintf outf "Not gathering system fonts\n"; library_map
     | Some(prefix) ->
@@ -184,31 +168,9 @@ let get_library_map ~outf ~system_font_prefix ~autogen_libraries ~libraries ~(en
   then library_map
   else add_autogen_libraries ~outf ~libraries:autogen_libraries ~env ~persistent_autogen library_map
 
-let install d ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~verbose ?(safe=false) ~copy ~(env: Environment.t) ~persistent_autogen () =
+let install d ~outf ~system_font_prefix ?(autogen_libraries=[]) ~libraries ~verbose ?safe:_ ~copy ~(env: Environment.t) ~persistent_autogen () =
   (* TODO build all *)
   Format.open_vbox 0;
-  let maybe_depot = env.depot in
-  begin if safe
-    then Option.iter maybe_depot ~f:(fun {repo; reg} ->
-      Format.fprintf outf "Updating libraries@,";
-      begin match Repository.update_all ~outf repo with
-      | Some updated_libraries -> begin
-        [%derive.show: string list] updated_libraries
-        |> Format.fprintf outf "Updated libraries: %s@,";
-      end
-      | None ->
-        Format.fprintf outf "No libraries updated@,"
-      end;
-      Format.fprintf outf "Building updated libraries@,";
-      begin match Registry.update_all ~outf reg with
-      | Some updated_libraries -> begin
-        [%derive.show: string list] updated_libraries
-        |> Format.fprintf outf "Built libraries: %s@,";
-      end
-      | None ->
-        Format.fprintf outf "No libraries built@,"
-      end)
-  end;
   let library_map =
     get_library_map ~outf ~system_font_prefix ~autogen_libraries ~libraries ~env ~persistent_autogen ()
   in
