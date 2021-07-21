@@ -12,10 +12,8 @@ let status () =
   [%derive.show: string list] (SatysfiDirs.runtime_dirs ()) |> print_endline;
   printf "SATySFi user directory: ";
   [%derive.show: string option] (SatysfiDirs.user_dir ()) |> print_endline;
-  env.opam_reg |> Option.iter ~f:(
-    printf !"Selected SATySFi runtime distribution: %{sexp:OpamSatysfiRegistry.t}\n");
-  env.dist_library_dir |> Option.iter ~f:(
-    printf "Selected SATySFi runtime distribution: %s\n")
+  printf !"Selected OPAM SATySFi library registry: %{sexp:OpamSatysfiRegistry.t option}\n" env.opam_reg ;
+  printf !"Selected SATySFi runtime distribution: %{sexp: string option}\n" env.dist_library_dir
 
 
 let status_command =

@@ -2,6 +2,7 @@ open Core
 open Satyrographos
 
 module P = Shexp_process
+module OW = Satyrographos.OpamWrapper
 
 let read_module ~outf ~verbose ~build_module ~buildscript_path =
   let src_dir = Filename.dirname buildscript_path in
@@ -122,7 +123,9 @@ let opam_pin_project ~(buildscript: BuildScript.t) ~buildscript_path =
             Lint.get_opam_name ~opam ~opam_path
           in
           P.run "opam" ["pin"; "add"; "--no-action"; "--yes"; opam_name; "file://" ^ workdir cwd]
-          >> P.run "opam" ["reinstall"; "--verbose"; "--yes"; workdir cwd]
+          >> P.set_env "OPAMSOLVERTIMEOUT" "0" (
+            P.run "opam" ["reinstall"; "--verbose"; "--yes"; "--"; workdir cwd]
+          )
         )
     )
 

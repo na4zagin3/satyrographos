@@ -21,9 +21,11 @@ let save_lockdown ~verbose ~buildscript_path =
     (lockdown_file_path ~buildscript_path)
     lockdown
 
+let restore_lockdown_result ~verbose ~buildscript_path =
+  Satyrographos_lockdown.LockdownFile.load_file_result
+    (lockdown_file_path ~buildscript_path)
+  |> Result.map (Satyrographos_lockdown.Lockdown.restore_lockdown ~verbose)
+
 let restore_lockdown ~verbose ~buildscript_path =
-  let lockdown =
-    Satyrographos_lockdown.LockdownFile.load_file_exn
-      (lockdown_file_path ~buildscript_path);
-  in
-  Satyrographos_lockdown.Lockdown.restore_lockdown ~verbose lockdown;
+  restore_lockdown_result ~verbose ~buildscript_path
+  |> Result.get_ok

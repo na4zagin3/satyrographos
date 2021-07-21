@@ -20,10 +20,17 @@ type opam_package = {
 }
 [@@deriving equal, sexp, yojson]
 
+type opam_repo = {
+  name: string;
+  url: string;
+}
+[@@deriving equal, sexp, yojson]
+
 let x =
   opam_package_of_yojson
 type opam_dependencies = {
   packages: opam_package list;
+  repos: opam_repo list;
 }
 [@@deriving equal, sexp, yojson]
 
@@ -75,10 +82,13 @@ let save_file_exn f ld =
       |> Out_channel.output_string oc
     )
 
-let load_file_exn f =
+let load_file_result f =
   In_channel.read_all f
   |> Yaml.yaml_of_string
   |> error_msg_to_invalid_arg
   |> YamlYojson.yojson_of_yaml
   |> of_yojson
+
+let load_file_exn f =
+  load_file_result f
   |> Result.ok_or_failwith

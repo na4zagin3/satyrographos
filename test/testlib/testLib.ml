@@ -180,6 +180,7 @@ let test_install ?(replacements=[]) ?(post_dump_dirs=default_post_dump_dirs) set
 
 let read_env ?repo:_ ?opam_reg ?dist_library_dir () =
   Satyrographos.Environment.{
+    opam_switch = None; (* TODO Fix this *)
     opam_reg = begin match opam_reg with
       | Some opam_reg -> Satyrographos.OpamSatysfiRegistry.read opam_reg
       | None -> None end;

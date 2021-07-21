@@ -2,61 +2,101 @@ open Core
 
 open LockdownFile
 module P = Shexp_process
+module OpamWrapper = Satyrographos.OpamWrapper
 
-let opam_installed_transitive_dependencies_com ~verbose:_ packages =
-  let open P.Infix in
-  let cmd =
-    P.run "opam" [
-      "list";
-      "-i";
-      "--color=never";
-      "--columns";
-      "name,installed-version";
-      "--separator=,";
-      "--recursive";
-      "--required-by"; String.concat ~sep:"," packages]
-    |> P.capture_unit [P.Std_io.Stdout]
-    >>| String.split_lines
-    >>| List.filter ~f:(fun l -> String.is_prefix ~prefix:"#" l |> not)
-    >>| List.filter_map ~f:(fun l ->
-        match String.split_on_chars ~on:[','] l with
-        | [name; version] -> Some {
-            name = String.strip name;
-            version = String.strip version;
-          }
-        | [""] | [] -> None
-        | _ ->
-          failwithf
-            "BUG: Unrecognizable package information from OPAM: %S"
-            l
-            ()
-      )
-  in
-  P.echo "Gathering OPAM package information..."
-  >> cmd
+let get_opam_repositories ~gt ~rt () =
+  OpamGlobalState.repos_list gt
+  |> List.map ~f:(OpamRepositoryState.get_repo rt)
 
 let get_opam_dependencies ~verbose packages =
-  let packages =
-    opam_installed_transitive_dependencies_com ~verbose packages
+  OpamGlobalState.with_ `Lock_none @@ fun gt ->
+  OpamRepositoryState.with_ `Lock_none gt @@ fun rt ->
+  let package_and_repos =
+    OpamWrapper.opam_installed_transitive_dependencies_com ~verbose packages
     |> P.eval
   in
-  { packages; }
+  let packages =
+    package_and_repos
+    |> List.map ~f:(fun {name; version; _} -> {name; version;})
+  in
+  let used_repos =
+    package_and_repos
+    |> List.map ~f:(fun {repo; _} -> repo)
+    |> Set.of_list (module String)
+  in
+  used_repos
+  |> Set.to_list
+  |> Printf.printf !"Used repos: %{sexp: string list}\n";
+  let all_repos = get_opam_repositories ~gt ~rt () in
+  let repo_map =
+    all_repos
+    |> List.filter_map ~f:(fun r ->
+        let name = OpamRepositoryName.to_string r.repo_name in
+        if Set.mem used_repos name
+        then Some (name, r)
+        else begin
+          OpamRepositoryBackend.to_string r |> Printf.printf "Not used: %s\n";
+          None
+        end
+      )
+    |> Map.of_alist_exn (module String)
+  in
+  let repos =
+    all_repos
+    |> List.filter ~f:(fun r ->
+       let name = OpamRepositoryName.to_string r.repo_name in
+       Set.mem used_repos name
+      )
+    |> List.map ~f:(fun r ->
+        { name = OpamRepositoryName.to_string r.repo_name;
+          url = OpamUrl.to_string r.repo_url;
+        }
+      )
+  in
+  let unsafe_repos =
+    repo_map
+    |> Map.filter ~f:(fun r ->
+        OpamUrl.to_string r.repo_url
+        |> Set.mem OpamWrapper.safe_repo_list
+        |> not)
+  in
+  if Map.is_empty unsafe_repos |> not
+  then begin
+    unsafe_repos
+    |> Map.to_alist
+    |> List.map ~f:snd
+    |> List.map ~f:OpamRepositoryBackend.to_string
+    |> List.map ~f:(fun s -> "  " ^ s)
+    |> String.concat ~sep:"\n"
+    |> Printf.printf "[WARNING] The following repos are unsafe:\n%s\n";
+    package_and_repos
+    |> List.filter_map ~f:(fun {name; repo; _} ->
+        if Map.mem unsafe_repos repo
+        then Some (Printf.sprintf "  %s at %s" name repo)
+        else None)
+    |> String.concat ~sep:"\n"
+    |> Printf.printf "Used by:\n%s\n";
+  end;
+  { packages; repos; }
 
 let restore_opam_dependencies_com ~verbose (dependencies : opam_dependencies) =
   let packages =
     dependencies.packages
     |> List.map ~f:(fun {name; version;} ->
-        sprintf "%s.%s" name version)
+        name, version)
   in
-  [
-    ["install"; "--yes";];
-    if verbose
-    then ["--verbose";]
-    else [];
-    packages;
-  ]
-  |> List.concat
-  |> P.run "opam"
+  let install_com =
+    OpamWrapper.opam_install_com ~verbose packages
+  in
+  let repos =
+    dependencies.repos
+    |> List.map ~f:(fun {name; url} -> name, url)
+  in
+  let open P.Infix in
+  OpamWrapper.opam_clean_up_local_switch_com ()
+  >> OpamWrapper.opam_set_up_local_switch_com ~repos ~version:None ()
+  >> install_com
+
 
 let restore_opam_dependencies ~verbose (dependencies : opam_dependencies) =
   restore_opam_dependencies_com ~verbose dependencies

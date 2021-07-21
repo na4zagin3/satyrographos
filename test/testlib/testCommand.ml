@@ -32,6 +32,7 @@ in
     in
     let env () =
       Environment.{
+        opam_switch = None;
         opam_reg = OpamSatysfiRegistry.read opam_dir;
         dist_library_dir=Some dist_library_dir
       }

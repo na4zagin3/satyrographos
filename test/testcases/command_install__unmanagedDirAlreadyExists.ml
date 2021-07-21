@@ -11,9 +11,10 @@ let env ~dest_dir ~temp_dir : Satyrographos.Environment.t t =
   PrepareDist.empty empty_dist
   >> mkdir (FilePath.concat dest_dir "dest")
   >> return Satyrographos.Environment.{
-    opam_reg = None;
-    dist_library_dir = Some empty_dist;
-  }
+      opam_switch = None;
+      opam_reg = None;
+      dist_library_dir = Some empty_dist;
+    }
 
 let () =
   let system_font_prefix = None in
