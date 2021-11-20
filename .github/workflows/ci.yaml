@@ -16,8 +16,9 @@ jobs:
 #         - 'macos-latest'
         ocaml-version:
           - 4.09.1
-          - 4.10.1
-          - 4.11.1
+          - 4.10.2
+          - 4.11.2
+          - 4.12.1
     runs-on: ${{ matrix.os }}
     env:
       OPAMSOLVERTIMEOUT: 3600
