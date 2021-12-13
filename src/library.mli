@@ -106,6 +106,9 @@ type metadata = {
 
 val current_version : int
 
+(** [read_dir_result ~outf dir] read a library at [dir] *)
+val read_dir_result : outf:Format.formatter -> FilePath.filename -> (t, string) Result.t
+
 (** [read_dir ~outf dir] read a library at [dir] *)
 val read_dir : outf:Format.formatter -> FilePath.filename -> t
 
