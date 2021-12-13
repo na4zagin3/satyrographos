@@ -26,24 +26,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Cache OPAM directory (Non Windows)
-        uses: actions/cache@v2
-        if: runner.os != 'Windows'
-        with:
-          path: "~/.opam"
-          key: ${{ runner.os }}-opam-${{ matrix.ocaml-version }}-${{ matrix.snapshot }}
-
-      - name: Cache OPAM directory (Windows)
-        uses: actions/cache@v2
-        if: runner.os == 'Windows'
-        with:
-          path: "C:\\cygwin\\home\\runneradmin\\.opam"
-          key: ${{ runner.os }}-opam-${{ matrix.ocaml-version }}-${{ matrix.snapshot }}
-
       - name: Setup OCaml ${{ matrix.ocaml-version }}
-        uses: avsm/setup-ocaml@v1
+        uses: ocaml/setup-ocaml@v2
         with:
-          ocaml-version: ${{ matrix.ocaml-version }}
+          ocaml-compiler: ${{ matrix.ocaml-version }}
+          dune-cache: true
+
+          cache-prefix: "satysfi-${{ matrix.with-satysfi }}"
 
       - name: Check validity of the snapshot OPAM files
         run: |
@@ -70,15 +59,9 @@ jobs:
 
       - name: Install Satyrographos
         run: |
-          opam pin add satyrographos.dev . --no-action
-          opam depext satyrographos --yes --with-doc
           opam install satyrographos --yes --with-doc
           
       - name: Test Satyrographos
         run: |
           opam lint
           opam exec -- dune runtest
-
-      - name: Clean up logs and temporary files
-        run: |
-          opam clean --switch-cleanup --logs
