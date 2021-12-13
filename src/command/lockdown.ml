@@ -10,11 +10,12 @@ let load_lockdown_file ~buildscript_path =
   then Some (Satyrographos_lockdown.LockdownFile.load_file_exn path)
   else None
 
-let save_lockdown ~verbose ~buildscript_path =
+let save_lockdown ~verbose ~env ~buildscript_path =
   let buildscript = Satyrographos.BuildScript.load buildscript_path in
   let lockdown =
     Satyrographos_lockdown.Lockdown.generate_lockdown
       ~verbose
+      ~env
       ~buildscript
   in
   Satyrographos_lockdown.LockdownFile.save_file_exn

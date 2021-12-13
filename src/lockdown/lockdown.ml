@@ -1,6 +1,6 @@
 open Core
 
-let generate_lockdown ~verbose ~buildscript =
+let generate_lockdown ~verbose ~env ~buildscript =
   let open Satyrographos in
   let dependent_opam_packages =
     BuildScript.get_opam_dependencies buildscript
@@ -24,7 +24,7 @@ let generate_lockdown ~verbose ~buildscript =
   LockdownFile.make
     ~dependencies:
       (LockdownFile.Opam
-         (OpamDependencies.get_opam_dependencies ~verbose dependent_opam_packages))
+         (OpamDependencies.get_opam_dependencies ~verbose ~env dependent_opam_packages))
     ~autogen
 
 let restore_lockdown ~verbose (lockdown : LockdownFile.t) =

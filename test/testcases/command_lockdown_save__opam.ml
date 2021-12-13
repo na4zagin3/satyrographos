@@ -65,10 +65,10 @@ let files =
 
 let opam_response = {
   PrepareBin.list_result = {|# Packages matching: (installed | available) & (name-match(satyrographos) | name-match(satysfi) | name-match(ocaml))
-# Name       ,# Version
-ocaml        ,4.09.0
-satyrographos,0.0.2.7
-satysfi      ,0.0.5+dev2020.09.05|}
+# Name       ,# Repository    ,# Version
+ocaml        ,default         ,4.09.0
+satyrographos,satysfi-external,0.0.2.7
+satysfi      ,satyrographos   ,0.0.5+dev2020.09.05|}
 }
 
 let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
@@ -97,11 +97,12 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
 
 let () =
   let verbose = false in
-  let main _env ~dest_dir:_ ~temp_dir ~outf:_ =
+  let main env ~dest_dir:_ ~temp_dir ~outf:_ =
     let _name = Some "example-doc" in
     (* let dest_dir = FilePath.concat dest_dir "dest" in *)
     Satyrographos_command.Lockdown.save_lockdown
       ~verbose
+      ~env
       ~buildscript_path:(FilePath.concat temp_dir "pkg/Satyristes")
   in
   let post_dump_dirs ~dest_dir:_ ~temp_dir =

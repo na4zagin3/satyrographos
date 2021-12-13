@@ -80,7 +80,10 @@ let dump_dir dir : unit t =
   )
   |> set_env "LC_ALL" "C"
 
-let stacktrace = false
+let stacktrace =
+  Sys.getenv_opt "SATYROGRAPHOS_TEST_STACKTRACE"
+  |> Option.map (String.equal "true")
+  |> Option.value ~default:false
 
 let filter_output f c =
   capture [Std_io.Stdout] c

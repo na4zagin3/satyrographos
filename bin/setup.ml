@@ -13,9 +13,8 @@ let default_target_dir =
   |> Option.value ~default:(Filename.concat home_dir ".satysfi")
   |> (fun dir -> Filename.concat dir "dist")
 
-let read_environment () =
+let read_environment ?opam_switch () =
   let outf = Format.std_formatter in
-  let env = EnvironmentStatus.read_opam_environment () in
-  Format.(fprintf std_formatter !"env: %{sexp: Environment.t}\n" env);
+  let env = EnvironmentStatus.read_opam_environment ?opam_switch () in
   SatysfiDirs.read_satysfi_env ~outf env
 

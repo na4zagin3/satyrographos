@@ -32,7 +32,7 @@ let option_to_list = function
   | Some x -> [x]
   | None -> []
 
-let dist_library_dir ?satysfi_opam_reg ~outf:_ =
+let dist_library_dir ~satysfi_opam_reg ~outf:_ =
 
   let shares = ["/usr/local/share"; "/usr/share"] in
   let dist_dirs =
@@ -51,5 +51,5 @@ let dist_library_dir ?satysfi_opam_reg ~outf:_ =
 
 
 let read_satysfi_env ~outf (env: Satyrographos.Environment.t) =
-  let dist_library_dir = dist_library_dir ?satysfi_opam_reg:(Option.map env.opam_reg ~f:(fun reg -> reg.registry_dir)) ~outf in
+  let dist_library_dir = dist_library_dir ~satysfi_opam_reg:(Option.map env.opam_reg ~f:(fun reg -> reg.registry_dir)) ~outf in
   { env with dist_library_dir }

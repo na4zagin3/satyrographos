@@ -30,10 +30,11 @@ let lockdown_save_command =
           "_build"
         |> Option.some
       in
-      let _env = Setup.read_environment () in
+      let env = Setup.read_environment () in
       (fun () ->
          Satyrographos_command.Lockdown.save_lockdown
            ~verbose
+           ~env
            ~buildscript_path;
          reprint_err_warn ())
     ]
@@ -50,10 +51,11 @@ let lockdown_restore_command =
       in
       Compatibility.optin ();
       let buildscript_path = Option.value ~default:(default_script_path ()) script in
-      let _env = Setup.read_environment () in
+      let env = Setup.read_environment () in
       (fun () ->
          Satyrographos_command.Lockdown.restore_lockdown
            ~verbose
+           ~env
            ~buildscript_path;
          reprint_err_warn ())
     ]

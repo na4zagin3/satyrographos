@@ -16,6 +16,11 @@ dependencies:
     version: 0.0.2.7
   - name: satysfi
     version: 0.0.5+dev2020.09.05
+  repos:
+  - name: default
+    url: https://opam.ocaml.org/
+  - name: satysfi-external
+    url: git+https://github.com/gfngfn/satysfi-external-repo.git
 autogen:
   '$today':
     time: 2020-11-06T00:46:35.000000+09:00
@@ -54,11 +59,12 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
 
 let () =
   let verbose = false in
-  let main _env ~dest_dir:_ ~temp_dir ~outf:_ =
+  let main env ~dest_dir:_ ~temp_dir ~outf:_ =
     let _name = Some "example-doc" in
     (* let dest_dir = FilePath.concat dest_dir "dest" in *)
     Satyrographos_command.Lockdown.restore_lockdown
       ~verbose
+      ~env
       ~buildscript_path:(FilePath.concat temp_dir "pkg/Satyristes")
   in
   let post_dump_dirs ~dest_dir:_ ~temp_dir:_ = [] in

@@ -8,11 +8,11 @@ let get_opam_repositories ~gt ~rt () =
   OpamGlobalState.repos_list gt
   |> List.map ~f:(OpamRepositoryState.get_repo rt)
 
-let get_opam_dependencies ~verbose packages =
+let get_opam_dependencies ~verbose ~env packages =
   OpamGlobalState.with_ `Lock_none @@ fun gt ->
   OpamRepositoryState.with_ `Lock_none gt @@ fun rt ->
   let package_and_repos =
-    OpamWrapper.opam_installed_transitive_dependencies_com ~verbose packages
+    OpamWrapper.opam_installed_transitive_dependencies_com ~verbose ~env packages
     |> P.eval
   in
   let packages =
@@ -79,14 +79,14 @@ let get_opam_dependencies ~verbose packages =
   end;
   { packages; repos; }
 
-let restore_opam_dependencies_com ~verbose (dependencies : opam_dependencies) =
+let restore_opam_dependencies_com ~verbose ~env (dependencies : opam_dependencies) =
   let packages =
     dependencies.packages
     |> List.map ~f:(fun {name; version;} ->
         name, version)
   in
-  let install_com =
-    OpamWrapper.opam_install_com ~verbose packages
+  let install_com env =
+    OpamWrapper.opam_install_com ~env ~verbose packages
   in
   let repos =
     dependencies.repos
@@ -94,10 +94,10 @@ let restore_opam_dependencies_com ~verbose (dependencies : opam_dependencies) =
   in
   let open P.Infix in
   OpamWrapper.opam_clean_up_local_switch_com ()
-  >> OpamWrapper.opam_set_up_local_switch_com ~repos ~version:None ()
-  >> install_com
+  >> OpamWrapper.opam_set_up_local_switch_com ~env ~repos ~version:None ()
+  >>= install_com
 
 
-let restore_opam_dependencies ~verbose (dependencies : opam_dependencies) =
-  restore_opam_dependencies_com ~verbose dependencies
+let restore_opam_dependencies ~verbose ~env (dependencies : opam_dependencies) =
+  restore_opam_dependencies_com ~verbose ~env dependencies
   |> P.eval

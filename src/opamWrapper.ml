@@ -22,11 +22,8 @@ let opam_package_name_satysfi = OpamPackage.Name.(of_string "satysfi")
 let get_satysfi_opam_registry switch =
   let get_reg_from_root switch =
     let root = OpamStateConfig.(!r.root_dir) in
-    Format.(OpamFilename.Dir.to_string root |> printf !"root: %s\n");
     let switch_config_file = OpamPath.Switch.switch_config root switch in
-    Format.(OpamFile.to_string switch_config_file |> printf !"switch_config_file: %s\n");
     let switch_config = OpamFile.Switch_config.read switch_config_file in
-    Format.(OpamFile.Switch_config.write_to_string switch_config |> printf !"switch_config: %s\n");
     OpamPath.Switch.share root switch switch_config opam_package_name_satysfi
   in
   OpamGlobalState.with_ `Lock_none @@ fun gt ->
@@ -73,7 +70,21 @@ let default_repo_list =
     "https://opam.ocaml.org/";
   ]
 
+let opam_switch_arg opam_switch =
+  "--switch=" ^ OpamSwitch.to_string opam_switch
 
+let read_opam_environment ?opam_switch env =
+  let satysfi_opam_registry () =
+    get_satysfi_opam_registry opam_switch
+    |> Option.map ~f:OpamFilename.Dir.to_string
+  in
+
+  let reg = satysfi_opam_registry () in
+
+  let opam_reg =
+    OpamSatysfiRegistry.read (reg |> Option.value_exn ~message:"Failed to read OPAM repo")
+  in
+  Environment.{ env with opam_reg; opam_switch; }
 
 let opam_clean_up_local_switch_com ?(path="./") () =
   let open P.Infix in
@@ -98,7 +109,9 @@ let opam_clean_up_local_switch_com ?(path="./") () =
   else P.return ()
 
 
-let opam_set_up_local_switch_com ?(repos=default_repo_list) ?(path="./") ~version () =
+let opam_set_up_local_switch_com ~(env: Environment.t) ?(repos=default_repo_list) ?(path="./") ~version () =
+  let opam_switch = OpamSwitch.of_dirname @@ OpamFilename.Dir.of_string path in
+  let open P.Infix in
   let args = [
     "switch";
     "create";
@@ -116,6 +129,9 @@ let opam_set_up_local_switch_com ?(repos=default_repo_list) ?(path="./") ~versio
   ]
   in
   P.run "opam" args
+  >>| (fun () ->
+      read_opam_environment ~opam_switch env
+    )
 
 
 type opam_dependency_wrapper = {
@@ -124,10 +140,10 @@ type opam_dependency_wrapper = {
   version: string;
 }
 
-let opam_installed_transitive_dependencies_com ~verbose:_ packages =
+let opam_installed_transitive_dependencies_com ~verbose:_ ~(env: Environment.t) packages =
   let open P.Infix in
   let cmd =
-    P.run "opam" [
+    [
       "list";
       "-i";
       "--color=never";
@@ -136,6 +152,8 @@ let opam_installed_transitive_dependencies_com ~verbose:_ packages =
       "--separator=,";
       "--recursive";
       "--required-by"; String.concat ~sep:"," packages]
+    @ Option.value_map env.opam_switch ~default:[] ~f:(fun switch -> [opam_switch_arg switch])
+    |> P.run "opam"
     |> P.capture_unit [P.Std_io.Stdout]
     >>| String.split_lines
     >>| List.filter ~f:(fun l -> String.is_prefix ~prefix:"#" l |> not)
@@ -161,7 +179,7 @@ let get_opam_repositories ~gt ~rt () =
   OpamGlobalState.repos_list gt
   |> List.map ~f:(OpamRepositoryState.get_repo rt)
 
-let opam_install_com ~verbose packages =
+let opam_install_com ~(env: Environment.t) ~verbose packages =
   let packages =
     packages
     |> List.map ~f:(fun (name, version) ->
@@ -169,7 +187,9 @@ let opam_install_com ~verbose packages =
   in
   [
     ["install"; "--yes";];
-    ["--switch=.";];
+    Option.value_map env.opam_switch ~default:[] ~f:(fun opam_switch ->
+        [opam_switch_arg opam_switch]
+      );
     if verbose
     then ["--verbose";]
     else [];
@@ -179,14 +199,19 @@ let opam_install_com ~verbose packages =
   |> P.run "opam"
   |> with_dune_cache
 
-let opam_install ~verbose packages =
-  opam_install_com ~verbose packages
+let opam_install ~(env: Environment.t) ~verbose packages =
+  opam_install_com ~env ~verbose packages
   |> P.eval
 
-let opam_exec_run com args =
-  [
-    "exec";
-    "--switch=.";
-    "--";
-  ] @ [com] @ args
-  |> P.run "opam"
+
+let exec_run ~(env: Environment.t) com args =
+  match env.opam_switch with
+  | None ->
+    P.run com args
+  | Some opam_switch ->
+    [
+      "exec";
+      opam_switch_arg opam_switch;
+      "--";
+    ] @ [com] @ args
+    |> P.run "opam"
