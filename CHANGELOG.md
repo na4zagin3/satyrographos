@@ -8,7 +8,7 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [v0.0.2.11] - 2021-03-13
 ### Changed
-- Update templates ([#276])
+- Update templates ([#276] by @puripuri2100)
 - Use `--no-default-config` option if available ([#279])
 - Install dependencies of doc module before building ([#281])
 - `build` subcommand now accepts multiple module names to build ([#281])
