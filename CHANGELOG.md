@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
+### Changed
+- Update templates ([#276])
+- Use `--no-default-config` option if available ([#279])
+- Install dependencies of doc module before building ([#281])
+- `build` subcommand now accepts multiple module names to build ([#281])
+- Removed `pin` subcommand ([#285])
+
+### Fixed
+- Fixed README ([#277] by  @y-yu, [#282] by  @TonalidadeHidrica, [#290])
+- `migrate` subcommand used a wrong module name ([#280])
+- Don't stop when fails to load non-dependent libraries ([#289])
 
 ## [v0.0.2.10] - 2021-03-08
 ### Fixed
@@ -296,6 +307,15 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#268]: https://github.com/na4zagin3/satyrographos/pull/268
 [#269]: https://github.com/na4zagin3/satyrographos/pull/269
 [#272]: https://github.com/na4zagin3/satyrographos/pull/272
+[#276]: https://github.com/na4zagin3/satyrographos/pull/276
+[#277]: https://github.com/na4zagin3/satyrographos/pull/277
+[#279]: https://github.com/na4zagin3/satyrographos/pull/279
+[#280]: https://github.com/na4zagin3/satyrographos/pull/280
+[#281]: https://github.com/na4zagin3/satyrographos/pull/281
+[#282]: https://github.com/na4zagin3/satyrographos/pull/282
+[#285]: https://github.com/na4zagin3/satyrographos/pull/285
+[#289]: https://github.com/na4zagin3/satyrographos/pull/289
+[#290]: https://github.com/na4zagin3/satyrographos/pull/290
 
 
 [Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.10...HEAD
