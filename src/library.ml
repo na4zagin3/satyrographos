@@ -254,7 +254,7 @@ let save_metadata f (p: t) =
 
 let metadata_filename = "metadata"
 
-let read_dir ~outf d =
+let read_dir_result ~outf d =
   let add acc f =
     let rel_f = FilePath.make_relative d f in
     match rel_f with
@@ -272,8 +272,14 @@ let read_dir ~outf d =
       add_file rel_f f acc
   in
   if FileUtil.test FileUtil.Is_dir d
-  then FileUtil.(find ~follow:Follow Is_file d add empty)
-  else failwith (d ^ " is not a library directory")
+  then
+    FileUtil.(find ~follow:Follow Is_file d add empty)
+    |> Result.return
+  else Result.failf "%s is not a library directory" d
+
+let read_dir ~outf d =
+  read_dir_result ~outf d
+  |> Result.ok_or_failwith
 
 let write_dir ?(verbose=false) ?(symlink=false) ~outf d p =
   let p = normalize ~outf p in
