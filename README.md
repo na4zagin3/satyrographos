@@ -274,7 +274,12 @@ depends: [
   # If your library depends on other libraries, please write down here
   "satysfi-fonts-theano" {>= "2.0+satysfi0.0.3+satyrograhos0.0.2"}
 ]
-build: [ ]
+build: [
+  ["satyrographos" "opam" "build"
+   "--name" "great-package"
+   "--prefix" "%{prefix}%"
+   "--script" "%{build}%/Satyristes"]
+]
 install: [
   ["satyrographos" "opam" "install"
    "--name" "great-package"
