@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
+
+## [v0.0.2.11] - 2021-03-13
 ### Changed
 - Update templates ([#276])
 - Use `--no-default-config` option if available ([#279])
@@ -318,7 +320,8 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#290]: https://github.com/na4zagin3/satyrographos/pull/290
 
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.10...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.11...HEAD
+[v0.0.2.11]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.10...v0.0.2.11
 [v0.0.2.10]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.9...v0.0.2.10
 [v0.0.2.9]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.8...v0.0.2.9
 [v0.0.2.8]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.7...v0.0.2.8
