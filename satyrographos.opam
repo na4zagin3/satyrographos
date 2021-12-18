@@ -25,13 +25,18 @@ depends: [
   "dune" {>= "2.7"}
   "fileutils"
   "json-derivers"
-  "menhir"
+  "menhir" {>= "20181006"}
   "ppx_deriving"
   "ppx_deriving_yojson"
   "ocamlgraph"
-  "opam-format" {>= "2.0" & < "2.1"}
-  "opam-state" {>= "2.0" & < "2.1"}
-  "re"
+  ( "opam-format" {>= "2.0.4" & < "2.2"}
+    & "opam-state" {>= "2.0.4" & < "2.2"}
+    & "ocaml" {< "4.12.0"}
+  | "opam-format" {>= "2.1.0" & < "2.2"}
+    & "opam-state" {>= "2.1.0" & < "2.2"}
+    & "ocaml" {>= "4.12.0"}
+  )
+  "re" { >= "1.9.0" }
   "stringext" {with-test}
   "uri" {>= "3.0.0"}
   "uri-sexp" {>= "3.0.0"}
@@ -43,6 +48,7 @@ depends: [
   "ppx_jane"
   "shexp"
 ]
+
 synopsis: "A package manager for SATySFi"
 description: """
 Satyrographos is a package manager for [SATySFi].
