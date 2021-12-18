@@ -29,8 +29,8 @@ depends: [
   "ppx_deriving"
   "ppx_deriving_yojson"
   "ocamlgraph"
-  ( "opam-format" {>= "2.0.0" & < "2.2"}
-    & "opam-state" {>= "2.0.0" & < "2.2"}
+  ( "opam-format" {>= "2.0.4" & < "2.2"}
+    & "opam-state" {>= "2.0.4" & < "2.2"}
     & "ocaml" {< "4.12.0"}
   | "opam-format" {>= "2.1.0" & < "2.2"}
     & "opam-state" {>= "2.1.0" & < "2.2"}
@@ -48,6 +48,7 @@ depends: [
   "ppx_jane"
   "shexp"
 ]
+
 synopsis: "A package manager for SATySFi"
 description: """
 Satyrographos is a package manager for [SATySFi].
