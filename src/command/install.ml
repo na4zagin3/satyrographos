@@ -31,9 +31,11 @@ let get_libraries ~outf ~(env: Environment.t) ~libraries =
         |> StringSet.to_map ~f:(OpamSatysfiRegistry.directory reg_opam)
   in
   Format.fprintf outf "Reading opam libraries: %s\n" (opam_libraries |> Map.keys |> [%sexp_of: string list] |> Sexp.to_string_hum);
-  let all_libraries = Map.filter_map opam_libraries ~f:(fun dir ->
+  let all_libraries = Map.filter_mapi opam_libraries ~f:(fun ~key:name ~data:dir ->
       Library.read_dir_result ~outf dir
-    |> Result.map_error ~f:(Format.fprintf outf "Warning: %s")
+      |> Result.map_error ~f:(fun err ->
+          Format.fprintf outf "Warning: Failed to read library %s at %s\nReason: %s\n" name dir err;
+          ())
     |> Result.ok) in
   let all_libraries = match Map.add all_libraries ~key:"dist" ~data:dist_library with
     | `Ok result -> result
