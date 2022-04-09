@@ -15,6 +15,6 @@ let default_target_dir =
 
 let read_environment ?opam_switch () =
   let outf = Format.std_formatter in
-  let env = EnvironmentStatus.read_opam_environment ?opam_switch () in
+  let env = EnvironmentStatus.read_opam_environment ~outf ?opam_switch () in
   SatysfiDirs.read_satysfi_env ~outf env
 

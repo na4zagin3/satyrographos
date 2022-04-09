@@ -79,7 +79,7 @@ let get_opam_dependencies ~verbose ~env packages =
   end;
   { packages; repos; }
 
-let restore_opam_dependencies_com ~verbose ~env (dependencies : opam_dependencies) =
+let restore_opam_dependencies_com ~outf ~verbose ~env (dependencies : opam_dependencies) =
   let packages =
     dependencies.packages
     |> List.map ~f:(fun {name; version;} ->
@@ -94,10 +94,10 @@ let restore_opam_dependencies_com ~verbose ~env (dependencies : opam_dependencie
   in
   let open P.Infix in
   OpamWrapper.opam_clean_up_local_switch_com ()
-  >> OpamWrapper.opam_set_up_local_switch_com ~env ~repos ~version:None ()
+  >> OpamWrapper.opam_set_up_local_switch_com ~outf ~env ~repos ~version:None ()
   >>= install_com
 
 
-let restore_opam_dependencies ~verbose ~env (dependencies : opam_dependencies) =
-  restore_opam_dependencies_com ~verbose ~env dependencies
+let restore_opam_dependencies ~outf ~verbose ~env (dependencies : opam_dependencies) =
+  restore_opam_dependencies_com ~outf ~verbose ~env dependencies
   |> P.eval

@@ -26,19 +26,22 @@ let get_satysfi_opam_registry switch =
     let switch_config = OpamFile.Switch_config.read switch_config_file in
     OpamPath.Switch.share root switch switch_config opam_package_name_satysfi
   in
-  OpamGlobalState.with_ `Lock_none @@ fun gt ->
-  let global_switch = OpamFile.Config.switch gt.config in
-  match switch, global_switch with
-  | Some switch, _ ->
-    Some (get_reg_from_root switch)
-  | None, Some switch ->
-    Some (get_reg_from_root switch)
-  | None, None ->
-    None
+  let get_reg () =
+    OpamGlobalState.with_ `Lock_none @@ fun gt ->
+    let global_switch = OpamFile.Config.switch gt.config in
+    match switch, global_switch with
+    | Some switch, _ ->
+      get_reg_from_root switch
+    | None, Some switch ->
+      get_reg_from_root switch
+    | None, None ->
+      failwith "get_reg: No switch is specified"
+  in
+  Result.try_with get_reg
 
 let get_satysfi_opam_registry_exc switch =
   get_satysfi_opam_registry switch
-  |> Option.value_exn ~message:"Failed to get opam directory."
+  |> Result.ok_exn
 
 let dune_cache_envs = [
   "DUNE_CACHE", "enabled";
@@ -73,16 +76,19 @@ let default_repo_list =
 let opam_switch_arg opam_switch =
   "--switch=" ^ OpamSwitch.to_string opam_switch
 
-let read_opam_environment ?opam_switch env =
+let read_opam_environment ~outf ?opam_switch env =
   let satysfi_opam_registry () =
     get_satysfi_opam_registry opam_switch
-    |> Option.map ~f:OpamFilename.Dir.to_string
+    |> Result.map ~f:OpamFilename.Dir.to_string
   in
 
   let reg = satysfi_opam_registry () in
 
   let opam_reg =
-    OpamSatysfiRegistry.read (reg |> Option.value_exn ~message:"Failed to read OPAM repo")
+    reg
+    |> Result.map_error ~f:(Exn.pp outf)
+    |> Result.ok
+    |> Option.bind ~f:OpamSatysfiRegistry.read
   in
   Environment.{ env with opam_reg; opam_switch; }
 
@@ -109,7 +115,7 @@ let opam_clean_up_local_switch_com ?(path="./") () =
   else P.return ()
 
 
-let opam_set_up_local_switch_com ~(env: Environment.t) ?(repos=default_repo_list) ?(path="./") ~version () =
+let opam_set_up_local_switch_com ~outf ~(env: Environment.t) ?(repos=default_repo_list) ?(path="./") ~version () =
   let opam_switch = OpamSwitch.of_dirname @@ OpamFilename.Dir.of_string path in
   let open P.Infix in
   let args = [
@@ -130,7 +136,7 @@ let opam_set_up_local_switch_com ~(env: Environment.t) ?(repos=default_repo_list
   in
   P.run "opam" args
   >>| (fun () ->
-      read_opam_environment ~opam_switch env
+      read_opam_environment ~outf ~opam_switch env
     )
 
 

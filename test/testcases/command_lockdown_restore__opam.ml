@@ -59,10 +59,11 @@ let env ~dest_dir:_ ~temp_dir : Satyrographos.Environment.t t =
 
 let () =
   let verbose = false in
-  let main env ~dest_dir:_ ~temp_dir ~outf:_ =
+  let main env ~dest_dir:_ ~temp_dir ~outf =
     let _name = Some "example-doc" in
     (* let dest_dir = FilePath.concat dest_dir "dest" in *)
     Satyrographos_command.Lockdown.restore_lockdown
+      ~outf
       ~verbose
       ~env
       ~buildscript_path:(FilePath.concat temp_dir "pkg/Satyristes")
