@@ -11,7 +11,7 @@ module Json = struct
   include Yojson.Safe
   include Json_derivers.Yojson
   let to_yojson = ident
-  let of_yojson x = Rresult.R.ok x
+  let of_yojson x = Result.Ok x
 end
 
 type opam_package = {
@@ -40,9 +40,9 @@ let autogen_to_yojson lvs =
 let autogen_of_yojson (j : Yojson.Safe.t) =
   match j with
   | `Assoc lvs ->
-    Rresult.R.ok lvs
+    Result.Ok lvs
   | _ ->
-    Rresult.R.error "autogen_of_yojson: Invalid form"
+    Result.Error "autogen_of_yojson: Invalid form"
 
 type t = {
   satyrographos: string;
@@ -58,6 +58,11 @@ let make ~dependencies ~autogen = {
   autogen;
 }
 
+let error_msg_to_invalid_arg res =
+  res
+  |> Result.map_error ~f:(function `Msg m -> m)
+  |> Result.ok_or_failwith
+
 let save_file_exn f ld =
   Out_channel.with_file f ~f:(fun oc ->
       let str =
@@ -66,14 +71,14 @@ let save_file_exn f ld =
         |> Yaml.yaml_to_string
       in
       str
-      |> Rresult.R.error_msg_to_invalid_arg
+      |> error_msg_to_invalid_arg
       |> Out_channel.output_string oc
     )
 
 let load_file_exn f =
   In_channel.read_all f
   |> Yaml.yaml_of_string
-  |> Rresult.R.error_msg_to_invalid_arg
+  |> error_msg_to_invalid_arg
   |> YamlYojson.yojson_of_yaml
   |> of_yojson
   |> Result.ok_or_failwith
