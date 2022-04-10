@@ -1,3 +1,6 @@
+Load utility functions
+  $ . ./test-utils.sh
+
 Create a new document with doc-omake@en template
   $ satyrographos new [experimental]doc-omake@en --license CC-BY-4.0 test-doc-en
   Name: test-doc-en
@@ -5,7 +8,7 @@ Create a new document with doc-omake@en template
   Created a new library/document.
 
 Try to build when there is satysfi command
-  $ if command satysfi --version >/dev/null 2>&1 && command omake --version >/dev/null 2>&1 && opam list -i --silent satysfi-dist && opam list -i --silent satysfi-fss ; then
+  $ if test_omake && test_satysfi_pkgs dist fss ; then
   >   cd test-doc-en
   >   SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos build >build.log 2>&1
   >   [ -f main.pdf ] || cat build.log
@@ -19,7 +22,7 @@ Create a new document with doc-omake@ja template
   Created a new library/document.
 
 Try to build when there is satysfi command
-  $ if command satysfi --version >/dev/null 2>&1 && command omake --version >/dev/null 2>&1 && opam list -i --silent satysfi-dist && opam list -i --silent satysfi-fss ; then
+  $ if test_omake && test_satysfi_pkgs dist fss ; then
   >   cd test-doc-ja
   >   SATYROGRAPHOS_EXPERIMENTAL=1 satyrographos build >build.log 2>&1
   >   [ -f main.pdf ] || cat build.log
