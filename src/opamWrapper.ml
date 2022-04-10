@@ -19,6 +19,12 @@ end
 
 let opam_package_name_satysfi = OpamPackage.Name.(of_string "satysfi")
 
+let exists_switch_at_dir dir =
+  let switch = OpamSwitch.of_dirname dir in
+  let root = OpamStateConfig.(!r.root_dir) in
+  let switch_config_file = OpamPath.Switch.switch_config root switch in
+  OpamFile.exists switch_config_file
+
 let get_satysfi_opam_registry switch =
   let get_reg_from_root switch =
     let root = OpamStateConfig.(!r.root_dir) in
@@ -221,3 +227,13 @@ let exec_run ~(env: Environment.t) com args =
       "--";
     ] @ [com] @ args
     |> P.run "opam"
+
+let opam_add_pin_com ~(env: Environment.t) ~verbose:_ package proj_dir =
+  ignore env;
+  P.run "opam" ["pin"; "add"; "--no-action"; "--yes"; package; "file://" ^ proj_dir]
+
+let opam_rebuild_com ~(env: Environment.t) ~verbose:_ proj_dir =
+  ignore env;
+  P.set_env "OPAMSOLVERTIMEOUT" "0" (
+    P.run "opam" ["reinstall"; "--verbose"; "--yes"; "--"; proj_dir]
+  )
