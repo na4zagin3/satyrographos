@@ -11,4 +11,5 @@
    satyrographos_autogen
    shexp.process
    yaml
+   yaml-sexp
 ))

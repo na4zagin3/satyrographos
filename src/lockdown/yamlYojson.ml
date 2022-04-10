@@ -1,8 +1,8 @@
 open Core
 
 
-let rec yaml_of_yojson =
-  let label s = Yaml.{
+let rec yaml_of_yojson : Yojson.Safe.t -> Yaml.yaml =
+  let label s = `Scalar Yaml.{
     anchor = None;
     tag = None;
     value = s;
@@ -13,9 +13,14 @@ let rec yaml_of_yojson =
   in
   function
   | `Assoc (lvs) ->
-    `O (List.map lvs ~f:(fun (l, v) ->
-        label l, yaml_of_yojson v
-      ))
+    `O Yaml.{
+        m_anchor = None;
+        m_tag = None;
+        m_implicit = true;
+        m_members = List.map lvs ~f:(fun (l, v) ->
+            label l, yaml_of_yojson v
+          );
+      }
   | `Bool b ->
     `Scalar Yaml.{
     anchor = None;
@@ -27,13 +32,13 @@ let rec yaml_of_yojson =
   }
   | `Float f ->
     `Scalar Yaml.{
-      anchor = None;
-      tag = Some "tag:yaml.org,2002:float";
-      value = string_of_float f;
-      plain_implicit = true;
-      quoted_implicit = false;
-      style = `Plain;
-    }
+        anchor = None;
+        tag = Some "tag:yaml.org,2002:float";
+        value = string_of_float f;
+        plain_implicit = true;
+        quoted_implicit = false;
+        style = `Plain;
+      }
   | `Int i ->
     `Scalar Yaml.{
       anchor = None;
@@ -53,7 +58,12 @@ let rec yaml_of_yojson =
       style = `Plain;
     }
   | `List xs ->
-    `A (List.map ~f:yaml_of_yojson xs)
+    `A Yaml.{
+        s_anchor = None;
+        s_tag = None;
+        s_implicit = true;
+        s_members = List.map ~f:yaml_of_yojson xs;
+      }
   | `Null ->
     `Scalar Yaml.{
       anchor = None;
@@ -92,11 +102,13 @@ let rec yaml_of_yojson =
   | `Variant _ ->
     failwithf "Non standard JSON is not accepted." ()
 
-let rec yojson_of_yaml =
+let rec yojson_of_yaml : Yaml.yaml -> Yojson.Safe.t =
   function
-  | `O (lvs) ->
-    `Assoc (List.map lvs ~f:(fun (l, v) ->
-        l.Yaml.value, yojson_of_yaml v
+  | `O {Yaml.m_members = lvs; _} ->
+    `Assoc (List.map lvs ~f:(function
+        | (`Scalar l, v) -> l.Yaml.value, yojson_of_yaml v
+        | (l, _) ->
+          failwithf !"Cannot support non-scalar object keys: %{sexp: Yaml_sexp.yaml}" l ()
       ))
   | `Scalar {Yaml.tag = Some "tag:yaml.org,2002:bool"; value = v; _} ->
     `Bool (bool_of_string v)
@@ -108,7 +120,7 @@ let rec yojson_of_yaml =
       | Some i -> `Int i
       end
   | `A ys ->
-    `List (List.map ~f:yojson_of_yaml ys)
+    `List (List.map ~f:yojson_of_yaml ys.s_members)
   | `Scalar {Yaml.tag = Some "tag:yaml.org,2002:null"; value = _; _}
   | `Scalar {Yaml.plain_implicit = true; value = "null"; _} ->
     `Null
@@ -131,7 +143,7 @@ let rec yojson_of_yaml =
       `String s
     end
   | y ->
-    failwithf !"Unknown YAML object: %{sexp: Yaml.yaml}" y ()
+    failwithf !"Unknown YAML object: %{sexp: Yaml_sexp.yaml}" y ()
 
 let%test_unit "yaml_of_yojson: roundtrip" =
   let test json =
@@ -141,7 +153,9 @@ let%test_unit "yaml_of_yojson: roundtrip" =
     then ()
     else failwithf "Round trip failed\nOriginal: %s\n\nYaml: %s\n\nConverted: %s"
         (Yojson.Safe.to_string json)
-        (Yaml.yaml_to_string yaml |> Rresult.R.get_ok)
+        (Yaml.yaml_to_string yaml
+         |> Result.map_error ~f:(function `Msg m -> m)
+         |> Result.ok_or_failwith)
         (Yojson.Safe.to_string result)
         ()
   in
