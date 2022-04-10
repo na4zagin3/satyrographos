@@ -66,4 +66,4 @@
  )
 
 (cram
- (deps %{bin:satyrographos}))
+ (deps %{bin:satyrographos} ./test-utils.sh))
