@@ -30,8 +30,11 @@ let library_opam_list () =
   Compatibility.optin ();
   let env = Setup.read_environment () in
   Option.iter env.opam_reg ~f:(fun opam_reg ->
-    [%derive.show: string list] (OpamSatysfiRegistry.list opam_reg) |> print_endline
-  )
+      OpamSatysfiRegistry.list opam_reg
+      |> List.sort ~compare:String.compare
+      |> String.concat ~sep:"\n"
+      |> print_endline
+    )
 let library_opam_list_command =
   library_list_command_g library_opam_list
 
