@@ -49,13 +49,28 @@ let get_libraries ~outf ~(env: Environment.t) ~libraries =
     "dist" :: Option.value ~default:(Map.keys all_libraries) libraries in
   let library_dependency_map =
     Map.map all_libraries ~f:(fun p -> p.Library.dependencies) in
+  let library_dependency_rev_map =
+    library_dependency_map
+    |> Map.to_sequence
+    |> Sequence.concat_map ~f:(fun (k, ds) ->
+        Set.to_sequence ds
+        |> Sequence.map ~f:(fun d -> (d, k)))
+    |> Map.of_sequence_multi (module Library.StringMap.Key)
+  in
   let library_name_set_to_install =
     LibraryMap.transitive_closure library_dependency_map (Library.Dependency.of_list required_library_names) in
   let all_library_name_set =
     Map.keys all_libraries |> Library.Dependency.of_list in
   let missing_dependencies = Set.diff library_name_set_to_install all_library_name_set in
   begin if not (Set.is_empty missing_dependencies)
-    then failwithf !"Missing dependencies: %{sexp:Library.Dependency.t}" missing_dependencies () end;
+    then
+      failwithf
+        !"Missing dependencies: %{sexp:Library.Dependency.t}. Revdeps: %{sexp:(string * string list) list}"
+        missing_dependencies
+        (Map.filter_keys ~f:(Set.mem missing_dependencies) library_dependency_rev_map
+         |> Map.to_alist)
+        ()
+  end;
   Map.filter_keys all_libraries ~f:(Set.mem library_name_set_to_install)
 
 let show_compatibility_warnings ~outf ~libraries =
