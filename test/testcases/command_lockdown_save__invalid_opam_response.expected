@@ -121,10 +121,10 @@ diff -Nr @@empty_dir@@/satysfi-grcnum.opam @@temp_dir@@/pkg/satysfi-grcnum.opam
 ------------------------------------------------------------
 Command invoked:
 opam list -i --color=never --columns name,repository,installed-version --separator=, --recursive --required-by satysfi-fonts-theano,satysfi-grcnum
-Installing packages                       +
-------------------------------------------+------------------
-Gathering OPAM package information...     +
-Exception:                                +
+Installing packages
+------------------------------------------------------------
+Gathering OPAM package information...
+Exception:
 (Failure
   "BUG: Unrecognizable package information from OPAM: \"***,invalid,response,!!!\"")
 ------------------------------------------------------------

@@ -131,8 +131,10 @@ let test_install ?(replacements=[]) ?(post_dump_dirs=default_post_dump_dirs) set
       post_dump_dirs ~dest_dir ~temp_dir
     in
     let opam_prefix = Unix.open_process_in "opam var prefix" |> input_line (* Assume a path does not contain line breaks*) in
+    let working_dir = Unix.getcwd () in
     let replacements =
       [ opam_prefix, "@@opam_prefix@@";
+        working_dir, "@@working_dir@@";
         dest_dir, "@@dest_dir@@";
         temp_dir, "@@temp_dir@@";
         Unix.getenv "HOME", "@@home_dir@@";

@@ -25,7 +25,7 @@ let exists_switch_at_dir dir =
   let switch_config_file = OpamPath.Switch.switch_config root switch in
   OpamFile.exists switch_config_file
 
-let get_satysfi_opam_registry switch =
+let get_satysfi_opam_registry ~outf switch =
   let get_reg_from_root switch =
     let root = OpamStateConfig.(!r.root_dir) in
     let switch_config_file = OpamPath.Switch.switch_config root switch in
@@ -34,19 +34,24 @@ let get_satysfi_opam_registry switch =
   in
   let get_reg () =
     OpamGlobalState.with_ `Lock_none @@ fun gt ->
-    let global_switch = OpamFile.Config.switch gt.config in
+    let global_switch =
+      OpamFile.Config.switch gt.config
+      (* OpamStateConfig.get_switch_opt () *)
+    in
     match switch, global_switch with
     | Some switch, _ ->
+      Format.fprintf outf "Switch specified: %s@." (OpamSwitch.to_string switch);
       get_reg_from_root switch
     | None, Some switch ->
+      Format.fprintf outf "Global switch found: %s@." (OpamSwitch.to_string switch);
       get_reg_from_root switch
     | None, None ->
       failwith "get_reg: No switch is specified"
   in
   Result.try_with get_reg
 
-let get_satysfi_opam_registry_exc switch =
-  get_satysfi_opam_registry switch
+let get_satysfi_opam_registry_exc ~outf switch =
+  get_satysfi_opam_registry ~outf switch
   |> Result.ok_exn
 
 let dune_cache_envs = [
@@ -84,7 +89,7 @@ let opam_switch_arg opam_switch =
 
 let read_opam_environment ~outf ?opam_switch env =
   let satysfi_opam_registry () =
-    get_satysfi_opam_registry opam_switch
+    get_satysfi_opam_registry ~outf opam_switch
     |> Result.map ~f:OpamFilename.Dir.to_string
   in
 
