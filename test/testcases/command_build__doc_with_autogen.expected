@@ -112,7 +112,7 @@ diff -Nr @@empty_dir@@/doc-grcnum.saty @@temp_dir@@/pkg/doc-grcnum.saty
 0a1
 > @@doc-grcnum.saty@@
 diff -Nr @@empty_dir@@/lockdown.yaml @@temp_dir@@/pkg/lockdown.yaml
-0a1,15
+0a1,20
 > satyrographos: 0.0.3
 > dependencies:
 > - Opam
@@ -123,6 +123,11 @@ diff -Nr @@empty_dir@@/lockdown.yaml @@temp_dir@@/pkg/lockdown.yaml
 >     version: 0.0.2.7
 >   - name: satysfi
 >     version: 0.0.5+dev2020.09.05
+>   repos:
+>   - name: default
+>     url: https://opam.ocaml.org/
+>   - name: satysfi-external
+>     url: git+https://github.com/gfngfn/satysfi-external-repo.git
 > autogen:
 >   '$today':
 >     datetime: 2020-11-06T00:46:35.000000+09:00

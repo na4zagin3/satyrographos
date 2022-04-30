@@ -42,6 +42,11 @@ dependencies:
     version: 0.0.2.7
   - name: satysfi
     version: 0.0.5+dev2020.09.05
+  repos:
+  - name: default
+    url: https://opam.ocaml.org/
+  - name: satysfi-external
+    url: git+https://github.com/gfngfn/satysfi-external-repo.git
 autogen:
   '$today':
     datetime: 2020-11-06T00:46:35.000000+09:00

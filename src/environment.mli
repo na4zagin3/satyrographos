@@ -1,12 +1,16 @@
 (** A type represents runtime environment. *)
 type t = {
+  opam_switch: OpamSwitch.t option;
+  (** OPAM Switch. E.g., 4.10.0 *)
+
   opam_reg: OpamSatysfiRegistry.t option;
-  (** OPAM Registry. I.e., ~/.satyrograpos *)
+  (** OPAM Registry. E.g., ~/.opam/4.10.0/share/satysfi *)
 
   dist_library_dir: string option;
   (** A directory with SATySFi dist for the current SATySFi compiler.
       Typically, this points a directory under OPAM reg or /usr/local/share/satysfi/dist. *)
 }
+[@@deriving sexp]
 
 (** An empty runtime environment. *)
 val empty: t

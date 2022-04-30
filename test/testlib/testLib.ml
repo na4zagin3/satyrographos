@@ -80,7 +80,10 @@ let dump_dir dir : unit t =
   )
   |> set_env "LC_ALL" "C"
 
-let stacktrace = false
+let stacktrace =
+  Sys.getenv_opt "SATYROGRAPHOS_TEST_STACKTRACE"
+  |> Option.map (String.equal "true")
+  |> Option.value ~default:false
 
 let filter_output f c =
   capture [Std_io.Stdout] c
@@ -127,9 +130,9 @@ let test_install ?(replacements=[]) ?(post_dump_dirs=default_post_dump_dirs) set
     let post_dump_dirs =
       post_dump_dirs ~dest_dir ~temp_dir
     in
-    let opam_prefix = Unix.open_process_in "opam var prefix" |> input_line (* Assume a path does not contain line breaks*) in
+    let working_dir = Unix.getcwd () in
     let replacements =
-      [ opam_prefix, "@@opam_prefix@@";
+      [ working_dir, "@@working_dir@@";
         dest_dir, "@@dest_dir@@";
         temp_dir, "@@temp_dir@@";
         Unix.getenv "HOME", "@@home_dir@@";
@@ -180,6 +183,7 @@ let test_install ?(replacements=[]) ?(post_dump_dirs=default_post_dump_dirs) set
 
 let read_env ?repo:_ ?opam_reg ?dist_library_dir () =
   Satyrographos.Environment.{
+    opam_switch = None; (* TODO Fix this *)
     opam_reg = begin match opam_reg with
       | Some opam_reg -> Satyrographos.OpamSatysfiRegistry.read opam_reg
       | None -> None end;

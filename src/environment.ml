@@ -1,14 +1,30 @@
+open Core
+
+module OpamSwitch = struct
+  include OpamSwitch
+
+  let sexp_of_t v =
+    OpamSwitch.to_string v
+    |> [%sexp_of: string]
+
+  let t_of_sexp sexp =
+    [%of_sexp: string] sexp
+    |> OpamSwitch.of_string
+end
+
 type t = {
+  opam_switch: OpamSwitch.t option;
   opam_reg: OpamSatysfiRegistry.t option;
   dist_library_dir: string option;
 }
+[@@deriving sexp]
+
 
 let empty = {
+  opam_switch=None;
   opam_reg=None;
   dist_library_dir=None;
 }
-
-open Core
 
 type project_env = {
   buildscript_path: string;

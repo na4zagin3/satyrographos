@@ -8,17 +8,20 @@ let home_dir = match SatysfiDirs.home_dir () with
   | Some(d) -> d
   | None -> failwith "Cannot find home directory"
 
-let reg_opam =
-  SatysfiDirs.opam_share_dir ~outf:Format.std_formatter
-  |> Option.bind ~f:(fun opam_share_dir ->
-      OpamSatysfiRegistry.read (Filename.concat opam_share_dir "satysfi"))
-
 let default_target_dir =
   Sys.getenv "SATYSFI_RUNTIME"
   |> Option.value ~default:(Filename.concat home_dir ".satysfi")
   |> (fun dir -> Filename.concat dir "dist")
 
-let read_environment () =
-  let dist_library_dir = SatysfiDirs.satysfi_dist_dir ~outf:Format.std_formatter in
-  Environment.{ opam_reg = reg_opam; dist_library_dir }
+let read_environment ?opam_switch () =
+  let outf = Format.std_formatter in
+  let opam_switch = match opam_switch with
+    | Some _ -> opam_switch
+    | None ->
+      let dir = OpamFilename.cwd () in
+      (* TODO Read switch relative to Satyristes *)
+      Option.some_if (OpamWrapper.exists_switch_at_dir dir) (OpamSwitch.of_dirname dir)
+  in
+  let env = EnvironmentStatus.read_opam_environment ~outf ?opam_switch () in
+  SatysfiDirs.read_satysfi_env ~outf env
 

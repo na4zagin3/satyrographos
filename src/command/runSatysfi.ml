@@ -3,6 +3,7 @@ open Satyrographos
 
 module Process = Shexp_process
 module P = Process
+module OW = Satyrographos.OpamWrapper
 
 module StringMap = Map.Make(String)
 

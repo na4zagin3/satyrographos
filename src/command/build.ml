@@ -2,6 +2,7 @@ open Core
 open Satyrographos
 
 module P = Shexp_process
+module OW = Satyrographos.OpamWrapper
 
 let read_module ~outf ~verbose ~build_module ~buildscript_path =
   let src_dir = Filename.dirname buildscript_path in
@@ -56,10 +57,11 @@ let build_cmd ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_
   let autogen_libraries = Library.Dependency.to_list p.autogen in
   let with_build_dir build_dir c =
     let satysfi_runtime_dir = FilePath.concat build_dir "satysfi" in
-    let project_env =
-      setup_project_env ~satysfi_runtime_dir ~buildscript_path ~outf ~verbose ~libraries ~env ~system_font_prefix ~autogen_libraries
-    in
-    c project_env
+    let open P.Infix in
+    P.return ()
+    >>| (fun () ->
+        setup_project_env ~satysfi_runtime_dir ~buildscript_path ~outf ~verbose ~libraries ~env ~system_font_prefix ~autogen_libraries)
+    >>= c
   in
   let with_project_env c =
     match build_dir with
@@ -97,7 +99,7 @@ let build ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_font
   end
 
 
-let opam_pin_project ~(buildscript: BuildScript.t) ~buildscript_path =
+let opam_pin_project ~(env: Environment.t) ~verbose ~(buildscript: BuildScript.t) ~buildscript_path =
   let open P.Infix in
   let workdir cwd =
     FilePath.make_absolute cwd buildscript_path
@@ -120,8 +122,9 @@ let opam_pin_project ~(buildscript: BuildScript.t) ~buildscript_path =
           let opam_name =
             Lint.get_opam_name ~opam ~opam_path
           in
-          P.run "opam" ["pin"; "add"; "--no-action"; "--yes"; opam_name; "file://" ^ workdir cwd]
-          >> P.run "opam" ["reinstall"; "--verbose"; "--yes"; workdir cwd]
+          let proj_dir = workdir cwd in
+          OpamWrapper.opam_add_pin_com ~env ~verbose opam_name proj_dir
+          >> OpamWrapper.opam_rebuild_com ~env ~verbose proj_dir
         )
     )
 
@@ -149,7 +152,7 @@ let build_command ~outf ~buildscript_path ~names ~verbose ~env =
     |> List.map ~f:BuildScript.get_name
     in
     P.echo ("= Pin projects")
-    >> opam_pin_project ~buildscript ~buildscript_path
+    >> opam_pin_project ~env ~verbose ~buildscript ~buildscript_path
     >> P.echo (Printf.sprintf !"\n= Build modules: %{sexp: string list}" module_names)
     >> P.List.iter build_modules ~f:(fun build_module ->
         begin match build_module with
