@@ -21,6 +21,7 @@ end
 
 module Dependency = Set.Make(String)
 module StringMap = Map.Make(String)
+module StringSet = Set.Make(String)
 module JsonSet = Set.Make(Json)
 module Rename = struct
   type t = {
