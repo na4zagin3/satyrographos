@@ -4,7 +4,7 @@ open Satyrographos
 module Process = Shexp_process
 module P = Process
 
-module StringMap = Map.Make(String)
+module StringMap = Library.StringMap
 
 let library_dir prefix (buildscript: BuildScript.m) =
   let libdir = Filename.concat prefix "share/satysfi" in
