@@ -104,6 +104,7 @@ let%expect_test "position_of_offset: empty content" =
     4: ((lnum 1) (cnum 1))
     5: ((lnum 2) (cnum 0)) |}]
 
+(*
 let offset_of_position content pos =
   let rec sub off cur =
     if equal_position pos cur
@@ -115,4 +116,4 @@ let offset_of_position content pos =
       else sub off {pos with cnum = pos.cnum + 1;}
   in
   sub 0 {lnum=0; cnum=0;}
-
+*)

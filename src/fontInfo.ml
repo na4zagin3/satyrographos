@@ -139,11 +139,13 @@ let fc_format_data =
 
 module DistinctFontMap = Map.Make(DistinctFont)
 
+(*
 let system_font_info_list_task =
   let open P.Infix in
   P.echo "("
   >> P.run "fc-list" ["-f"; fc_format_data]
   >> P.echo ")"
+*)
 
 (* TODO Handle extremely long argument lists *)
 let font_info_list_task fonts =

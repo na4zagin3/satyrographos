@@ -2,10 +2,7 @@ open Core
 open Satyrographos
 module Autogen = Satyrographos_autogen
 
-module StringSet = Set.Make(String)
-
-(* TODO Abstract this *)
-module StringMap = Map.Make(String)
+module StringSet = Library.StringSet
 
 type persistent_autogen = Satyrographos_lockdown.LockdownFile.autogen
 

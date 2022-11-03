@@ -3,7 +3,7 @@ open Satyrographos
 open Lint_prim
 
 
-module StringSet = Set.Make(String)
+module StringSet = Library.StringSet
 
 let dummy_formatter =
   Format.make_formatter (fun _ _ _ -> ()) ignore
@@ -44,7 +44,7 @@ let get_libraries ~locs ~env ~library_override m =
         ~system_font_prefix:None
         ~libraries:(Some libraries)
         ~autogen_libraries
-        ~persistent_autogen:[] 
+        ~persistent_autogen:[]
         ~env
         ()
       |> (fun m -> Map.merge_skewed ~combine m library_override)

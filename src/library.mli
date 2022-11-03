@@ -22,6 +22,10 @@ module StringMap : sig
   include Core.Map.S with type Key.t = String.t
 end
 
+module StringSet : sig
+  include Core.Set.S with type Elt.t = String.t
+end
+
 module JsonSet : sig
   include Core.Set.S with type Elt.t = Json.t
 end

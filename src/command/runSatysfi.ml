@@ -4,8 +4,9 @@ open Satyrographos
 module Process = Shexp_process
 module P = Process
 
-module StringMap = Map.Make(String)
+module StringMap = Library.StringMap
 
+(*
 let library_dir prefix (buildscript: BuildScript.m) =
   let libdir = Filename.concat prefix "share/satysfi" in
   Filename.concat libdir (BuildScript.get_name buildscript)
@@ -19,6 +20,7 @@ let read_module ~outf ~verbose ~build_module ~buildscript_path =
     Format.fprintf outf "@."
   end;
   (src_dir, p)
+*)
 
 let test_satysfi_option options =
   let open P in

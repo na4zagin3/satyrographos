@@ -8,10 +8,12 @@ let empty_set_of (type k cmp) another_set: (k, cmp) Base.Set.t =
     let comparator = (Set.comparator another_set)
   end)
 
-module StringSet = Set.Make(String)
-module StringMap = Map.Make(String)
+module StringSet = Library.StringSet
+module StringMap = Library.StringMap
 
+(*
 type t = Library.t StringMap.t
+*)
 
 (** Calculate a transitive closure. *)
 let transitive_closure map init =
@@ -67,5 +69,3 @@ let%expect_test "transitive_closure: non-closed" =
   transitive_closure map init
   |> [%sexp_of: StringSet.t] |> Sexp.to_string_hum |> print_endline;
   [%expect{| (c) |}]
-
-

@@ -4,11 +4,15 @@ open Core
 
 module Uri_sexp = struct
   include Uri_sexp
+(*
   let compare = Uri.compare
+*)
 end
 
 type library_name = string
+(*
 exception RegisteredAlready of library_name
+*)
 
 module Libraries = String.Map
 type entry = {
@@ -45,7 +49,9 @@ let with_modifying_file file ~f =
 let list reg = with_reading_file reg ~f:(fun m -> Libraries.keys m.libraries)
 let find reg name = with_reading_file reg ~f:(fun m -> Libraries.find m.libraries name)
 let mem reg name = with_reading_file reg ~f:(fun m -> Libraries.mem m.libraries name)
+(*
 let remove reg name = with_modifying_file reg ~f:(fun m -> {libraries = Libraries.remove m.libraries name})
+*)
 let remove_multiple reg names =
   let name_set = String.Set.of_list names in
   with_modifying_file reg ~f:(fun m ->

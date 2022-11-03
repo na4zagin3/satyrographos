@@ -294,11 +294,13 @@ module TokenMatcherSemantics = struct
   type value = bool
 
   type glob = value -> value TokenMatcher.t
+(*
   let id_char =
     Re.alt [
       Re.alnum;
       Re.set "_-.";
     ]
+*)
   let star : glob = fun v ->
     TokenMatcher.node (Some v) []
   let atom x : glob = fun v ->
