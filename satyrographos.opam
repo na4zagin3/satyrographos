@@ -45,7 +45,7 @@ depends: [
   "yojson" {< "2.0.0"}
 
   # Janestreet Libs
-  "core" {>= "v0.14" & < "v0.15"}
+  "core" {>= "v0.14" & < "v0.16"}
   "ppx_jane"
   "shexp"
 ]
