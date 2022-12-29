@@ -1,8 +1,7 @@
 Installing packages
 ------------------------------------------------------------
 Exception:
-(Sys_error
-  "@@temp_dir@@/pkg/fonts.satysfi-hash: No such file or directory")
+Sys_error("@@temp_dir@@/pkg/fonts.satysfi-hash: No such file or directory")
 ------------------------------------------------------------
 @@dest_dir@@
 ------------------------------------------------------------

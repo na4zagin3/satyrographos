@@ -37,7 +37,7 @@ in
       }
     in
     mkdir ~p:() dist_library_dir
-    >> (Option.map create_opam_reg opam_libs |> Option.value ~default:(return ()))
+    >> (Option.map create_opam_reg opam_libs |> Core.Option.value ~default:(return ()))
     >> TestLib.prepare_files work_dir files
     >> TestLib.prepare_files reg_dir satysfi_files
     >>| env

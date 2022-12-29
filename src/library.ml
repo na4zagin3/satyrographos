@@ -10,13 +10,8 @@ module LibraryFiles = struct
 end
 
 module Json = struct
-  (*
   include Yojson.Safe
-  type t = Json_derivers.Yojson.t
-  let ( sexp_of_t, t_of_sexp, compare, hash ) = Json_derivers.Yojson.( sexp_of_t, t_of_sexp, compare, hash )
-  *)
-  let ( to_string, from_file, to_file ) = Yojson.Safe.( to_string, from_file, to_file )
-  include Json_derivers.Yojson
+  type t = [%import: Yojson.Safe.t] [@@deriving sexp, compare, hash]
 end
 
 module Dependency = Set.Make(String)

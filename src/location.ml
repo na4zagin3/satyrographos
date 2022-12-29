@@ -95,7 +95,7 @@ let%expect_test "position_of_offset: empty content" =
     |> printf !"%d: %{sexp: position}\n" off
   in
   Sequence.init 6 ~f:test
-  |> Sequence.iter ~f:ident;
+  |> Sequence.iter ~f:Fn.id;
   [%expect{|
     0: ((lnum 0) (cnum 0))
     1: ((lnum 0) (cnum 1))

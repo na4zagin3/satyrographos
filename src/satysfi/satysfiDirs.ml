@@ -30,7 +30,7 @@ let is_runtime_dir dir =
 
 let opam_share_dir ~outf =
   try
-    Unix.open_process_in "opam var share"
+    Core_unix.open_process_in "opam var share"
     |> In_channel.input_all
     |> String.strip
     |> begin function

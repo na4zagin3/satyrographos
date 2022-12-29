@@ -1,3 +1,2 @@
 Exception:
-(Sys_error
-  "@@test_library@@/Satyristes: No such file or directory")
+Sys_error("@@test_library@@/Satyristes: No such file or directory")

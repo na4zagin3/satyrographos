@@ -20,4 +20,4 @@ let total_command =
 
 (* %%VERSION_NUM%% is expanded by "dune subst" *)
 let () =
-  Command.run ~version:"%%VERSION_NUM%%" total_command
+  Command_unix.run ~version:"%%VERSION_NUM%%" total_command

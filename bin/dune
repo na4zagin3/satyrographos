@@ -1,9 +1,10 @@
 (executable
  (name main)
  (public_name satyrographos)
- (preprocess (pps ppx_deriving.std ppx_jane -allow-unannotated-ignores))
+ (preprocess (pps ppx_deriving.std ppx_jane))
  (libraries
    core
+   core_unix.command_unix
    satyrographos_template
    satyrographos_command
    satyrographos_lockdown

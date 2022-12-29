@@ -1,8 +1,7 @@
 Installing packages
 ------------------------------------------------------------
 Exception:
-(Failure
-  "Missing dependencies: (fonts-theano). Revdeps: ((fonts-theano (grcnum)))")
+Failure("Missing dependencies: (fonts-theano). Revdeps: ((fonts-theano (grcnum)))")
 ------------------------------------------------------------
 @@dest_dir@@
 ------------------------------------------------------------

@@ -1,7 +1,7 @@
 open Core
 
-module Json = Json_derivers.Yojson
 module Library = Satyrographos.Library
+module Json = Library.Json
 
 let migrate_font_src ~outf (l: Library.t) =
   let migrate_font_hash_variant_entry ~outf names = function

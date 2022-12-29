@@ -4,6 +4,7 @@
  (preprocess (staged_pps ppx_deriving.std ppx_jane))
  (libraries
    core
+   core_unix
    fileutils
    ocamlgraph
    re

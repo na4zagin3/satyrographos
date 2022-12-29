@@ -19,13 +19,13 @@ run-test: [
 ]
 
 depends: [
-  "ocaml" {>= "4.09.0"}
+  "ocaml" {>= "4.11.0"}
 
   "conf-diffutils" {with-test}
   "dune" {>= "2.7"}
   "fileutils"
-  "json-derivers"
   "menhir" {>= "20181006"}
+  "ppx_import"
   "ppx_deriving"
   "ppx_deriving_yojson"
   "ocamlgraph"
@@ -45,7 +45,8 @@ depends: [
   "yojson"
 
   # Janestreet Libs
-  "core" {>= "v0.14" & < "v0.15"}
+  "core" {>= "v0.15" & < "v0.16"}
+  "core_unix"
   "ppx_jane"
   "shexp"
 ]

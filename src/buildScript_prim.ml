@@ -277,7 +277,7 @@ let rebase_file ~src_dir ~library_name =
   let append_prefix dst_dir {dst; src} =
     let dst_prefix =
       if String.is_empty dst_dir
-      then ident
+      then Fn.id
       else Filename.concat dst_dir in
     {dst=dst_prefix dst; src=Filename.concat src_dir src}
   in

@@ -50,7 +50,7 @@ module DistinctFontMap = Map.Make(DistinctFont)
 
 let font_list ~outf =
   Printf.sprintf "fc-list -f '%s'" fc_format_data (* TODO escape quotes *)
-  |> Unix.open_process_in
+  |> Core_unix.open_process_in
   |> In_channel.input_all
   |> Printf.sprintf "(%s)"
   |> Sexp.of_string

@@ -23,7 +23,7 @@ let remove reg name =
   remove_multiple reg [name]
 
 let add_dir reg name dir =
-  let abs_dir = Filename.realpath dir in
+  let abs_dir = Filename_unix.realpath dir in
   let uri = Uri.make ~scheme:"file" ~path:abs_dir () in
   (* Store.add_dir reg.cache name dir;  *)
   Metadata.add reg.metadata name {

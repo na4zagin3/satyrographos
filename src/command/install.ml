@@ -24,7 +24,7 @@ let get_libraries ~outf ~(env: Environment.t) ~libraries =
   Format.fprintf outf "Reading runtime dist: %s\n" dist_library_dir;
   let dist_library = Library.read_dir ~outf dist_library_dir in
   let opam_libraries = match opam_reg with
-    | None -> StringSet.to_map StringSet.empty ~f:ident
+    | None -> StringSet.to_map StringSet.empty ~f:Fn.id
     | Some reg_opam ->
         OpamSatysfiRegistry.list reg_opam
         |> StringSet.of_list
