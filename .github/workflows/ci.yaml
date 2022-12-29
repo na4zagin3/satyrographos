@@ -16,7 +16,7 @@ jobs:
           - 4.11.2
           - 4.12.1
           - 4.13.1
-          - 4.14.0
+          - 4.14.1
         with-satysfi:
           - false
         oldest-dependencies:
@@ -65,11 +65,12 @@ jobs:
         if: matrix.oldest-dependencies
         run: |
           OCAML_PACKAGE="ocaml.$(opam show --color=never -f version ocaml)"
+          OCAML_BASE_COMPILER="ocaml-base-compiler.$(opam show --color=never -f version ocaml-base-compiler)"
           SATYROGRAPHOS_PACKAGE=satyrographos
           # export OPAMEXTERNALSOLVER=builtin-0install
           # export OPAMCRITERIA=+removed,+count[version-lag,solution]
           opam install opam-0install
-          opam install --yes $(opam exec -- opam-0install --prefer-oldest "$SATYROGRAPHOS_PACKAGE" "$OCAML_PACKAGE")
+          opam install --yes $(opam exec -- opam-0install --prefer-oldest "$SATYROGRAPHOS_PACKAGE" "$OCAML_PACKAGE" "$OCAML_BASE_COMPILER")
 
 
       - name: Test Satyrographos
