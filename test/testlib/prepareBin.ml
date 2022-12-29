@@ -73,9 +73,10 @@ echo opam "$@" >> "$LOG_FILE"
 case "$1" in
   list)
     cat <<EOF|};
+      begin let open Core in
       opam_response
-      |> Option.map (fun o -> o.list_result)
-      |> Option.value ~default:"";
+      |> Option.map ~f:(fun o -> o.list_result)
+      |> Option.value ~default:"" end;
       {|EOF
     ;;
   *)

@@ -80,7 +80,10 @@ let dump_dir dir : unit t =
   )
   |> set_env "LC_ALL" "C"
 
-let stacktrace = false
+let stacktrace =
+  Sys.getenv_opt "SATYROGRAPHOS_TEST_STACKTRACE"
+  |> Option.map (String.equal "true")
+  |> Core.Option.value ~default:false
 
 let filter_output f c =
   capture [Std_io.Stdout] c
@@ -210,11 +213,11 @@ let opam_file_for_test
   =
   let name =
     Option.map (Printf.sprintf {|name: "%s"|}) name
-    |> Option.value ~default:""
+    |> Core.Option.value ~default:""
   in
   let version =
     Option.map (Printf.sprintf {|version: "%s"|}) version
-    |> Option.value ~default:""
+    |> Core.Option.value ~default:""
   in
   Printf.sprintf
     {|opam-version: "2.0"

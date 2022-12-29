@@ -24,8 +24,8 @@ depends: [
   "conf-diffutils" {with-test}
   "dune" {>= "2.7"}
   "fileutils"
-  "json-derivers"
   "menhir" {>= "20181006"}
+  "ppx_import"
   "ppx_deriving"
   "ppx_deriving_yojson"
   "ocamlgraph"
@@ -42,10 +42,11 @@ depends: [
   "uri-sexp" {>= "3.0.0"}
   "yaml" {>= "3.0" & < "4.0"}
   "yaml-sexp" {>= "3.0" & < "4.0"}
-  "yojson"
+  "yojson" {< "2.0"}
 
   # Janestreet Libs
-  "core" {>= "v0.14" & < "v0.15"}
+  "core" {>= "v0.14" & < "v0.16"}
+  "core_unix"
   "ppx_jane"
   "shexp"
 ]

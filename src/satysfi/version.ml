@@ -132,7 +132,7 @@ let flag =
       | Some x -> x
       | None ->
         Format.fprintf outf
-          "Cannot detect SATySFi Version.  Please specify with --satysfi-version.  Assuming %s"
+          "Cannot detect SATySFi Version.  Please specify it with --satysfi-version.  Assuming %s"
           (to_string latest_version);
         latest_version
   ]

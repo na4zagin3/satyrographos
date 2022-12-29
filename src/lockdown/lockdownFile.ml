@@ -3,13 +3,7 @@ open Core
 let version = "0.0.3"
 
 module Json = struct
-  (*
-  include Yojson.Safe
-  type t = Json_derivers.Yojson.t
-  let ( sexp_of_t, t_of_sexp, compare, hash ) = Json_derivers.Yojson.( sexp_of_t, t_of_sexp, compare, hash )
-  *)
-  include Yojson.Safe
-  include Json_derivers.Yojson
+  include Satyrographos.Library.Json
   let to_yojson = ident
   let of_yojson x = Result.Ok x
 end

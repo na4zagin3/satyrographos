@@ -42,7 +42,7 @@ let create_new_reg dir =
   initialize registry_dir;
   read registry_dir
 let with_new_reg f =
-  let dir = Filename.temp_dir "Satyrographos" "Store" in
+  let dir = Filename_unix.temp_dir "Satyrographos" "Store" in
   protect ~f:(fun () -> create_new_reg dir |> f) ~finally:(fun () -> FileUtil.rm ~force:Force ~recurse:true [dir])
 
 let test_library_list ~expect reg =
@@ -58,7 +58,7 @@ let%test "store: list: empty" = with_new_reg begin fun reg ->
     match list reg with [] -> true | _ :: _ -> false
   end
 let%test_unit "store: add empty dir" = with_new_reg begin fun reg ->
-    let dir = Filename.temp_dir "Satyrographos" "Library" in
+    let dir = Filename_unix.temp_dir "Satyrographos" "Library" in
     add_dir reg "a" dir;
     test_library_list ~expect:["a"] reg;
     [%test_result: bool] ~expect:true (mem reg "a");
@@ -67,7 +67,7 @@ let%test_unit "store: add empty dir" = with_new_reg begin fun reg ->
   end
 
 let%test_unit "store: add nonempty dir" = with_new_reg begin fun reg ->
-    let dir = Filename.temp_dir "Satyrographos" "Library" in
+    let dir = Filename_unix.temp_dir "Satyrographos" "Library" in
     FilePath.concat dir "c" |> FileUtil.touch;
     add_dir reg "a" dir;
     test_library_list ~expect:["a"] reg;
@@ -78,12 +78,12 @@ let%test_unit "store: add nonempty dir" = with_new_reg begin fun reg ->
   end
 
 let%test_unit "store: add nonempty dir twice" = with_new_reg begin fun reg ->
-    let dir1 = Filename.temp_dir "Satyrographos" "Library" in
+    let dir1 = Filename_unix.temp_dir "Satyrographos" "Library" in
     FilePath.concat dir1 "c" |> FileUtil.touch;
     add_dir reg "a" dir1;
     test_library_list ~expect:["a"] reg;
     test_library_content ~expect:["c"] reg "a";
-    let dir2 = Filename.temp_dir "Satyrographos" "Library" in
+    let dir2 = Filename_unix.temp_dir "Satyrographos" "Library" in
     FilePath.concat dir2 "d" |> FileUtil.touch;
     add_dir reg "a" dir2;
     test_library_list ~expect:["a"] reg;
@@ -91,7 +91,7 @@ let%test_unit "store: add nonempty dir twice" = with_new_reg begin fun reg ->
   end
 
 let%test_unit "store: added dir must be copied" = with_new_reg begin fun reg ->
-    let dir = Filename.temp_dir "Satyrographos" "Library" in
+    let dir = Filename_unix.temp_dir "Satyrographos" "Library" in
     FilePath.concat dir "c" |> FileUtil.touch;
     add_dir reg "a" dir;
     test_library_list ~expect:["a"] reg;
@@ -105,7 +105,7 @@ let%test_unit "store: added dir must be copied" = with_new_reg begin fun reg ->
   end
 
 let%test_unit "store: add the same directory twice with different contents" = with_new_reg begin fun reg ->
-    let dir = Filename.temp_dir "Satyrographos" "Library" in
+    let dir = Filename_unix.temp_dir "Satyrographos" "Library" in
     FilePath.concat dir "c" |> FileUtil.touch;
     add_dir reg "a" dir;
     test_library_list ~expect:["a"] reg;

@@ -60,7 +60,7 @@ let () =
       ~outf
       ~verbose
       ~buildscript_path:(FilePath.concat temp_dir "pkg/Satyristes")
-      ~build_dir:(FilePath.concat temp_dir "pkg/_build" |> Option.some)
+      ~build_dir:(FilePath.concat temp_dir "pkg/_build" |> Core.Option.some)
       ~env
       ~names
   in

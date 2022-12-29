@@ -120,8 +120,7 @@ Installing packages
 ------------------------------------------------------------
 Gathering OPAM package information...
 Exception:
-(Failure
-  "BUG: Unrecognizable package information from OPAM: \"***invalid,response,!!!\"")
+Failure("BUG: Unrecognizable package information from OPAM: \"***invalid,response,!!!\"")
 ------------------------------------------------------------
 @@temp_dir@@/pkg
 @@temp_dir@@/pkg/Makefile
