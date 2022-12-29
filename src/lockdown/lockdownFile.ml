@@ -4,7 +4,7 @@ let version = "0.0.3"
 
 module Json = struct
   include Satyrographos.Library.Json
-  let to_yojson = ident
+  let to_yojson = Fn.id
   let of_yojson x = Result.Ok x
 end
 

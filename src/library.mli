@@ -7,12 +7,6 @@ end
 module Json : sig
   include module type of Yojson.Safe
   type t = [%import: Yojson.Safe.t] [@@deriving sexp, compare, hash]
-  val to_string :
-    ?buf:Bi_outbuf.t -> ?len:int -> ?std:bool -> t -> string
-  val from_file :
-    ?buf:Bi_outbuf.t -> ?fname:string -> ?lnum:int -> string -> t
-  val to_file :
-    ?len:int -> ?std:bool -> string -> t -> unit
 end
 
 module Dependency : sig

@@ -3,7 +3,7 @@ open Core
 module PrinterSemantics = struct
   type glob = string
   let star = "*"
-  let atom = ident
+  let atom = Fn.id
   let range =
     sprintf "%d..%d"
   let slash s g =
@@ -50,7 +50,7 @@ module TokenMatcher = struct
       then b
       else begin
         let v =
-          List.find_map ~f:ident
+          List.find_map ~f:Fn.id
             [b.value; a.value; v;]
         in
         let merge_children =
