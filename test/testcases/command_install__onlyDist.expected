@@ -59,7 +59,6 @@ diff -Nr @@empty_dir@@/dest/fonts/Junicode.ttf @@dest_dir@@/dest/fonts/Junicode.
 diff -Nr @@empty_dir@@/dest/hash/fonts.satysfi-hash @@dest_dir@@/dest/hash/fonts.satysfi-hash
 0a1
 > {"Junicode":<"Single":{"src":"dist/fonts/Junicode.ttf"}>}
-\ No newline at end of file
 diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 0a1,2
 > ((version 1) (libraryName dist) (libraryVersion "") (compatibility ())

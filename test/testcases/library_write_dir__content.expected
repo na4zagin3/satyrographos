@@ -20,7 +20,6 @@ diff -Nr @@empty_dir@@/dest/fonts/Junicode.ttf @@dest_dir@@/dest/fonts/Junicode.
 diff -Nr @@empty_dir@@/dest/hash/fonts.satysfi-hash @@dest_dir@@/dest/hash/fonts.satysfi-hash
 0a1
 > {"Junicode":<"Single":{"src":"dist/fonts/Junicode.ttf"}>}
-\ No newline at end of file
 diff -Nr @@empty_dir@@/dest/metadata @@dest_dir@@/dest/metadata
 0a1,2
 > ((version 1) (libraryName "") (libraryVersion "") (compatibility ())
@@ -32,7 +31,6 @@ diff -Nr @@empty_dir@@/dest/packages/List.satyg @@dest_dir@@/dest/packages/List.
 diff -Nr @@empty_dir@@/dest/packages/test.satyg @@dest_dir@@/dest/packages/test.satyg
 0a1
 > let x = 1
-\ No newline at end of file
 diff -Nr @@empty_dir@@/dest/unidata/UnicodeData.txt @@dest_dir@@/dest/unidata/UnicodeData.txt
 0a1,3
 > 0000;<control>;Cc;0;BN;;;;;N;NULL;;;;
