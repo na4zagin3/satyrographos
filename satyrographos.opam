@@ -19,7 +19,7 @@ run-test: [
 ]
 
 depends: [
-  "ocaml" {>= "4.09.0"}
+  "ocaml" {>= "4.11.0"}
 
   "conf-diffutils" {with-test}
   "dune" {>= "2.7"}
