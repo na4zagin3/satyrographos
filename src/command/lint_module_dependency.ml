@@ -29,12 +29,12 @@ let render_missing_dependency level (md : missing_dependency) =
 let get_libraries ~locs ~env ~library_override m =
   let libraries =
     BuildScript.get_dependencies_opt m
-    |> Option.map ~f:(fun d -> Library.Dependency.elements d)
+    |> Option.map ~f:Set.elements
     |> Option.value ~default:[]
   in
   let autogen_libraries =
     BuildScript.get_autogen_opt m
-    |> Option.map ~f:Library.Dependency.elements
+    |> Option.map ~f:Set.elements
     |> Option.value ~default:[]
   in
   let combine ~key:_ _v1 v2 = v2 in
@@ -44,7 +44,7 @@ let get_libraries ~locs ~env ~library_override m =
         ~system_font_prefix:None
         ~libraries:(Some libraries)
         ~autogen_libraries
-        ~persistent_autogen:[] 
+        ~persistent_autogen:[]
         ~env
         ()
       |> (fun m -> Map.merge_skewed ~combine m library_override)
@@ -94,7 +94,7 @@ let check_dependency ~loaded_library_names ~mode ~dep_graph_mode ~packages =
   let get_suggested_dependency = function
     | Dependency.Require r ->
       begin match String.split r ~on:'/' with
-        | l :: _ :: _ when StringSet.mem loaded_library_names l |> not ->
+        | l :: _ :: _ when Set.mem loaded_library_names l |> not ->
           Some l
         | _ -> None
       end
@@ -137,7 +137,7 @@ let lint_module_dependency ~outf ~locs ~satysfi_version ~basedir ~(env : Environ
         FilePath.reduce ~no_symlink:true path
         |> FilePath.make_relative d
       in
-      let content = Library.LibraryFiles.find
+      let content = Map.find
         merged.files
         package_relative_path
       in
@@ -163,7 +163,7 @@ let lint_module_dependency ~outf ~locs ~satysfi_version ~basedir ~(env : Environ
         let open Satyrographos_satysfi in
         let packages =
           target_library.files
-          |> Library.LibraryFiles.keys
+          |> Map.keys
           |> List.filter ~f:(String.is_prefix ~prefix:"packages/")
           |> List.map ~f:(FilePath.concat d)
         in
@@ -195,7 +195,7 @@ let lint_module_dependency ~outf ~locs ~satysfi_version ~basedir ~(env : Environ
         let modes =
           (* TODO Optimize *)
           target_library.files
-          |> Library.LibraryFiles.keys
+          |> Map.keys
           |> List.filter_map ~f:(fun path ->
               FilePath.basename path
               |> Mode.of_basename_opt)

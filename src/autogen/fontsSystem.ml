@@ -55,7 +55,7 @@ let font_list ~outf =
   |> Printf.sprintf "(%s)"
   |> Sexp.of_string
   |> [%of_sexp: Font.t list] (* Use Parsexp.Many *)
-  |> List.filter ~f:(fun f -> not (StringSet.mem blacklist f.file))
+  |> List.filter ~f:(fun f -> not (Set.mem blacklist f.file))
   |> List.map ~f:(fun f -> DistinctFont.of_font f, f)
   |> DistinctFontMap.of_alist_reduce ~f:(fun f1 f2 ->
       let sf1 = [%sexp_of: Font.t] f1 |> Sexp.to_string in
@@ -65,7 +65,7 @@ let font_list ~outf =
       end;
       f1
     )
-  |> DistinctFontMap.data
+  |> Map.data
 
 let satysfi_name (font: Font.t) =
   font.postscriptname
@@ -105,8 +105,8 @@ let fonts_to_library ~outf prefix fonts =
   (* let stored_font_name font = FilePath.basename font.file in *)
   let (hash, files) = List.map ~f:(fun (f: Font.t) -> f.file, f) fonts
     |> FileMap.of_alist_multi
-    |> FileMap.map ~f:add_variant
-    |> FileMap.data
+    |> Map.map ~f:add_variant
+    |> Map.data
     |> List.concat_map ~f:(font_to_json_and_hash prefix)
     |> List.unzip
   in

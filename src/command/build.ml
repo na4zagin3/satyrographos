@@ -52,8 +52,8 @@ let setup_project_env ~buildscript_path ~satysfi_runtime_dir ~outf ~verbose ~lib
 
 let build_cmd ~outf ~build_dir ~verbose ~build_module ~buildscript_path ~system_font_prefix ~env =
   let src_dir, p = read_module ~outf ~verbose ~build_module ~buildscript_path in
-  let libraries = Library.Dependency.to_list p.dependencies |> Some in
-  let autogen_libraries = Library.Dependency.to_list p.autogen in
+  let libraries = Set.to_list p.dependencies |> Some in
+  let autogen_libraries = Set.to_list p.autogen in
   let with_build_dir build_dir c =
     let satysfi_runtime_dir = FilePath.concat build_dir "satysfi" in
     let project_env =
@@ -128,7 +128,7 @@ let opam_pin_project ~(buildscript: BuildScript.t) ~buildscript_path =
 let instal_dependencies_opam_cmd ~(build_module:BuildScript.m) =
   let opam_dependencies d =
     d
-    |> Library.Dependency.to_list
+    |> Set.to_list
     |> List.map ~f:(fun name -> "satysfi-" ^ name)
   in
   match BuildScript.get_dependencies_opt build_module with

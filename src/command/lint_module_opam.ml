@@ -19,8 +19,8 @@ let extract_opam_package_names ~opam =
       OpamPackage.Name.to_string n
       |> StringSet.singleton
     | Block b -> sub b
-    | And (x, y) -> StringSet.union (sub x) (sub y)
-    | Or (x, y) -> StringSet.union (sub x) (sub y)
+    | And (x, y) -> Set.union (sub x) (sub y)
+    | Or (x, y) -> Set.union (sub x) (sub y)
   in
   OpamFile.OPAM.depends opam |> sub
 
@@ -88,7 +88,7 @@ let lint_module_opam ~locs ~basedir (m : BuildScript.m) opam_path =
       BuildScript.get_dependencies_opt m
       |> Option.value_exn
         ~message:(sprintf "BUG: Module %s lacks dependencies" module_name)
-      |> Library.Dependency.to_array
+      |> Set.to_array
       |> StringSet.of_array
     in
     let opam_dependencies =
@@ -96,14 +96,14 @@ let lint_module_opam ~locs ~basedir (m : BuildScript.m) opam_path =
       |> StringSet.filter_map ~f:(String.chop_prefix ~prefix:"satysfi-")
     in
     let missing_dependencies =
-      StringSet.diff module_dependencies opam_dependencies
+      Set.diff module_dependencies opam_dependencies
     in
-    if StringSet.is_empty missing_dependencies |> not
+    if Set.is_empty missing_dependencies |> not
     then
       [{
         locs;
         level = `Warning;
-        problem = OpamPackageShouldHaveSatysfiDependencies (StringSet.to_list missing_dependencies);
+        problem = OpamPackageShouldHaveSatysfiDependencies (Set.to_list missing_dependencies);
       }]
     else []
   in

@@ -30,7 +30,7 @@ let migrate_font_src ~outf (l: Library.t) =
     | j -> j
   in
   let hashes =
-    Library.LibraryFiles.mapi l.hashes ~f:(fun ~key ~data -> match key with
+    Map.mapi l.hashes ~f:(fun ~key ~data -> match key with
         | "hash/fonts.satysfi-hash"
         | "hash/mathfonts.satysfi-hash" ->
           let names, j = data in

@@ -37,17 +37,17 @@ let module_struct data =
 
 let generate_persistent () =
   (* TODO (gh-98) get the values from the lockfile *)
-  let datetime = Time.now () in
+  let datetime = Time_ns.now () in
   let tzname =
-    Time_unix.Zone.local
+    Time_ns_unix.Zone.local
     |> Lazy.force
   in
   { datetime =
       datetime
-      |> Time.to_string_iso8601_basic ~zone:tzname;
+      |> Time_ns.to_string_iso8601_basic ~zone:tzname;
     tzname =
       tzname
-      |> Time.Zone.name;
+      |> Time_ns_unix.Zone.name;
   }
 
 let generate_persistent_opt () =

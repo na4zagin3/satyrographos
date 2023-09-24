@@ -4,7 +4,7 @@
  (preprocess (staged_pps ppx_deriving.std ppx_deriving_yojson ppx_jane))
  (libraries
    core
-   core_unix.time_unix
+   core_unix.time_ns_unix
    fileutils
    satyrographos
    satyrographos_satysfi

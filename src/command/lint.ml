@@ -20,7 +20,7 @@ let lint_compatibility ~locs (m : BuildScript.m) =
   | None -> []
   | Some compatibility ->
     compatibility
-    |> Satyrographos.BuildScript.CompatibilitySet.to_list
+    |> Set.to_list
     |> List.concat_map ~f
 
 let lint_build ~locs ~(buildscript_version : BuildScript.version) (m : BuildScript.m) =

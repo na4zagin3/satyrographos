@@ -69,8 +69,8 @@ let add ~outf reg name uri =
 let gc reg =
   let current_libraries = list reg |> StringSet.of_list in
   let valid_libraries = Metadata.list reg.metadata |> StringSet.of_list in
-  let broken_libraries = StringSet.diff current_libraries valid_libraries in
-  StringSet.to_list broken_libraries
+  let broken_libraries = Set.diff current_libraries valid_libraries in
+  Set.to_list broken_libraries
   |> remove_multiple reg
 
 let initialize libraries_dir metadata_file =

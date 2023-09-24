@@ -122,7 +122,7 @@ let get_font_info ~outf font_list =
     List.map font_list ~f:(fun f ->
       let font_info =
         font_location_to_distint_font f.location
-        |> Option.map ~f:(FontInfo.DistinctFontMap.find font_info_map) in
+        |> Option.map ~f:(Map.find font_info_map) in
       { f with font_info = Option.value font_info ~default:f.font_info }
     )
   in

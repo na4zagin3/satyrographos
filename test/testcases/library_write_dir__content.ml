@@ -18,7 +18,7 @@ let () =
     let dest_dir = FilePath.concat dest_dir "dest" in
     let l = Library.read_dir ~outf dist in
     let l = { l with files =
-      Library.LibraryFiles.add_exn l.files ~key:"packages/test.satyg" ~data:(`Content "let x = 1")
+      Core.Map.add_exn l.files ~key:"packages/test.satyg" ~data:(`Content "let x = 1")
     } in
     Library.write_dir ~outf ~verbose ~symlink:true dest_dir l in
   eval (test_install env main)

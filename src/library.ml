@@ -1,12 +1,13 @@
 open Core
 
 module LibraryFiles = struct
+  include Map
   include Map.Make(String)
 
   let union f = merge ~f:(fun ~key:key -> function
-    | `Left v | `Right v -> Some v
-    | `Both (x, y) -> f key x y
-  )
+      | `Left v | `Right v -> Some v
+      | `Both (x, y) -> f key x y
+    )
 end
 
 module Json = struct
@@ -25,6 +26,7 @@ module Rename = struct
   [@@deriving sexp, compare]
 end
 module RenameSet = Set.Make(Rename)
+
 module Compatibility = struct
   type t = {
     rename_packages: RenameSet.t [@sexp.omit_nil];
@@ -36,11 +38,11 @@ module Compatibility = struct
     rename_fonts = RenameSet.empty;
   }
   let is_empty c =
-    RenameSet.is_empty c.rename_packages
-    && RenameSet.is_empty c.rename_fonts
+    Set.is_empty c.rename_packages
+    && Set.is_empty c.rename_fonts
   let union c1 c2 = {
-    rename_packages = RenameSet.union c1.rename_packages c2.rename_packages;
-    rename_fonts = RenameSet.union c1.rename_fonts c2.rename_fonts;
+    rename_packages = Set.union c1.rename_packages c2.rename_packages;
+    rename_fonts = Set.union c1.rename_fonts c2.rename_fonts;
   }
   let union_list = List.fold ~init:empty ~f:union
 end
@@ -89,23 +91,23 @@ let to_string x =
 
 let hash_map_union =
   (* TODO use merge_skewed *)
-  StringMap.merge ~f:(fun ~key:_ -> function
+  Map.merge ~f:(fun ~key:_ -> function
     | `Left v | `Right v -> Some v
-    | `Both (x, y) -> Some(JsonSet.union x y)
+    | `Both (x, y) -> Some(Set.union x y)
   )
 
 let validate_hash f abs_fs = function
   | (`Assoc a) ->
     List.map ~f:hash_map_singleton a
     |> List.fold_left ~f:hash_map_union ~init:StringMap.empty
-    |> StringMap.filter ~f:(fun v -> JsonSet.length v > 1)
-    |> StringMap.mapi ~f:(fun ~key:k ~data:v -> Printf.sprintf "Conflict values in %s:\nField: %s\nValues: %s\nOriginally from: %s\n\n"
+    |> Map.filter ~f:(fun v -> Set.length v > 1)
+    |> Map.mapi ~f:(fun ~key:k ~data:v -> Printf.sprintf "Conflict values in %s:\nField: %s\nValues: %s\nOriginally from: %s\n\n"
       f
       k
-      (Json.to_string (`List (JsonSet.elements v)))
+      (Json.to_string (`List (Set.elements v)))
       (show_file_list abs_fs)
     )
-    |> StringMap.data
+    |> Map.data
 
   | _ -> [f ^ " is not an object. Originally from " ^ show_file_list abs_fs]
 
@@ -123,7 +125,7 @@ let normalize_hash ~outf = function
         (Json.to_string v2);
       v1
     ) in
-    `Assoc (StringMap.to_alist map)
+    `Assoc (Map.to_alist map)
   | j ->
     Format.fprintf outf "Invalid value: %s\n@."
         (Json.to_string j);
@@ -187,8 +189,8 @@ let union p1 p2 =
   { hashes = LibraryFiles.union handle_hash_conflict p1.hashes p2.hashes;
     files = LibraryFiles.union handle_file_conflict p1.files p2.files;
     compatibility = Compatibility.union p1.compatibility p2.compatibility;
-    dependencies = Dependency.union p1.dependencies p2.dependencies;
-    autogen = Dependency.union p1.autogen p2.autogen;
+    dependencies = Set.union p1.dependencies p2.dependencies;
+    autogen = Set.union p1.autogen p2.autogen;
     name = Core.Option.first_some p1.name p2.name;
     version = Core.Option.first_some p1.version p2.version;
   }
@@ -222,19 +224,19 @@ let add_metadata f (p: t) =
   let ds = metadata.dependencies |> List.map ~f:fst in
   let ags = metadata.autogen |> List.map ~f:fst in
   { p with
-    dependencies = Dependency.of_list ds |> Dependency.union p.dependencies;
-    autogen = Dependency.of_list ags |> Dependency.union p.autogen;
+    dependencies = Dependency.of_list ds |> Set.union p.dependencies;
+    autogen = Dependency.of_list ags |> Set.union p.autogen;
     compatibility = Compatibility.union p.compatibility metadata.compatibility;
     name = if String.is_empty metadata.libraryName then None else Some metadata.libraryName;
     version = if String.is_empty metadata.libraryVersion then None else Some metadata.libraryVersion;
   }
 let save_metadata f (p: t) =
   let dependencies =
-    Dependency.to_list p.dependencies
+    Set.to_list p.dependencies
     |> List.map ~f:(fun x -> x, ())
   in
   let autogen =
-    Dependency.to_list p.autogen
+    Set.to_list p.autogen
     |> List.map ~f:(fun x -> x, ())
   in
   { version = current_version;
