@@ -39,7 +39,7 @@ let generate_persistent () =
   (* TODO (gh-98) get the values from the lockfile *)
   let datetime = Time_ns.now () in
   let tzname =
-    Time_float_unix.Zone.local
+    Time_ns_unix.Zone.local
     |> Lazy.force
   in
   { datetime =
@@ -47,7 +47,7 @@ let generate_persistent () =
       |> Time_ns.to_string_iso8601_basic ~zone:tzname;
     tzname =
       tzname
-      |> Time_float_unix.Zone.name;
+      |> Time_ns_unix.Zone.name;
   }
 
 let generate_persistent_opt () =
