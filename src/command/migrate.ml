@@ -62,7 +62,7 @@ build:
       OpamFile.OPAM.write (OpamFile.make file) opam
   in
   BuildScript.get_module_map bs
-  |> BuildScript.StringMap.iter ~f:(fun m ->
+  |> Map.iter ~f:(fun m ->
       let name = BuildScript.get_name m in
       BuildScript.get_opam_opt m
       |> Option.iter ~f:(migrate_opam name)

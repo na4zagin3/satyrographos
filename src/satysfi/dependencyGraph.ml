@@ -267,15 +267,15 @@ let subgraph_with_mode ~mode g =
             Option.value_map fmode ~default:acc ~f:(fun fmode ->
                 if Mode.(fmode <=: mode)
                 then acc
-                else VertexSet.add acc v
+                else Set.add acc v
               )
         in
-        EdgeSet.union edges acc_nodes,
+        Set.union edges acc_nodes,
         vertices acc_vertices
       ) g (EdgeSet.empty, VertexSet.empty)
   in
-  EdgeSet.iter edges_to_be_removed ~f:(G.remove_edge_e g);
-  VertexSet.iter vertices_to_be_removed ~f:(G.remove_vertex g);
+  Set.iter edges_to_be_removed ~f:(G.remove_edge_e g);
+  Set.iter vertices_to_be_removed ~f:(G.remove_vertex g);
   g
 
 let%expect_test "subgraph_with_mode: test 1" =
@@ -330,11 +330,11 @@ let reachable_sinks g root_vertices =
       let sinks =
         G.succ gc v
         |> VertexSet.of_list
-        |> VertexSet.filter ~f:(fun v -> G.out_degree g v = 0)
+        |> Set.filter ~f:(fun v -> G.out_degree g v = 0)
       in
-      VertexSet.union acc sinks
+      Set.union acc sinks
     )
-  |> VertexSet.to_list
+  |> Set.to_list
 
 let%expect_test "reachable_sinks: test 1" =
   let g = G.create () in
@@ -503,7 +503,7 @@ let cyclic_edges dep_graph =
         let vs = VertexSet.of_list vs in
         (* TODO Optimize *)
         G.fold_edges_e (fun ((vf, _, vt) as e) acc ->
-            if VertexSet.mem vs vf && VertexSet.mem vs vt
+            if Set.mem vs vf && Set.mem vs vt
             then e :: acc
             else acc)
           reduced_dep_graph

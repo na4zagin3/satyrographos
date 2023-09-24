@@ -62,13 +62,13 @@ let with_build_script f ~outf ~prefix ?(satysfi_version=Satyrographos_satysfi.Ve
   let module_map = BuildScript.get_module_map buildscript in
   match name with
   | None -> begin
-    if StringMap.length module_map = 1
-    then let build_module = StringMap.nth_exn module_map 0 |> snd in
+    if Map.length module_map = 1
+    then let build_module = Map.nth_exn module_map 0 |> snd in
       f ~outf ~verbose ~prefix ~satysfi_version ~script_version ~build_module ~buildscript_path ~env
     else failwith "Please specify module name with -name option"
   end
   | Some name ->
-    match StringMap.find module_map name with
+    match Map.find module_map name with
       | Some build_module ->
         f ~outf ~verbose ~prefix ~satysfi_version ~script_version ~build_module ~buildscript_path ~env
       | _ ->

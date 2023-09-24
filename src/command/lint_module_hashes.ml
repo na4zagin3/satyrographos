@@ -8,7 +8,7 @@ let lint_module_hashes ~outf:_ ~locs ~satysfi_version ~basedir ~env:_ (m : Build
     BuildScript.read_module ~src_dir:basedir m
   in
   target_library.hashes
-  |> Library.LibraryFiles.to_alist
+  |> Map.to_alist
   |> List.concat_map ~f:(fun (file, (_, json)) ->
       match file with
       | "hash/fonts.satysfi-hash"

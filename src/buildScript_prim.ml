@@ -152,7 +152,7 @@ let export_opam_package = function
     failwithf "export_opam_package does not support doc modules" ()
 
 let export_opam bs =
-  StringMap.iter bs ~f:export_opam_package
+  Map.iter bs ~f:export_opam_package
 
 let get_autogen_opt = function
   | Library l -> Some l.autogen
@@ -202,17 +202,17 @@ let get_version_opt = function
 let get_opam_dependencies_of_module m =
   get_dependencies_opt m
   |> Option.value ~default:Library.Dependency.empty
-  |> Library.Dependency.to_list
+  |> Set.to_list
   |> List.map ~f:(fun name -> "satysfi-" ^ name)
 
 let get_opam_dependencies l =
   get_module_map l
-  |> StringMap.to_sequence
+  |> Map.to_sequence
   |> Sequence.map ~f:(snd)
   |> Sequence.map ~f:(get_opam_dependencies_of_module)
   |> Sequence.map ~f:(StringSet.of_list)
-  |> Sequence.fold ~init:StringSet.empty ~f:StringSet.union
-  |> StringSet.to_list
+  |> Sequence.fold ~init:StringSet.empty ~f:Set.union
+  |> Set.to_list
 
 (* Compatibility treatment *)
 let compatibility_treatment (m: m) (l: Library.t) =
@@ -244,7 +244,7 @@ let compatibility_treatment (m: m) (l: Library.t) =
   in
   let compatibility =
     get_compatibility_opt m
-    |> Option.value_map ~default:[] ~f:CompatibilitySet.to_list
+    |> Option.value_map ~default:[] ~f:Set.to_list
     |> List.map ~f
     |> Library.Compatibility.union_list
   in

@@ -24,11 +24,11 @@ let get_libraries ~outf ~(env: Environment.t) ~libraries =
   Format.fprintf outf "Reading runtime dist: %s\n" dist_library_dir;
   let dist_library = Library.read_dir ~outf dist_library_dir in
   let opam_libraries = match opam_reg with
-    | None -> StringSet.to_map StringSet.empty ~f:Fn.id
+    | None -> Set.to_map StringSet.empty ~f:Fn.id
     | Some reg_opam ->
         OpamSatysfiRegistry.list reg_opam
         |> StringSet.of_list
-        |> StringSet.to_map ~f:(OpamSatysfiRegistry.directory reg_opam)
+        |> Set.to_map ~f:(OpamSatysfiRegistry.directory reg_opam)
   in
   Format.fprintf outf "Reading opam libraries: %s\n" (opam_libraries |> Map.keys |> [%sexp_of: string list] |> Sexp.to_string_hum);
   let all_libraries = Map.filter_mapi opam_libraries ~f:(fun ~key:name ~data:dir ->
@@ -80,10 +80,10 @@ let show_compatibility_warnings ~outf ~libraries =
     if Compatibility.is_empty compatibility |> not
     then begin
       let print_rename t renames =
-        if RenameSet.is_empty renames |> not
+        if Set.is_empty renames |> not
         then begin
           Format.fprintf outf "@[<v 2>@,%s have been renamed.@,@[<v 2>" t;
-          RenameSet.iter renames ~f:(fun { old_name; new_name } ->
+          Set.iter renames ~f:(fun { Rename.old_name; new_name } ->
             Format.fprintf outf "@,%s -> %s" old_name new_name;
           );
           Format.fprintf outf "@]@]@,";
