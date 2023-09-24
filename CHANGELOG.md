@@ -6,6 +6,17 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.2.12] - 2023-09-25
+### Changed
+- Make `library-opam list` subcommand output in shellscript-friendly multi line format ([#299])
+- Update dependent yaml library to 3.0 ([#301])
+- Refactored the clam test cases with shared shell script functions ([#300], [#302])
+- `install` subcommand shows reverse dependencies of missing libraries ([#303])
+- Support Core v0.15 and v0.16 by dropping support of OCaml 4.10 and older ([#309], [#312])
+
+### Fixed
+- Race condition non-dependent packages are being removed during reading libraries ([#298])
+
 ## [v0.0.2.11] - 2021-03-13
 ### Changed
 - Update templates ([#276] by @puripuri2100)
@@ -318,9 +329,18 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#285]: https://github.com/na4zagin3/satyrographos/pull/285
 [#289]: https://github.com/na4zagin3/satyrographos/pull/289
 [#290]: https://github.com/na4zagin3/satyrographos/pull/290
+[#298]: https://github.com/na4zagin3/satyrographos/pull/298
+[#299]: https://github.com/na4zagin3/satyrographos/pull/299
+[#300]: https://github.com/na4zagin3/satyrographos/pull/300
+[#301]: https://github.com/na4zagin3/satyrographos/pull/301
+[#302]: https://github.com/na4zagin3/satyrographos/pull/302
+[#303]: https://github.com/na4zagin3/satyrographos/pull/303
+[#309]: https://github.com/na4zagin3/satyrographos/pull/309
+[#312]: https://github.com/na4zagin3/satyrographos/pull/312
 
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.11...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.12...HEAD
+[v0.0.2.12]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.11...v0.0.2.12
 [v0.0.2.11]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.10...v0.0.2.11
 [v0.0.2.10]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.9...v0.0.2.10
 [v0.0.2.9]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.8...v0.0.2.9
