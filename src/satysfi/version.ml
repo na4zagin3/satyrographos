@@ -5,9 +5,12 @@ type t =
   | Satysfi_0_0_4
   | Satysfi_0_0_5
   | Satysfi_0_0_6
+  | Satysfi_0_0_7
+  | Satysfi_0_0_8
+  | Satysfi_0_0_9
 [@@deriving sexp, compare, equal]
 
-let latest_version = Satysfi_0_0_6
+let latest_version = Satysfi_0_0_9
 
 let alist = [
   "0.0.3", Satysfi_0_0_3;
@@ -18,6 +21,12 @@ let alist = [
   "v0.0.5", Satysfi_0_0_5;
   "0.0.6", Satysfi_0_0_6;
   "v0.0.6", Satysfi_0_0_6;
+  "0.0.7", Satysfi_0_0_7;
+  "v0.0.7", Satysfi_0_0_7;
+  "0.0.8", Satysfi_0_0_8;
+  "v0.0.8", Satysfi_0_0_8;
+  "0.0.9", Satysfi_0_0_9;
+  "v0.0.9", Satysfi_0_0_9;
 ]
 
 let of_string_opt =
