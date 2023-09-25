@@ -6,6 +6,10 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 
 ## [Unreleased]
 
+## [v0.0.2.13] - 2023-09-26
+### Changed
+- Stop passing multiple arguments to echo(1) ([#315])
+
 ## [v0.0.2.12] - 2023-09-25
 ### Changed
 - Make `library-opam list` subcommand output in shellscript-friendly multi line format ([#299])
@@ -337,9 +341,11 @@ and this project adheres to [Haskell PVP](https://pvp.haskell.org/).
 [#303]: https://github.com/na4zagin3/satyrographos/pull/303
 [#309]: https://github.com/na4zagin3/satyrographos/pull/309
 [#312]: https://github.com/na4zagin3/satyrographos/pull/312
+[#315]: https://github.com/na4zagin3/satyrographos/pull/315
 
 
-[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.12...HEAD
+[Unreleased]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.13...HEAD
+[v0.0.2.13]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.12...v0.0.2.13
 [v0.0.2.12]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.11...v0.0.2.12
 [v0.0.2.11]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.10...v0.0.2.11
 [v0.0.2.10]: https://github.com/na4zagin3/satyrographos/compare/v0.0.2.9...v0.0.2.10

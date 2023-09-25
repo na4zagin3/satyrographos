@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "satyrographos"
-version: "0.0.2.12"
+version: "0.0.2.13"
 maintainer: "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
 authors: [
   "SAKAMOTO Noriaki <mrty.ityt.pt@gmail.com>"
