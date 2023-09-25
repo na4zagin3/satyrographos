@@ -2,8 +2,7 @@
 let satysfi ~version_string log_file =
   let log_invocation =
 {|
-    echo 'Command invoked:' >> $LOG_FILE
-    echo satysfi "$@" | sed -e 's!/tmp/ \w*!@@build_temp_dir@@!' >> $LOG_FILE
+    printf 'Command invoked:\nsatysfi %s\n' "$*" >> "$LOG_FILE"
 |} in
   let parse_options =
     {|
@@ -39,7 +38,7 @@ case "$MODE" in
     echo "  SATySFi version $VERSION_STRING"
     ;;
   process)
-    echo "$INPUT -> $OUTPUT" >> $LOG_FILE
+    echo "$INPUT -> $OUTPUT" >> "$LOG_FILE"
     cat $INPUT > $OUTPUT
 esac
 }
@@ -67,8 +66,7 @@ let opam log_file ~opam_response =
   String.concat "\n"
     [ "#!/bin/sh";
       "LOG_FILE='" ^ log_file ^"'";
-      {|echo 'Command invoked:' >> "$LOG_FILE"
-echo opam "$@" >> "$LOG_FILE"
+      {|printf 'Command invoked:\nopam %s\n' "$*" >> "$LOG_FILE"
 
 case "$1" in
   list)
