@@ -66,4 +66,5 @@
  )
 
 (cram
+ (applies_to :whole_subtree)
  (deps %{bin:satyrographos} ./test-utils.sh))
